@@ -3,21 +3,22 @@ import styled from 'styled-components';
 import { FiGift } from 'react-icons/fi';
 import { LuCalendarHeart } from 'react-icons/lu';
 import { images } from '../Images';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Footer = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(null);
 
   const tabs = [
     {
       key: 'gift',
-      icon: <FiGift size={20} color={activeTab === 'gift' ? '#FF6E00' : '#000'} />,
+      icon: <FiGift size={20} color={location.pathname === '/#' ? '#FF6E00' : '#000'} />,
       text: '나눔',
       link: '/#',
     },
     {
       key: 'health',
-      icon: <LuCalendarHeart size={20} color={activeTab === 'health' ? '#FF6E00' : '#000'} />,
+      icon: <LuCalendarHeart size={20} color={location.pathname === '/#' ? '#FF6E00' : '#000'} />,
       text: '건강관리',
       link: '/#',
     },
@@ -41,7 +42,7 @@ const Footer = () => {
         <Link to={link} key={key}>
           <FooterTap onClick={() => handleTabClick(key)}>
             {icon ? icon : <FooterImage src={image} alt={text} />}
-            <FooterText active={activeTab === key}>{text}</FooterText>
+            <FooterText active={location.pathname === link}>{text}</FooterText>
           </FooterTap>
         </Link>
       ))}
