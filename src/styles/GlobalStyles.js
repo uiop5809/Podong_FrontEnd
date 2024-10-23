@@ -124,6 +124,7 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100vh;
   }
+
   body {
     width: 100%;
     height: 100%;
@@ -134,10 +135,12 @@ const GlobalStyle = createGlobalStyle`
   ul {
     list-style: none;
   }
+
   blockquote,
   q {
     quotes: none;
   }
+
   blockquote:before,
   blockquote:after,
   q:before,
@@ -145,6 +148,7 @@ const GlobalStyle = createGlobalStyle`
     content: "";
     content: none;
   }
+
   table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -182,6 +186,23 @@ const GlobalStyle = createGlobalStyle`
   #root {
     width: 100%;
     height: 100%;
+    box-shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
+  }
+
+  .Router {
+    min-height: 100vh;
+  }
+
+  @media (min-width: 375px) {
+    .Router {
+        width: 375px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .Router {
+        width: 100vw;
+    }
   }
 `;
 
