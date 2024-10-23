@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -186,10 +186,13 @@ const GlobalStyle = createGlobalStyle`
   #root {
     width: 100%;
     height: 100%;
-    box-shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-
+  
   .Router {
+    box-shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
     min-height: 100vh;
   }
 
