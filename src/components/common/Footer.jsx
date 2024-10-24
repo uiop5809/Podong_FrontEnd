@@ -14,7 +14,7 @@ const Footer = () => {
       key: 'gift',
       icon: <FiGift size={20} color={location.pathname === '/#' ? '#FF6E00' : '#000'} />,
       text: '나눔',
-      link: '/#',
+      link: '/petitemList',
     },
     {
       key: 'health',
@@ -42,7 +42,7 @@ const Footer = () => {
         <Link to={link} key={key}>
           <FooterTap onClick={() => handleTabClick(key)}>
             {icon ? icon : <FooterImage src={image} alt={text} />}
-            <FooterText active={location.pathname === link}>{text}</FooterText>
+            <FooterText $active={location.pathname === link}>{text}</FooterText>
           </FooterTap>
         </Link>
       ))}
@@ -94,5 +94,5 @@ const FooterText = styled.div`
   }
   font-family: 'TTLaundryGothicB';
   font-size: 12px;
-  color: ${({ active }) => (active ? '#FF6E00' : '#000000')};
+  color: ${({ $active }) => ($active ? '#FF6E00' : '#000000')};
 `;

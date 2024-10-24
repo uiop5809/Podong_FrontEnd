@@ -30,7 +30,7 @@ const Nav = () => {
   ];
 
   return (
-    <Navbar isScrolled={isScrolled}>
+    <Navbar $isScrolled={isScrolled}>
       <AnimalWrap>
         <PiDogBold color="#FF6E00" />
         <AnimalName>반려동물 이름</AnimalName>
@@ -58,8 +58,8 @@ const Navbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${({ isScrolled }) => (isScrolled ? 'rgba(255, 255, 255, 0.7)' : '#ffffff')};
-  backdrop-filter: ${({ isScrolled }) => (isScrolled ? 'blur(4px)' : 'none')};
+  background-color: ${({ $isScrolled }) => ($isScrolled ? 'rgba(255, 255, 255, 0.7)' : '#ffffff')};
+  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? 'blur(4px)' : 'none')};
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 
   @media (min-width: 375px) {
