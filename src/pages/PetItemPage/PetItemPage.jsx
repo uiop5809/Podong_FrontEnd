@@ -1,8 +1,9 @@
-import { useState } from "react";
+
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { images } from "../../components/Images";
-import { GoArrowLeft } from "react-icons/go";
+import { HiArrowLeft } from "react-icons/hi";
+import { MdPhotoCamera } from "react-icons/md";
 
 const PetItemPage = () => {
   const navigate = useNavigate();
@@ -33,52 +34,44 @@ const PetItemPage = () => {
     e.preventDefault(); //새로고침 방지
     handleCreateClick(e);
   }
-  const [isClicked, setIsClicked] = useState(false); 
-
-  const handleClick = () => {
-    setIsClicked(!isClicked); //버튼 클릭시 상태 반전
-  };
+  
   return (
     <ItemTitle>
-      <Row>
+      <MainTitle>
         <button onClick={() => {navigate("/petitemList");}}>
-          <GoArrowLeft1 />
+          <HiArrowLeft1 />
         </button>
         <H1>판매 글 작성</H1>
-      </Row>
+      </MainTitle>
       <form onSubmit={handleSubmit}>
         <label>
           유저 : <br />
           <input name="user" type="text" required />
         </label><br />
-        <label>
-          이미지 첨부 : <br />
-          <img src={images.cameraIcon} alt="카메라아이콘" />
-          <input name="imageUrl" />
-        </label><br />
+        <LableImg>
+          <input type="file" style={{display:'none'}} name="imageUrl" multiple={true} />
+          <BuImg>0/5</BuImg><MdPhotoCamera1 />
+        </LableImg>
         <br />
         <label>
           <Title>제목 </Title>
           <Box name="name" type="text" required  placeholder="제목을 입력해주세요"/>
         </label>
         <Title>거래 방식</Title>
-        <Row>
-          <Button1 right="15" isClicked={isClicked} onClick={handleClick}>판매하기</Button1>
-          <Button1 isClicked={isClicked} onClick={handleClick}>나눔하기</Button1>
-        </Row>
-        <br />
+          <label>
+            <ButtonRow>
+              <ButtonNa >판매하기</ButtonNa>
+              <ButtonNa >나눔하기</ButtonNa>
+            </ButtonRow>
+          <Box name="price" type="text" placeholder="금액을 입력해주세요"/>
+          </label>
         <label>
           <Title> 설명 </Title>
           <Textarea name="description" required placeholder="공유하고 싶은 내용을 작성해주세요"/>
         </label>
         <br />
-        <label>
-          나눔상태 : <br />
-          <input type="checkbox" name="status" />
-        </label>
-        <br />
         <Div>욕설 광고등 운영저책 위반 시 제재를 받으실 수 있습니다</Div>
-        <Button type="submit">작성 완료</Button>
+        <BuWrite type="submit">작성 완료</BuWrite>
       </form>
     </ItemTitle>
   );
@@ -90,30 +83,27 @@ const ItemTitle = styled.div`
   margin: 64px 25px 64px 25px;
 `;
 
-const Row = styled.div`
+const MainTitle = styled.div`
   display: flex;
   margin-bottom: 20px;
   align-items: center;
 `;
 
 const H1 = styled.h1`
-  font-size: 1em;
+  font-size: 18px;
   font-weight: bold;
-  top: 0;
-  z-index: 10;
   width: 100%;
-  height: 64px;
-  padding: 16px;
   display: flex;
   align-items: center;
-  padding-left: 25%;
+  justify-content: center;
+  margin-right :20px ;
 `;
 
-const GoArrowLeft1 = styled(GoArrowLeft)`
-  font-size: 2em;
+const HiArrowLeft1 = styled(HiArrowLeft)`
+  font-size: 20px;
 `;
 const Title = styled.div`
-  font-size: 1em;
+  font-size: 15px;
   font-weight: bold;
   display: flex;
   margin: 5px;
@@ -131,7 +121,7 @@ const Box = styled.input`
   outline: none;
   transition: border-color 0.3s;
   &::placeholder {
-    font-size: 0.7em; /* placeholder의 글씨 크기를 작게 설정 */
+    font-size: 10px; /* placeholder의 글씨 크기를 작게 설정 */
     color: #E4E4E4; /* 필요에 따라 placeholder 색상 변경 */
   }
 `;
@@ -147,17 +137,17 @@ const Textarea = styled.textarea`
   outline: none;
   transition: border-color 0.3s;
   &::placeholder {
-    font-size: 0.7em; /* placeholder의 글씨 크기를 작게 설정 */
+    font-size: 10px; /* placeholder의 글씨 크기를 작게 설정 */
     color: #E4E4E4; /* 필요에 따라 placeholder 색상 변경 */
   }
 `;
-const Button = styled.button`
+const BuWrite = styled.button`
   width: 100%;
-  height: 40px;
+  height: 45px;
   display: flex;
   background-color: #FF6E00;
   padding: 15px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #FF6E00;
   outline: none;
   transition: border-color 0.3s;
@@ -165,39 +155,63 @@ const Button = styled.button`
   justify-content: center;
   color: white;
 `;
-const Button1 = styled.button`
-  width: 7em;
-  height: 35px;
+const ButtonRow = styled.div`
+  display: flex;        // 플렉스 박스 레이아웃으로 설정
+  gap: 10px;           // 버튼 간의 간격
+`;
+const ButtonNa = styled.button`
+  width: 85px;
+  height: 30px;
   display: flex;
   background-color: white;
-  border: 1px solid #8D8D8D;
-  padding: 15px;
-  border-radius: 30px;
+  border: 0.3px solid #FF6E00;
+  border-radius: 8px;
   align-items: center;
   justify-content: center;
-  color: #8D8D8D;
+  color: #FF6E00;
   &:hover {
-    background-color: #b8b8b8; /* 호버 시 배경색 */
+    background-color: #FF6E00; /* 호버 시 배경색 */
     color: white; /* 호버 시 텍스트 색상 */
   }
-  ${({isClicked}) => isClicked &&`
-    background-color: #8D8D8D;
-    color: white;
-    border: 1px solid #8D8D8D;
-  `}
-  margin-right: ${(props) => (props.right ?`${props.right}px` : '0')};
 `;
 const Div = styled.div`
-  font-size: 0.7em;
+  font-size: 10px;
+  font-weight: bold;
   width: 100%;
   height: 20px;
   display: flex;
   background-color: #FFEFEF;
   padding: 15px;
-  border-radius: 6px;
+  border-radius: 5px;
   outline: none;
   margin-bottom: 15px;
   align-items: center;
   justify-content: center;
   color: #E04F4B;
 `;
+const BuImg = styled.button`
+  background-color: white;
+  border-radius: 8px;
+  padding-top: 25px;
+  font-size: 10px;
+  color: #8D8D8D;
+  border: 1px solid #E4E4E4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+`;
+const MdPhotoCamera1 = styled(MdPhotoCamera)`
+  position: absolute;
+  font-size: 20px;
+  top: 18px;
+  left: 23px;
+  border-radius: 15px;
+  color: #8D8D8D;
+`;
+
+const LableImg = styled.label`
+position: relative;
+display: flex;
+`;  
