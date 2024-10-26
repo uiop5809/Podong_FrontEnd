@@ -5,6 +5,7 @@ import Footer from './components/common/Footer';
 import ScrollTop from './components/common/ScrollTop.jsx';
 import PetItemPage from './pages/PetItemPage/PetItemPage.jsx';
 import PetItemListPage from './pages/PetItemPage/PetItemListPage.jsx';
+import PetItemDetailPage from './pages/PetItemPage/PetItemDetailPage.jsx';
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
           <Route path="/" element={<MainPage />} />
           <Route path="/petitem" element={<PetItemPage />} />
           <Route path="/petitemList" element={<PetItemListPage />} />
+          <Route path="/petitemDetail/:no" element={<PetItemDetailPage/>} />
         </Routes>
         <Footer />
         <ScrollTop />
