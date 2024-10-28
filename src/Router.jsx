@@ -1,21 +1,28 @@
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
-import MainPage from './pages/MainPage/MainPage.jsx';
-import MainNav from './components/common/MainNav.jsx';
-import Footer from './components/common/Footer';
-import ScrollTop from './components/common/ScrollTop.jsx';
-import LoginPage from './pages/LoginPage/LoginPage.jsx';
-import NanumWrite from './pages/NanumPage/NanumWrite.jsx';
-import NanumList from './pages/NanumPage/NanumList.jsx';
-import NanumDetail from './pages/NanumPage/NanumDetail.jsx';
-import UserRegisterPage from './pages/RegisterPage/UserRegisterPage.jsx';
-import PetEditPage from './pages/MyPage/PetEditPage.jsx';
-import UserEditPage from './pages/MyPage/UserEditPage.jsx';
-import MyPage from './pages/MyPage/MyPage.jsx';
-import RegisterMissingSavePage from './pages/MyPage/RegisterMissingSavePage.jsx';
-import RegisterMissing from './pages/MyPage/RegisterMissing.jsx';
-import PetRegisterPage from './pages/RegisterPage/PetRegisterPage.jsx';
-import ShoppingDetail from './pages/MainPage/ShoppingDetail.jsx';
-import SideNav from './components/common/SideNav.jsx';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
+import MainPage from "./pages/MainPage/MainPage.jsx";
+import MainNav from "./components/common/MainNav.jsx";
+import Footer from "./components/common/Footer";
+import ScrollTop from "./components/common/ScrollTop.jsx";
+import LoginPage from "./pages/LoginPage/LoginPage.jsx";
+import NanumWrite from "./pages/NanumPage/NanumWrite.jsx";
+import NanumList from "./pages/NanumPage/NanumList.jsx";
+import NanumDetail from "./pages/NanumPage/NanumDetail.jsx";
+import UserRegisterPage from "./pages/RegisterPage/UserRegisterPage.jsx";
+import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
+import UserEditPage from "./pages/MyPage/UserEditPage.jsx";
+import MyPage from "./pages/MyPage/MyPage.jsx";
+import RegisterMissingSavePage from "./pages/MyPage/RegisterMissingSavePage.jsx";
+import RegisterMissing from "./pages/MyPage/RegisterMissing.jsx";
+import PetRegisterPage from "./pages/RegisterPage/PetRegisterPage.jsx";
+import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
+import SideNav from "./components/common/SideNav.jsx";
+import WalkPage from "./pages/WalkPage/WalkPage.jsx";
 
 function Router() {
   return (
@@ -26,7 +33,10 @@ function Router() {
         <Route path="/" element={<Outlet />}>
           <Route index element={<MainPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="shoppingDetail/:productId" element={<ShoppingDetail />} />
+          <Route
+            path="shoppingDetail/:productId"
+            element={<ShoppingDetail />}
+          />
 
           <Route path="nanumList" element={<Outlet />}>
             <Route index element={<NanumList />} />
@@ -36,6 +46,8 @@ function Router() {
 
           <Route path="userRegister" element={<UserRegisterPage />} />
           <Route path="petRegister" element={<PetRegisterPage />} />
+
+          <Route path="walking" element={<WalkPage />} />
 
           <Route path="myPage" element={<Outlet />}>
             <Route index element={<MyPage />} />
@@ -54,8 +66,13 @@ function Router() {
 function NavSelector() {
   const location = useLocation();
   const path = location.pathname;
-  const navPaths = ['/shoppingDetail', '/nanumList/write', '/nanumList/detail', '/myPage'];
-  const isNavPath = navPaths.some(navPath => path.startsWith(navPath));
+  const navPaths = [
+    "/shoppingDetail",
+    "/nanumList/write",
+    "/nanumList/detail",
+    "/myPage",
+  ];
+  const isNavPath = navPaths.some((navPath) => path.startsWith(navPath));
 
   return isNavPath ? <SideNav /> : <MainNav />;
 }
