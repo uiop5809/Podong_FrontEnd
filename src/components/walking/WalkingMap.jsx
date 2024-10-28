@@ -19,6 +19,7 @@ const WalkingMap = () => {
   // 타이머 상태 추가
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isStarted, setIsStarted] = useState(false); // Start 버튼이 눌렸는지 여부를 관리
 
   // 타이머 기능
   useEffect(() => {
@@ -39,11 +40,16 @@ const WalkingMap = () => {
     return `${mins}:${secs}`;
   };
 
-  const startTimer = () => setIsRunning(true);
+  const startTimer = () => {
+    setIsRunning(true);
+    setIsStarted(true); // Start 버튼이 눌렸음을 표시
+  };
+
   const pauseTimer = () => setIsRunning(false);
   const stopTimer = () => {
     setIsRunning(false);
     setTime(0);
+    setIsStarted(false); // 산책 종료 시 Start 버튼이 다시 보이도록 설정
   };
 
   useEffect(() => {
@@ -216,36 +222,50 @@ const WalkingMap = () => {
 
   return (
     <Container>
-      <MapContainer id="map" />
-      <InputContainer>
-        <ButtonContainer>
+      <HeaderContainer>
+        <div>
           <StatusButton selected={!!originCoords}>
             {originCoords ? "출발지 설정됨" : "출발지 미설정"}
           </StatusButton>
           <StatusButton selected={!!destinationCoords}>
             {destinationCoords ? "목적지 설정됨" : "목적지 미설정"}
           </StatusButton>
-        </ButtonContainer>
+        </div>
+        <OutlineButton onClick={resetMarkers}>초기화</OutlineButton>
+      </HeaderContainer>
 
-        <ButtonContainer>
-          <button onClick={getCarDirection}>경로 구하기</button>
-          <button onClick={resetMarkers}>초기화</button>
-        </ButtonContainer>
+      <MapContainer id="map" />
 
-        {/* 타이머 UI */}
-        <ButtonContainer>
-          {!isRunning ? (
-            <button onClick={startTimer}>
-              {time === 0 ? "Start!" : "다시 시작"}
-            </button>
-          ) : (
-            <button onClick={pauseTimer}>일시 정지</button>
-          )}
-          <button onClick={stopTimer}>산책 종료</button>
-        </ButtonContainer>
-        <TimerDisplay>{formatTime(time)}</TimerDisplay>
+      <DetailContainer>
+        <div>
+          <div>산책 시간(시간:분)</div>
+          {formatTime(time)}
+        </div>
+        <div>
+          <div>산책 거리(km)</div>
+          {routeDistance ? (routeDistance / 1000).toFixed(1) : `0.0`}
+        </div>
+      </DetailContainer>
 
-        {routeDistance && <p>경로 길이: {routeDistance} 미터</p>}
+      <InputContainer>
+        <StyledButton onClick={getCarDirection}>경로 구하기</StyledButton>
+
+        {!isStarted && (
+          <OutlineButton onClick={startTimer}>
+            {time === 0 ? "Start!" : "다시 시작"}
+          </OutlineButton>
+        )}
+        {isStarted && (
+          <>
+            {isRunning ? (
+              <OutlineButton onClick={pauseTimer}>일시 정지</OutlineButton>
+            ) : (
+              <OutlineButton onClick={startTimer}>다시 시작</OutlineButton>
+            )}
+            <OutlineButton onClick={stopTimer}>산책 종료</OutlineButton>
+          </>
+        )}
+        <br />
         <br />
         <br />
         <br />
@@ -270,6 +290,18 @@ const Container = styled.div`
   }
 `;
 
+const HeaderContainer = styled.div`
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-10px);
+
+  div {
+    display: flex;
+    gap: 10px;
+  }
+`;
+
 const InputContainer = styled.div`
   margin-top: 1rem;
   display: flex;
@@ -284,21 +316,61 @@ const MapContainer = styled.div`
 `;
 
 const StatusButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: ${(props) => (props.selected ? "#4CAF50" : "#f0f0f0")};
+  padding: 2px 10px;
+  background-color: ${(props) => (props.selected ? "#FFA764" : "#f0f0f0")};
   color: ${(props) => (props.selected ? "#fff" : "#000")};
   border: none;
   border-radius: 4px;
   cursor: ${(props) => (props.selected ? "default" : "pointer")};
 `;
 
-const ButtonContainer = styled.div`
+const DetailContainer = styled.div`
+  @media (min-width: 375px) {
+    width: 375px;
+  }
+  @media (max-width: 500px) {
+    width: 100vw;
+  }
   display: flex;
-  gap: 10px;
+  justify-content: space-around;
+  background-color: #ffefef;
+  padding: 10px 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    gap: 5px;
+  }
 `;
 
-const TimerDisplay = styled.p`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 1rem;
+const StyledButton = styled.button`
+  padding: 0.7rem 1.2rem;
+  background-color: #ff6e00;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #ff6e00;
+    color: #ffffff;
+  }
+`;
+
+const OutlineButton = styled.button`
+  padding: 5px 10px;
+  background-color: #fff;
+  color: #ff6e00;
+  border: 1px solid #ff6e00;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #ff6e00;
+    color: #ffffff;
+  }
 `;
