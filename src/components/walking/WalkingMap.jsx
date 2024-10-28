@@ -11,8 +11,8 @@ const WalkingMap = () => {
   const [destinationMarker, setDestinationMarker] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
   const [destinationCoords, setDestinationCoords] = useState(null);
+  const [polyline, setPolyline] = useState(null); // 경로선을 상태로 관리
 
-  // handleMapClick을 useCallback으로 분리하여 안정적인 참조 유지
   const handleMapClick = useCallback(
     (mouseEvent) => {
       const coords = mouseEvent.latLng;
@@ -42,7 +42,6 @@ const WalkingMap = () => {
     [map, originCoords, destinationCoords, originMarker, destinationMarker]
   );
 
-  // 지도 초기화 로직을 별도의 useEffect로 분리
   useEffect(() => {
     const mapContainer = document.getElementById("map");
     const mapOptions = {
@@ -54,7 +53,6 @@ const WalkingMap = () => {
     setMap(kakaoMap);
   }, [latitude, longitude]);
 
-  // 클릭 이벤트 리스너 관리를 별도의 useEffect로 분리
   useEffect(() => {
     if (!map) return;
 
@@ -73,6 +71,11 @@ const WalkingMap = () => {
     if (!originCoords || !destinationCoords) {
       alert("출발지와 목적지를 선택하세요.");
       return;
+    }
+
+    // 기존 경로선이 있다면 제거
+    if (polyline) {
+      polyline.setMap(null);
     }
 
     const REST_API_KEY = "da0dd0fc23a035bb681daba549304728";
@@ -116,20 +119,23 @@ const WalkingMap = () => {
         });
       });
 
-      const polyline = new kakao.maps.Polyline({
+      const newPolyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
         strokeColor: "#000000",
         strokeOpacity: 0.7,
         strokeStyle: "solid",
       });
-      polyline.setMap(map);
+
+      newPolyline.setMap(map);
+      setPolyline(newPolyline); // 새로운 경로선을 상태로 저장
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   const resetMarkers = useCallback(() => {
+    // 마커 초기화
     if (originMarker) {
       originMarker.setMap(null);
       setOriginMarker(null);
@@ -138,9 +144,16 @@ const WalkingMap = () => {
       destinationMarker.setMap(null);
       setDestinationMarker(null);
     }
+
+    // 경로선 초기화
+    if (polyline) {
+      polyline.setMap(null);
+      setPolyline(null);
+    }
+
     setOriginCoords(null);
     setDestinationCoords(null);
-  }, [originMarker, destinationMarker]);
+  }, [originMarker, destinationMarker, polyline]);
 
   return (
     <Container>
@@ -154,7 +167,6 @@ const WalkingMap = () => {
         </StatusButton>
         <button onClick={getCarDirection}>경로 구하기</button>
         <button onClick={resetMarkers}>마커 초기화</button>
-        <br />
         <br />
         <br />
         <br />
