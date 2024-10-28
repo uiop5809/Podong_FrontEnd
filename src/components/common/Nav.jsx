@@ -26,7 +26,7 @@ const Nav = () => {
   const icons = [
     { icon: <FaRegBell />, link: '/notifications' },
     { icon: <HiOutlineShoppingCart size={17} />, link: '/cart' },
-    { icon: <FaRegUserCircle />, link: '/profile' },
+    { icon: <FaRegUserCircle />, link: '/Login' },
   ];
 
   return (
