@@ -1,6 +1,5 @@
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { GoArrowLeft } from 'react-icons/go';
 import { FaStar } from 'react-icons/fa';
 import { useState } from 'react';
 
@@ -8,8 +7,7 @@ const ShoppingDetail = () => {
   const { productId } = useParams();
   const location = useLocation();
   const { product } = location.state || {};
-  const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(1); // 수량 상태 추가
+  const [quantity, setQuantity] = useState(1);
 
   if (!product || product.productId !== productId) {
     return <NotFoundMessage>상품 정보를 찾을 수 없습니다.</NotFoundMessage>;
@@ -29,16 +27,6 @@ const ShoppingDetail = () => {
 
   return (
     <DetailContainer>
-      <DetailNav>
-        <NavBtn
-          onClick={() => {
-            navigate('/');
-          }}>
-          <GoArrowLeft size={20} />
-        </NavBtn>
-        <H1>상품 상세 정보</H1>
-        <div></div>
-      </DetailNav>
       <ProductImage src={product.image} alt={product.title} />
       <Title>{product.title.replace(/<b>/g, '').replace(/<\/b>/g, '')}</Title>
       <ReviewPriceWrap>
@@ -99,24 +87,6 @@ const DetailContainer = styled.div`
   align-items: center;
   padding: 20px;
   margin: 48px auto 64px;
-`;
-
-const DetailNav = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  width: 100%;
-`;
-
-const NavBtn = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const H1 = styled.h1`
-  font-size: 18px;
-  font-weight: bold;
 `;
 
 const Title = styled.h1`

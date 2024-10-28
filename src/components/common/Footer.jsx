@@ -5,35 +5,45 @@ import { LuCalendarHeart } from 'react-icons/lu';
 import { images } from '../Images';
 import { Link, useLocation } from 'react-router-dom';
 
-const Footer = () => { 
+const Footer = () => {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState(location.pathname);
 
   const tabs = [
     {
-      key: 'gift',
-      icon: <FiGift size={20} color={location.pathname === '/#' ? '#FF6E00' : '#000'} />,
+      key: 'nanumList',
+      icon: <FiGift size={20} color={activeTab === '/nanumList' ? '#FF6E00' : '#000'} />,
       text: '나눔',
-      link: '/petitemList',
+      link: '/nanumList',
     },
     {
       key: 'health',
-      icon: <LuCalendarHeart size={20} color={location.pathname === '/#' ? '#FF6E00' : '#000'} />,
+      icon: <LuCalendarHeart size={20} color={activeTab === '/health' ? '#FF6E00' : '#000'} />,
       text: '건강관리',
-      link: '/#',
+      link: '/health',
     },
-    { key: 'home', image: images.home, text: '발바닥천국', link: '/' },
-    { key: 'walk', image: activeTab === 'walk' ? images.dogWalkingOn : images.dogWalkingOff, text: '산책', link: '/#' },
+    {
+      key: 'home',
+      image: activeTab === '/' ? images.home : images.home,
+      text: '발바닥천국',
+      link: '/',
+    },
+    {
+      key: 'walk',
+      image: activeTab === '/walk' ? images.dogWalkingOn : images.dogWalkingOff,
+      text: '산책',
+      link: '/walk',
+    },
     {
       key: 'community',
-      image: activeTab === 'community' ? images.communityIconOn : images.communityIconOff,
+      image: activeTab === '/community' ? images.communityIconOn : images.communityIconOff,
       text: '집사생활',
-      link: '/#',
+      link: '/community',
     },
   ];
 
-  const handleTabClick = tab => {
-    setActiveTab(tab);
+  const handleTabClick = (tab, link) => {
+    setActiveTab(link); // 탭 클릭 시 activeTab 상태 업데이트
   };
 
   return (
@@ -41,9 +51,9 @@ const Footer = () => {
       <FooterWrap>
         {tabs.map(({ key, icon, image, text, link }) => (
           <Link to={link} key={key}>
-            <FooterTap onClick={() => handleTabClick(key)}>
+            <FooterTap onClick={() => handleTabClick(key, link)}>
               {icon ? icon : <FooterImage src={image} alt={text} />}
-              <FooterText $active={location.pathname === link}>{text}</FooterText>
+              <FooterText $active={activeTab === link}>{text}</FooterText>
             </FooterTap>
           </Link>
         ))}
