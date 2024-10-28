@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 
 const { kakao } = window;
@@ -12,6 +12,37 @@ const WalkingMap = () => {
   const [originCoords, setOriginCoords] = useState(null);
   const [destinationCoords, setDestinationCoords] = useState(null);
 
+  // handleMapClick을 useCallback으로 분리하여 안정적인 참조 유지
+  const handleMapClick = useCallback(
+    (mouseEvent) => {
+      const coords = mouseEvent.latLng;
+
+      if (!originCoords) {
+        if (originMarker) {
+          originMarker.setMap(null);
+        }
+        const newOriginMarker = new kakao.maps.Marker({
+          position: coords,
+        });
+        newOriginMarker.setMap(map);
+        setOriginMarker(newOriginMarker);
+        setOriginCoords(coords);
+      } else if (!destinationCoords) {
+        if (destinationMarker) {
+          destinationMarker.setMap(null);
+        }
+        const newDestinationMarker = new kakao.maps.Marker({
+          position: coords,
+        });
+        newDestinationMarker.setMap(map);
+        setDestinationMarker(newDestinationMarker);
+        setDestinationCoords(coords);
+      }
+    },
+    [map, originCoords, destinationCoords, originMarker, destinationMarker]
+  );
+
+  // 지도 초기화 로직을 별도의 useEffect로 분리
   useEffect(() => {
     const mapContainer = document.getElementById("map");
     const mapOptions = {
@@ -21,42 +52,22 @@ const WalkingMap = () => {
 
     const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
     setMap(kakaoMap);
+  }, [latitude, longitude]);
 
-    const handleMapClick = (mouseEvent) => {
-      const coords = mouseEvent.latLng;
+  // 클릭 이벤트 리스너 관리를 별도의 useEffect로 분리
+  useEffect(() => {
+    if (!map) return;
 
-      // 출발지 설정
-      if (!originCoords) {
-        const newOriginMarker = new kakao.maps.Marker({
-          map: kakaoMap,
-          position: coords,
-        });
-        newOriginMarker.setMap(kakaoMap);
-        setOriginMarker(newOriginMarker);
-        setOriginCoords(coords);
-      }
-      // 목적지 설정
-      else if (!destinationCoords) {
-        const newDestinationMarker = new kakao.maps.Marker({
-          map: kakaoMap,
-          position: coords,
-        });
-        newDestinationMarker.setMap(kakaoMap);
-        setDestinationMarker(newDestinationMarker);
-        setDestinationCoords(coords);
+    if (!destinationCoords) {
+      kakao.maps.event.addListener(map, "click", handleMapClick);
+    } else {
+      kakao.maps.event.removeListener(map, "click", handleMapClick);
+    }
 
-        // 출발지와 목적지가 모두 설정된 경우 클릭 이벤트 제거
-        kakao.maps.event.removeListener(kakaoMap, "click", handleMapClick);
-      }
-    };
-
-    kakao.maps.event.addListener(kakaoMap, "click", handleMapClick);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
-      kakao.maps.event.removeListener(kakaoMap, "click", handleMapClick);
+      kakao.maps.event.removeListener(map, "click", handleMapClick);
     };
-  }, [latitude, longitude, originCoords, destinationCoords]);
+  }, [map, handleMapClick, destinationCoords]);
 
   const getCarDirection = async () => {
     if (!originCoords || !destinationCoords) {
@@ -118,7 +129,7 @@ const WalkingMap = () => {
     }
   };
 
-  const resetMarkers = () => {
+  const resetMarkers = useCallback(() => {
     if (originMarker) {
       originMarker.setMap(null);
       setOriginMarker(null);
@@ -129,36 +140,7 @@ const WalkingMap = () => {
     }
     setOriginCoords(null);
     setDestinationCoords(null);
-
-    // 지도 클릭 이벤트 다시 등록
-    if (map) {
-      const handleMapClick = (mouseEvent) => {
-        const coords = mouseEvent.latLng;
-
-        if (!originCoords) {
-          const newOriginMarker = new kakao.maps.Marker({
-            map,
-            position: coords,
-          });
-          newOriginMarker.setMap(map);
-          setOriginMarker(newOriginMarker);
-          setOriginCoords(coords);
-        } else if (!destinationCoords) {
-          const newDestinationMarker = new kakao.maps.Marker({
-            map,
-            position: coords,
-          });
-          newDestinationMarker.setMap(map);
-          setDestinationMarker(newDestinationMarker);
-          setDestinationCoords(coords);
-
-          kakao.maps.event.removeListener(map, "click", handleMapClick);
-        }
-      };
-
-      kakao.maps.event.addListener(map, "click", handleMapClick);
-    }
-  };
+  }, [originMarker, destinationMarker]);
 
   return (
     <Container>
