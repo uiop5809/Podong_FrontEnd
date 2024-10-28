@@ -9,7 +9,7 @@ import { FcLike } from "react-icons/fc";
 const PetItemListPage = () => {
   const navigate = useNavigate();
   const [petItemList, setPetItemList] = useState([]); 
-
+  const [counter, setCounter] = useState(0)
 
   function handleList() {
     fetch("http://localhost:8080/api/petItems")
@@ -24,8 +24,13 @@ const PetItemListPage = () => {
     handleList();
   }, []);
 
+  function good () {
+    setCounter(counter+1);
+    console.log("좋아요 :", counter)
+  }
+
   return (
-    <Div>
+    <ItemTitle>
       <RowTi>
         <button onClick={() => {navigate("/");}}>
           <HiArrowLeft1 />
@@ -44,31 +49,34 @@ const PetItemListPage = () => {
       <All>전체 {(petItemList.length).toLocaleString()}개</All>
         <RowLi>
           {petItemList.map((item) => ( 
-            <>
-            <Lists key={item.petItemId} onClick={(e)=>{e.preventDefault();navigate(`/petitemDetail/${item.petItemId}`)}}>
+            <Lists  key={item.petItemId} 
+              onClick={(e)=>{e.preventDefault();
+              navigate(`/petitemDetail/${item.petItemId}`)}}>
               <ListImg>{item.imageUrl}</ListImg>
               <ListTitlesContainer>
                 <ListTItle>{item.name}</ListTItle>
                 <ListUser>작성자{item.user}</ListUser>
-                <ListPrice>{(item.price||0).toLocaleString()}원</ListPrice>
-              </ListTitlesContainer>
-            </Lists>
-                <ListDate>{new Date(item.createdAt).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })}
+                <ListPrice>{(item.price ? `${item.price.toLocaleString()}원` : <나눔>나눔</나눔>)}</ListPrice>
+                <ListDate>
+                  {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+                    timeZone: 'Asia/Seoul' 
+                    })}
                   <Icons>
-                    <FcLike/>4
-                    <IoChatbubbleEllipsesOutline/>2
+                    <FcLike1 onClick={(e)=>{e.stopPropagation();good()}} />{counter}
+                    <Comment1/>2
                   </Icons>
                 </ListDate>
-          </>
+              </ListTitlesContainer>
+            </Lists>
           ))}
         </RowLi>
-    </Div>
+    </ItemTitle>
   );
 };
 
 export default PetItemListPage;
 
-const Div = styled.div`
+const ItemTitle = styled.div`
 margin: 64px 25px 64px 25px;
 `;
 
@@ -211,6 +219,14 @@ const ListPrice = styled.div`
   width: 100%;
   align-self: center;
 `;
+const 나눔 = styled.p`
+  font-size: 15px;
+  font-weight: bold;
+  display: flex;
+  width: 100%;
+  color: #FF6E00;
+  align-self: center;
+`;
 const ListDate = styled.div`
   font-size: 10px;
   color: #8D8D8D;
@@ -222,5 +238,12 @@ const ListDate = styled.div`
 const Icons = styled.div`
   font-size: 16px;
   color: #8D8D8D;
-  margin-left: 6px;
+  margin-left: 5px;
+`;
+const FcLike1 = styled(FcLike)`
+  font-size: 16px;
+`;
+const Comment1 = styled(IoChatbubbleEllipsesOutline)`
+  font-size: 16px;
+  margin-left: 10px;
 `;

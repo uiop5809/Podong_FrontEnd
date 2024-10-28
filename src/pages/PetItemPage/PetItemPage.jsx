@@ -1,7 +1,6 @@
 
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { images } from "../../components/Images";
 import { HiArrowLeft } from "react-icons/hi";
 import { MdPhotoCamera } from "react-icons/md";
 
@@ -34,7 +33,7 @@ const PetItemPage = () => {
     e.preventDefault(); //새로고침 방지
     handleCreateClick(e);
   }
-  
+
   return (
     <ItemTitle>
       <MainTitle>
@@ -50,7 +49,7 @@ const PetItemPage = () => {
         </label><br />
         <LableImg>
           <input type="file" style={{display:'none'}} name="imageUrl" multiple={true} />
-          <BuImg>0/5</BuImg><MdPhotoCamera1 />
+          <ImgNo>0/5</ImgNo><MdPhotoCamera1 />
         </LableImg>
         <br />
         <label>
@@ -58,13 +57,13 @@ const PetItemPage = () => {
           <Box name="name" type="text" required  placeholder="제목을 입력해주세요"/>
         </label>
         <Title>거래 방식</Title>
-          <label>
+        <input type="radio" name="status" value="0" checked />나눔
+        <input type="radio" name="status" value="1"  />판매
             <ButtonRow>
-              <ButtonNa >판매하기</ButtonNa>
+              <ButtonPan >판매하기</ButtonPan>
               <ButtonNa >나눔하기</ButtonNa>
             </ButtonRow>
           <Box name="price" type="text" placeholder="금액을 입력해주세요"/>
-          </label>
         <label>
           <Title> 설명 </Title>
           <Textarea name="description" required placeholder="공유하고 싶은 내용을 작성해주세요"/>
@@ -174,6 +173,21 @@ const ButtonNa = styled.button`
     color: white; /* 호버 시 텍스트 색상 */
   }
 `;
+const ButtonPan = styled.button`
+  width: 85px;
+  height: 30px;
+  display: flex;
+  background-color: white;
+  border: 0.3px solid #FF6E00;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  color: #FF6E00;
+  &:hover {
+    background-color: #FF6E00; /* 호버 시 배경색 */
+    color: white; /* 호버 시 텍스트 색상 */
+  }
+`;
 const Div = styled.div`
   font-size: 10px;
   font-weight: bold;
@@ -189,7 +203,7 @@ const Div = styled.div`
   justify-content: center;
   color: #E04F4B;
 `;
-const BuImg = styled.button`
+const ImgNo = styled.p`
   background-color: white;
   border-radius: 8px;
   padding-top: 25px;
@@ -207,7 +221,6 @@ const MdPhotoCamera1 = styled(MdPhotoCamera)`
   font-size: 20px;
   top: 18px;
   left: 23px;
-  border-radius: 15px;
   color: #8D8D8D;
 `;
 
