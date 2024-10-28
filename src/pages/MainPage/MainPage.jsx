@@ -11,7 +11,7 @@ const MainPage = () => {
   const [activeCategory, setActiveCategory] = useState('전체');
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageRange, setPageRange] = useState([1]); // 초기 페이지 범위를 1로 설정
+  const [pageRange, setPageRange] = useState([1]);
   const [searchQuery, setSearchQuery] = useState('');
   const useDummyData = true;
   const itemsPerPage = 8;
@@ -23,7 +23,7 @@ const MainPage = () => {
     if (useDummyData) {
       const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
       setData(filteredData);
-      updatePageRange(filteredData.length); // 검색된 데이터 길이에 따라 페이지 범위 업데이트
+      updatePageRange(filteredData.length);
       console.log('Using dummy data:', filteredData);
     } else {
       const URL = '/v1/search/shop.json';
@@ -237,7 +237,8 @@ const SearchIcon = styled(FaSearch)`
 const TabWrap = styled.div`
   display: flex;
   justify-content: start;
-  margin: 0 12px;
+  padding: 0 12px;
+  width: 100%;
 `;
 
 const Tab = styled.div`
@@ -257,6 +258,7 @@ const Tab = styled.div`
 const CategoryWrap = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
   padding: 16px;
 `;
 
@@ -281,7 +283,7 @@ const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
 `;
 
 const ProductWrap = styled.div`
