@@ -127,6 +127,13 @@ const WalkingMap = () => {
     };
   }, [map, handleMapClick, destinationCoords]);
 
+  // 목적지 설정 후 자동으로 경로 계산
+  useEffect(() => {
+    if (destinationCoords) {
+      getCarDirection();
+    }
+  }, [destinationCoords]);
+
   const getCarDirection = async () => {
     if (!originCoords || !destinationCoords) {
       alert("출발지와 목적지를 선택하세요.");
@@ -243,26 +250,26 @@ const WalkingMap = () => {
         </div>
         <div>
           <div>산책 거리(km)</div>
-          {routeDistance ? (routeDistance / 1000).toFixed(1) : `0.0`}
+          {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
 
       <InputContainer>
-        <StyledButton onClick={getCarDirection}>경로 구하기</StyledButton>
-
         {!isStarted && (
-          <OutlineButton onClick={startTimer}>
+          <TimerButton onClick={startTimer}>
             {time === 0 ? "Start!" : "다시 시작"}
-          </OutlineButton>
+          </TimerButton>
         )}
         {isStarted && (
           <>
             {isRunning ? (
-              <OutlineButton onClick={pauseTimer}>일시 정지</OutlineButton>
+              <TimerButton onClick={pauseTimer}>일시 정지</TimerButton>
             ) : (
-              <OutlineButton onClick={startTimer}>다시 시작</OutlineButton>
+              <ButtonContainer>
+                <TimerButton onClick={startTimer}>다시 시작</TimerButton>
+                <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
+              </ButtonContainer>
             )}
-            <OutlineButton onClick={stopTimer}>산책 종료</OutlineButton>
           </>
         )}
         <br />
@@ -312,7 +319,7 @@ const InputContainer = styled.div`
 
 const MapContainer = styled.div`
   width: 100%;
-  height: 300px;
+  height: 260px;
 `;
 
 const StatusButton = styled.button`
@@ -345,21 +352,6 @@ const DetailContainer = styled.div`
   }
 `;
 
-const StyledButton = styled.button`
-  padding: 0.7rem 1.2rem;
-  background-color: #ff6e00;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-
-  &:hover {
-    background-color: #ff6e00;
-    color: #ffffff;
-  }
-`;
-
 const OutlineButton = styled.button`
   padding: 5px 10px;
   background-color: #fff;
@@ -373,4 +365,15 @@ const OutlineButton = styled.button`
     background-color: #ff6e00;
     color: #ffffff;
   }
+`;
+
+const TimerButton = styled(OutlineButton)`
+  padding: 8px 12px;
+  font-size: 15px;
+  font-weight: bold;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
 `;
