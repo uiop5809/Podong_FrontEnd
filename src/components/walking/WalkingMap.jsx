@@ -10,6 +10,7 @@ const WalkingMap = () => {
   const [originCoords, setOriginCoords] = useState(null);
   const [destinationCoords, setDestinationCoords] = useState(null);
   const [polyline, setPolyline] = useState(null); // 경로선을 상태로 관리
+  const [routeDistance, setRouteDistance] = useState(null); // 경로 길이 상태 추가
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 33.450701,
     longitude: 126.570667,
@@ -142,6 +143,10 @@ const WalkingMap = () => {
         });
       });
 
+      // 경로 길이 설정
+      const distance = data.routes[0].summary.distance;
+      setRouteDistance(distance); // 경로 길이 업데이트
+
       const newPolyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
@@ -176,6 +181,7 @@ const WalkingMap = () => {
 
     setOriginCoords(null);
     setDestinationCoords(null);
+    setRouteDistance(null); // 경로 길이 초기화
   }, [originMarker, destinationMarker, polyline]);
 
   return (
@@ -195,6 +201,9 @@ const WalkingMap = () => {
           <button onClick={getCarDirection}>경로 구하기</button>
           <button onClick={resetMarkers}>초기화</button>
         </ButtonContainer>
+        {routeDistance && (
+          <p>경로 길이: {routeDistance} 미터</p> // 경로 길이 표시
+        )}
         <br />
         <br />
         <br />
