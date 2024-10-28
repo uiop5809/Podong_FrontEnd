@@ -37,16 +37,18 @@ const Footer = () => {
   };
 
   return (
-    <FooterWrap>
-      {tabs.map(({ key, icon, image, text, link }) => (
-        <Link to={link} key={key}>
-          <FooterTap onClick={() => handleTabClick(key)}>
-            {icon ? icon : <FooterImage src={image} alt={text} />}
-            <FooterText $active={location.pathname === link}>{text}</FooterText>
-          </FooterTap>
-        </Link>
-      ))}
-    </FooterWrap>
+    <>
+      <FooterWrap>
+        {tabs.map(({ key, icon, image, text, link }) => (
+          <Link to={link} key={key}>
+            <FooterTap onClick={() => handleTabClick(key)}>
+              {icon ? icon : <FooterImage src={image} alt={text} />}
+              <FooterText $active={location.pathname === link}>{text}</FooterText>
+            </FooterTap>
+          </Link>
+        ))}
+      </FooterWrap>
+    </>
   );
 };
 

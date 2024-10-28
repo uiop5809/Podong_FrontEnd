@@ -30,19 +30,21 @@ const Nav = () => {
   ];
 
   return (
-    <Navbar $isScrolled={isScrolled}>
-      <AnimalWrap>
-        <PiDogBold color="#FF6E00" />
-        <AnimalName>반려동물 이름</AnimalName>
-      </AnimalWrap>
-      <NavIconWrap>
-        {icons.map((item, index) => (
-          <Link to={item.link} key={index}>
-            {item.icon}
-          </Link>
-        ))}
-      </NavIconWrap>
-    </Navbar>
+    <>
+      <Navbar $isScrolled={isScrolled}>
+        <AnimalWrap>
+          <PiDogBold color="#FF6E00" />
+          <AnimalName>반려동물 이름</AnimalName>
+        </AnimalWrap>
+        <NavIconWrap>
+          {icons.map((item, index) => (
+            <Link to={item.link} key={index}>
+              {item.icon}
+            </Link>
+          ))}
+        </NavIconWrap>
+      </Navbar>
+    </>
   );
 };
 
