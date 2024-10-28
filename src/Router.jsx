@@ -5,8 +5,8 @@ import Footer from './components/common/Footer';
 import ScrollTop from './components/common/ScrollTop.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 /* import PGpay from './pages/PaymentPage/PGpay.jsx';
-import Payment from './pages/PaymentPage/Payment.jsx'; */
-import PaymentEnd from './pages/PaymentPage/PaymentEnd.jsx';
+import Payment from './pages/PaymentPage/Payment.jsx';
+import PaymentEnd from './pages/PaymentPage/PaymentEnd.jsx'; */
 import PetItemPage from './pages/PetItemPage/PetItemPage.jsx';
 import PetItemListPage from './pages/PetItemPage/PetItemListPage.jsx';
 import PetItemDetailPage from './pages/PetItemPage/PetItemDetailPage.jsx';
@@ -25,7 +25,7 @@ function Router() {
       <div className="Router">
         <Nav />
         <Routes>
-          <Route path="/" element={<PaymentEnd />} />
+          {/* <Route path="/" element={<PaymentEnd />} /> */}
           <Route path="/" element={<MainPage />} />
           <Route path="/Login" element={<LoginPage />} />
           <Route path="/shoppingDetail/:productId" element={<ShoppingDetail />} />
