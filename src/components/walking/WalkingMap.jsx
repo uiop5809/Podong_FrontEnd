@@ -245,7 +245,7 @@ const WalkingMap = () => {
 
       <DetailContainer>
         <div>
-          <div>산책 시간(시간:분)</div>
+          <div>산책 시간(분:초)</div>
           {formatTime(time)}
         </div>
         <div>
@@ -261,16 +261,14 @@ const WalkingMap = () => {
           </TimerButton>
         )}
         {isStarted && (
-          <>
+          <ButtonContainer>
             {isRunning ? (
               <TimerButton onClick={pauseTimer}>일시 정지</TimerButton>
             ) : (
-              <ButtonContainer>
-                <TimerButton onClick={startTimer}>다시 시작</TimerButton>
-                <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
-              </ButtonContainer>
+              <TimerButton onClick={startTimer}>다시 시작</TimerButton>
             )}
-          </>
+            <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
+          </ButtonContainer>
         )}
         <br />
         <br />
