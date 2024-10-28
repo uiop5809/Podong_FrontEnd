@@ -16,6 +16,36 @@ const WalkingMap = () => {
     longitude: 126.570667,
   });
 
+  // 타이머 상태 추가
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  // 타이머 기능
+  useEffect(() => {
+    let interval;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  const formatTime = (seconds) => {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${mins}:${secs}`;
+  };
+
+  const startTimer = () => setIsRunning(true);
+  const pauseTimer = () => setIsRunning(false);
+  const stopTimer = () => {
+    setIsRunning(false);
+    setTime(0);
+  };
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -201,9 +231,21 @@ const WalkingMap = () => {
           <button onClick={getCarDirection}>경로 구하기</button>
           <button onClick={resetMarkers}>초기화</button>
         </ButtonContainer>
-        {routeDistance && (
-          <p>경로 길이: {routeDistance} 미터</p> // 경로 길이 표시
-        )}
+
+        {/* 타이머 UI */}
+        <ButtonContainer>
+          {!isRunning ? (
+            <button onClick={startTimer}>
+              {time === 0 ? "Start!" : "다시 시작"}
+            </button>
+          ) : (
+            <button onClick={pauseTimer}>일시 정지</button>
+          )}
+          <button onClick={stopTimer}>산책 종료</button>
+        </ButtonContainer>
+        <TimerDisplay>{formatTime(time)}</TimerDisplay>
+
+        {routeDistance && <p>경로 길이: {routeDistance} 미터</p>}
         <br />
         <br />
         <br />
@@ -253,4 +295,10 @@ const StatusButton = styled.button`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 10px;
+`;
+
+const TimerDisplay = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
 `;
