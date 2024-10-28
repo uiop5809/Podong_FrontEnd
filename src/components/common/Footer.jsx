@@ -5,7 +5,7 @@ import { LuCalendarHeart } from 'react-icons/lu';
 import { images } from '../Images';
 import { Link, useLocation } from 'react-router-dom';
 
-const Footer = () => {
+const Footer = () => { 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(null);
 
