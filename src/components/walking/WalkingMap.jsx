@@ -4,14 +4,34 @@ import styled from "styled-components";
 const { kakao } = window;
 
 const WalkingMap = () => {
-  const [latitude, setLatitude] = useState(33.450701);
-  const [longitude, setLongitude] = useState(126.570667);
   const [map, setMap] = useState(null);
   const [originMarker, setOriginMarker] = useState(null);
   const [destinationMarker, setDestinationMarker] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
   const [destinationCoords, setDestinationCoords] = useState(null);
   const [polyline, setPolyline] = useState(null); // 경로선을 상태로 관리
+  const [currentPosition, setCurrentPosition] = useState({
+    latitude: 33.450701,
+    longitude: 126.570667,
+  });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentPosition({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting current position:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   const handleMapClick = useCallback(
     (mouseEvent) => {
@@ -45,13 +65,16 @@ const WalkingMap = () => {
   useEffect(() => {
     const mapContainer = document.getElementById("map");
     const mapOptions = {
-      center: new kakao.maps.LatLng(latitude, longitude),
+      center: new kakao.maps.LatLng(
+        currentPosition.latitude,
+        currentPosition.longitude
+      ),
       level: 3,
     };
 
     const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
     setMap(kakaoMap);
-  }, [latitude, longitude]);
+  }, [currentPosition.latitude, currentPosition.longitude]);
 
   useEffect(() => {
     if (!map) return;
@@ -159,14 +182,19 @@ const WalkingMap = () => {
     <Container>
       <MapContainer id="map" />
       <InputContainer>
-        <StatusButton selected={!!originCoords}>
-          {originCoords ? "출발지 설정됨" : "출발지 미설정"}
-        </StatusButton>
-        <StatusButton selected={!!destinationCoords}>
-          {destinationCoords ? "목적지 설정됨" : "목적지 미설정"}
-        </StatusButton>
-        <button onClick={getCarDirection}>경로 구하기</button>
-        <button onClick={resetMarkers}>마커 초기화</button>
+        <ButtonContainer>
+          <StatusButton selected={!!originCoords}>
+            {originCoords ? "출발지 설정됨" : "출발지 미설정"}
+          </StatusButton>
+          <StatusButton selected={!!destinationCoords}>
+            {destinationCoords ? "목적지 설정됨" : "목적지 미설정"}
+          </StatusButton>
+        </ButtonContainer>
+
+        <ButtonContainer>
+          <button onClick={getCarDirection}>경로 구하기</button>
+          <button onClick={resetMarkers}>초기화</button>
+        </ButtonContainer>
         <br />
         <br />
         <br />
@@ -182,6 +210,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (min-width: 375px) {
+    width: 375px;
+  }
+  @media (max-width: 500px) {
+    width: 100vw;
+  }
 `;
 
 const InputContainer = styled.div`
@@ -204,4 +239,9 @@ const StatusButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: ${(props) => (props.selected ? "default" : "pointer")};
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
 `;
