@@ -1,57 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
+import WalkingTimer from "./WalkingTimer";
 
 const { kakao } = window;
 
 const WalkingMap = () => {
   const [map, setMap] = useState(null);
+  const [time, setTime] = useState(0); // 산책 시간
   const [originMarker, setOriginMarker] = useState(null);
   const [destinationMarker, setDestinationMarker] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
   const [destinationCoords, setDestinationCoords] = useState(null);
-  const [polyline, setPolyline] = useState(null); // 경로선을 상태로 관리
-  const [routeDistance, setRouteDistance] = useState(null); // 경로 길이 상태 추가
+  const [polyline, setPolyline] = useState(null); // 경로선
+  const [routeDistance, setRouteDistance] = useState(null); // 경로 길이
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 33.450701,
     longitude: 126.570667,
   });
 
-  // 타이머 상태 추가
-  const [time, setTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isStarted, setIsStarted] = useState(false); // Start 버튼이 눌렸는지 여부를 관리
-
-  // 타이머 기능
-  useEffect(() => {
-    let interval;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isRunning]);
-
-  const formatTime = (seconds) => {
-    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
-    const secs = String(seconds % 60).padStart(2, "0");
-    return `${mins}:${secs}`;
-  };
-
-  const startTimer = () => {
-    setIsRunning(true);
-    setIsStarted(true); // Start 버튼이 눌렸음을 표시
-  };
-
-  const pauseTimer = () => setIsRunning(false);
-  const stopTimer = () => {
-    setIsRunning(false);
-    setTime(0);
-    setIsStarted(false); // 산책 종료 시 Start 버튼이 다시 보이도록 설정
-  };
-
+  // 현재 위치 받아오는 함수
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -70,6 +37,7 @@ const WalkingMap = () => {
     }
   }, []);
 
+  // 지도 클릭하여 출발지, 목적지 설정
   const handleMapClick = useCallback(
     (mouseEvent) => {
       const coords = mouseEvent.latLng;
@@ -99,6 +67,7 @@ const WalkingMap = () => {
     [map, originCoords, destinationCoords, originMarker, destinationMarker]
   );
 
+  // 지도 초기화
   useEffect(() => {
     const mapContainer = document.getElementById("map");
     const mapOptions = {
@@ -113,6 +82,7 @@ const WalkingMap = () => {
     setMap(kakaoMap);
   }, [currentPosition.latitude, currentPosition.longitude]);
 
+  // 지도 클릭 이벤트 리스너 등록
   useEffect(() => {
     if (!map) return;
 
@@ -134,6 +104,7 @@ const WalkingMap = () => {
     }
   }, [destinationCoords]);
 
+  // 경로 계산 함수
   const getCarDirection = async () => {
     if (!originCoords || !destinationCoords) {
       alert("출발지와 목적지를 선택하세요.");
@@ -215,7 +186,6 @@ const WalkingMap = () => {
       destinationMarker.setMap(null);
       setDestinationMarker(null);
     }
-
     // 경로선 초기화
     if (polyline) {
       polyline.setMap(null);
@@ -226,6 +196,12 @@ const WalkingMap = () => {
     setDestinationCoords(null);
     setRouteDistance(null); // 경로 길이 초기화
   }, [originMarker, destinationMarker, polyline]);
+
+  const formatTime = (seconds) => {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${mins}:${secs}`;
+  };
 
   return (
     <Container>
@@ -253,29 +229,7 @@ const WalkingMap = () => {
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
-
-      <InputContainer>
-        {!isStarted && (
-          <TimerButton onClick={startTimer}>
-            {time === 0 ? "Start!" : "다시 시작"}
-          </TimerButton>
-        )}
-        {isStarted && (
-          <ButtonContainer>
-            {isRunning ? (
-              <TimerButton onClick={pauseTimer}>일시 정지</TimerButton>
-            ) : (
-              <TimerButton onClick={startTimer}>다시 시작</TimerButton>
-            )}
-            <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
-          </ButtonContainer>
-        )}
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-      </InputContainer>
+      <WalkingTimer time={time} setTime={setTime} />
     </Container>
   );
 };
@@ -305,14 +259,6 @@ const HeaderContainer = styled.div`
     display: flex;
     gap: 10px;
   }
-`;
-
-const InputContainer = styled.div`
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
 `;
 
 const MapContainer = styled.div`
@@ -363,15 +309,4 @@ const OutlineButton = styled.button`
     background-color: #ff6e00;
     color: #ffffff;
   }
-`;
-
-const TimerButton = styled(OutlineButton)`
-  padding: 8px 12px;
-  font-size: 15px;
-  font-weight: bold;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 10px;
 `;
