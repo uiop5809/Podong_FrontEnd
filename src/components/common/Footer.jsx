@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { FiGift } from 'react-icons/fi';
-import { LuCalendarHeart } from 'react-icons/lu';
-import { images } from '../Images';
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import styled from "styled-components";
+import { FiGift } from "react-icons/fi";
+import { LuCalendarHeart } from "react-icons/lu";
+import { images } from "../Images";
+import { Link, useLocation } from "react-router-dom";
 
 const Footer = () => {
   const location = useLocation();
@@ -11,28 +11,39 @@ const Footer = () => {
 
   const tabs = [
     {
-      key: 'nanumList',
-      icon: <FiGift size={20} color={activeTab === '/nanumList' ? '#FF6E00' : '#000'} />,
-      text: '나눔',
-      link: '/nanumList',
+      key: "nanumList",
+      icon: (
+        <FiGift
+          size={20}
+          color={activeTab === "/nanumList" ? "#FF6E00" : "#000"}
+        />
+      ),
+      text: "나눔",
+      link: "/nanumList",
     },
     {
-      key: 'health',
-      icon: <LuCalendarHeart size={20} color={activeTab === '/health' ? '#FF6E00' : '#000'} />,
-      text: '건강관리',
-      link: '/health',
+      key: "health",
+      icon: (
+        <LuCalendarHeart
+          size={20}
+          color={activeTab === "/health" ? "#FF6E00" : "#000"}
+        />
+      ),
+      text: "건강관리",
+      link: "/health",
     },
     {
-      key: 'home',
-      image: activeTab === '/' ? images.home : images.home,
-      text: '발바닥천국',
-      link: '/',
+      key: "home",
+      image: activeTab === "/" ? images.home : images.home,
+      text: "발바닥천국",
+      link: "/",
     },
     {
-      key: 'walk',
-      image: activeTab === '/walk' ? images.dogWalkingOn : images.dogWalkingOff,
-      text: '산책',
-      link: '/walk',
+      key: "walking",
+      image:
+        activeTab === "/walking" ? images.dogWalkingOn : images.dogWalkingOff,
+      text: "산책",
+      link: "/walking",
     },
     {
       key: 'community',
@@ -99,12 +110,13 @@ const FooterImage = styled.img`
 
 const FooterText = styled.div`
   @font-face {
-    font-family: 'TTLaundryGothicB';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2') format('woff2');
+    font-family: "TTLaundryGothicB";
+    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2")
+      format("woff2");
     font-weight: 700;
     font-style: normal;
   }
-  font-family: 'TTLaundryGothicB';
+  font-family: "TTLaundryGothicB";
   font-size: 12px;
-  color: ${({ $active }) => ($active ? '#FF6E00' : '#000000')};
+  color: ${({ $active }) => ($active ? "#FF6E00" : "#000000")};
 `;
