@@ -18,24 +18,44 @@ const WalkingMap = () => {
     longitude: 126.570667,
   });
 
-  // 현재 위치 받아오는 함수
+  /* 위치 관련*/
   useEffect(() => {
+    // 위치 동의 받기
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentPosition({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting current position:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
+      navigator.geolocation.getCurrentPosition((position) => {
+        setCurrentPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      });
     }
   }, []);
+
+  // 현위치로 이동
+  const moveToCurrentLocation = () => {
+    if (map) {
+      map.setCenter(
+        new kakao.maps.LatLng(
+          currentPosition.latitude,
+          currentPosition.longitude
+        )
+      );
+    }
+  };
+
+  /* 지도 관련*/
+  useEffect(() => {
+    const mapContainer = document.getElementById("map");
+    const mapOptions = {
+      center: new kakao.maps.LatLng(
+        currentPosition.latitude,
+        currentPosition.longitude
+      ),
+      level: 3,
+    };
+    const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
+    setMap(kakaoMap); // 지도 객체 저장
+  }, [currentPosition.latitude, currentPosition.longitude]);
 
   // 지도 클릭하여 출발지, 목적지 설정
   const handleMapClick = useCallback(
@@ -67,82 +87,41 @@ const WalkingMap = () => {
     [map, originCoords, destinationCoords, originMarker, destinationMarker]
   );
 
-  // 지도 초기화
-  useEffect(() => {
-    const mapContainer = document.getElementById("map");
-    const mapOptions = {
-      center: new kakao.maps.LatLng(
-        currentPosition.latitude,
-        currentPosition.longitude
-      ),
-      level: 3,
-    };
-
-    const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
-    setMap(kakaoMap);
-  }, [currentPosition.latitude, currentPosition.longitude]);
-
   // 지도 클릭 이벤트 리스너 등록
   useEffect(() => {
     if (!map) return;
-
     if (!destinationCoords) {
       kakao.maps.event.addListener(map, "click", handleMapClick);
     } else {
       kakao.maps.event.removeListener(map, "click", handleMapClick);
     }
-
     return () => {
       kakao.maps.event.removeListener(map, "click", handleMapClick);
     };
   }, [map, handleMapClick, destinationCoords]);
 
-  // 목적지 설정 후 자동으로 경로 계산
-  useEffect(() => {
-    if (destinationCoords) {
-      getCarDirection();
-    }
-  }, [destinationCoords]);
-
-  // 경로 계산 함수
+  /* 경로 관련 */
   const getCarDirection = async () => {
-    if (!originCoords || !destinationCoords) {
-      alert("출발지와 목적지를 선택하세요.");
-      return;
-    }
-
-    // 기존 경로선이 있다면 제거
-    if (polyline) {
-      polyline.setMap(null);
-    }
-
     const REST_API_KEY = "da0dd0fc23a035bb681daba549304728";
     const url = "https://apis-navi.kakaomobility.com/v1/directions";
     const origin = `${originCoords.getLng()},${originCoords.getLat()}`;
     const destination = `${destinationCoords.getLng()},${destinationCoords.getLat()}`;
 
-    const headers = {
-      Authorization: `KakaoAK ${REST_API_KEY}`,
-      "Content-Type": "application/json",
-    };
-
     const queryParams = new URLSearchParams({
       origin,
       destination,
     });
+    const headers = {
+      Authorization: `KakaoAK ${REST_API_KEY}`,
+      "Content-Type": "application/json",
+    };
 
     try {
       const response = await fetch(`${url}?${queryParams}`, {
         method: "GET",
         headers,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const data = await response.json();
-
       const linePath = [];
       data.routes[0].sections[0].roads.forEach((road) => {
         road.vertexes.forEach((vertex, index) => {
@@ -156,11 +135,11 @@ const WalkingMap = () => {
           }
         });
       });
-
       // 경로 길이 설정
       const distance = data.routes[0].summary.distance;
-      setRouteDistance(distance); // 경로 길이 업데이트
+      setRouteDistance(distance);
 
+      // 경로선 그리기
       const newPolyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
@@ -170,14 +149,21 @@ const WalkingMap = () => {
       });
 
       newPolyline.setMap(map);
-      setPolyline(newPolyline); // 새로운 경로선을 상태로 저장
+      setPolyline(newPolyline);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+  // 목적지 설정 후 자동으로 경로 계산
+  useEffect(() => {
+    if (destinationCoords) {
+      getCarDirection();
+    }
+  }, [destinationCoords]);
+
+  // 마커, 경로선 초기화 함수
   const resetMarkers = useCallback(() => {
-    // 마커 초기화
     if (originMarker) {
       originMarker.setMap(null);
       setOriginMarker(null);
@@ -186,7 +172,6 @@ const WalkingMap = () => {
       destinationMarker.setMap(null);
       setDestinationMarker(null);
     }
-    // 경로선 초기화
     if (polyline) {
       polyline.setMap(null);
       setPolyline(null);
@@ -194,20 +179,10 @@ const WalkingMap = () => {
 
     setOriginCoords(null);
     setDestinationCoords(null);
-    setRouteDistance(null); // 경로 길이 초기화
+    setRouteDistance(null);
   }, [originMarker, destinationMarker, polyline]);
 
-  const moveToCurrentLocation = () => {
-    if (map) {
-      map.setCenter(
-        new kakao.maps.LatLng(
-          currentPosition.latitude,
-          currentPosition.longitude
-        )
-      );
-    }
-  };
-
+  // 초기 시간 형식 변환 함수
   const formatTime = (seconds) => {
     const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
     const secs = String(seconds % 60).padStart(2, "0");
@@ -237,11 +212,11 @@ const WalkingMap = () => {
 
       <DetailContainer>
         <div>
-          <div>산책 시간(분:초)</div>
+          <div>산책 시간 (분:초)</div>
           {formatTime(time)}
         </div>
         <div>
-          <div>산책 거리(km)</div>
+          <div>산책 거리 (km)</div>
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>

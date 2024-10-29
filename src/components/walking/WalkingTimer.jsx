@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const WalkingTimer = ({ time, setTime }) => {
+const WalkingTimer = ({ time, setTime, onStart }) => {
   // 타이머 상태 추가
   const [isRunning, setIsRunning] = useState(false);
   const [isStarted, setIsStarted] = useState(false); // Start 버튼이 눌렸는지 여부를 관리
@@ -21,7 +21,8 @@ const WalkingTimer = ({ time, setTime }) => {
 
   const startTimer = () => {
     setIsRunning(true);
-    setIsStarted(true); // Start 버튼이 눌렸음을 표시
+    setIsStarted(true);
+    onStart();
   };
 
   const pauseTimer = () => setIsRunning(false);
