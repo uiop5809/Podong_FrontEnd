@@ -8,6 +8,8 @@ export const images = {
   cameraIcon: '/images/common/cameraIcon.svg',
   loginDogCat: '/images/common/loginDogCat.svg',
   logo: '/images/common/logo.svg',
+  paw: '/images/common/paw.svg',
+
 
   // community
   categoryAll: '/images/community/categoryAll.svg',
