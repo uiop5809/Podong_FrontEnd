@@ -44,7 +44,7 @@ const WalkingTimer = ({ time, setTime, onStart }) => {
           {isRunning ? (
             <TimerButton onClick={pauseTimer}>일시 정지</TimerButton>
           ) : (
-            <TimerButton onClick={startTimer}>다시 시작</TimerButton>
+            <RestartButton onClick={startTimer}>다시 시작</RestartButton>
           )}
           <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
         </ButtonContainer>
@@ -87,6 +87,12 @@ const TimerButton = styled(OutlineButton)`
   padding: 8px 12px;
   font-size: 15px;
   font-weight: bold;
+`;
+
+const RestartButton = styled(TimerButton)`
+  background-color: #ff6e00;
+  color: #ffffff;
+  border: none;
 `;
 
 const ButtonContainer = styled.div`
