@@ -197,6 +197,17 @@ const WalkingMap = () => {
     setRouteDistance(null); // 경로 길이 초기화
   }, [originMarker, destinationMarker, polyline]);
 
+  const moveToCurrentLocation = () => {
+    if (map) {
+      map.setCenter(
+        new kakao.maps.LatLng(
+          currentPosition.latitude,
+          currentPosition.longitude
+        )
+      );
+    }
+  };
+
   const formatTime = (seconds) => {
     const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
     const secs = String(seconds % 60).padStart(2, "0");
@@ -214,7 +225,12 @@ const WalkingMap = () => {
             {destinationCoords ? "목적지 설정됨" : "목적지 미설정"}
           </StatusButton>
         </div>
-        <OutlineButton onClick={resetMarkers}>초기화</OutlineButton>
+        <div>
+          <OutlineButton onClick={moveToCurrentLocation}>
+            현위치로
+          </OutlineButton>
+          <OutlineButton onClick={resetMarkers}>초기화</OutlineButton>
+        </div>
       </HeaderContainer>
 
       <MapContainer id="map" />
