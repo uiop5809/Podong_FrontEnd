@@ -46,13 +46,10 @@ const Footer = () => {
       link: "/walking",
     },
     {
-      key: "community",
-      image:
-        activeTab === "/community"
-          ? images.communityIconOn
-          : images.communityIconOff,
-      text: "집사생활",
-      link: "/community",
+      key: 'community',
+      image: activeTab === '/community' ? images.communityIconOn : images.communityIconOff,
+      text: '집사생활',
+      link: '/petRegister',
     },
   ];
 

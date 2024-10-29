@@ -12,6 +12,7 @@ const PetItemDetailPage = () => {
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
   const [counter,setCounter] =useState(0);
+  
   useEffect(()=>{
     fetch(`http://localhost:8080/api/petItems/${no}`)
     .then((response) => response.json())
