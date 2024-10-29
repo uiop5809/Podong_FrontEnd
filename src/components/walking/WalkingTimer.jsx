@@ -25,6 +25,11 @@ const WalkingTimer = ({ time, setTime, onStart }) => {
     onStart();
   };
 
+  const restartTimer = () => {
+    setIsRunning(true);
+    setIsStarted(true);
+  };
+
   const pauseTimer = () => setIsRunning(false);
   const stopTimer = () => {
     setIsRunning(false);
@@ -44,7 +49,7 @@ const WalkingTimer = ({ time, setTime, onStart }) => {
           {isRunning ? (
             <TimerButton onClick={pauseTimer}>일시 정지</TimerButton>
           ) : (
-            <RestartButton onClick={startTimer}>다시 시작</RestartButton>
+            <RestartButton onClick={restartTimer}>다시 시작</RestartButton>
           )}
           <TimerButton onClick={stopTimer}>산책 종료</TimerButton>
         </ButtonContainer>

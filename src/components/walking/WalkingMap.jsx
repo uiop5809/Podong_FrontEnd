@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import WalkingTimer from "./WalkingTimer";
+import MissingPetAlert from "./MissingPetAlert";
 
 const { kakao } = window;
 
@@ -17,6 +18,36 @@ const WalkingMap = () => {
     latitude: 33.450701,
     longitude: 126.570667,
   });
+
+  const [startLocation, setStartLocation] = useState("");
+  const [destinationLocation, setDestinationLocation] = useState("");
+  const [isTimerStarted, setIsTimerStarted] = useState(false);
+  const [missingPet, setMissingPet] = useState(null);
+  const [missingPetDistance, setMissingPetDistance] = useState(0);
+  const [isMissingPetAlertOpen, setIsMissingPetAlertOpen] = useState(false);
+
+  const handleStartLocationChange = (e) => {
+    setStartLocation(e.target.value);
+  };
+  const handleDestinationLocationChange = (e) => {
+    setDestinationLocation(e.target.value);
+  };
+  const handleTimerStart = () => {
+    const sampleMissingPet = {
+      name: "멍멍이",
+      image: "https://via.placeholder.com/150",
+      description: "귀여운 강아지입니다.",
+      radius: 300,
+    };
+    setMissingPet(sampleMissingPet);
+    setMissingPetDistance(200);
+    setIsMissingPetAlertOpen(true);
+    setIsTimerStarted(true);
+  };
+
+  const handleMissingPetAlertClose = () => {
+    setIsMissingPetAlertOpen(false);
+  };
 
   /* 위치 관련*/
   useEffect(() => {
@@ -176,7 +207,8 @@ const WalkingMap = () => {
       polyline.setMap(null);
       setPolyline(null);
     }
-
+    setTime(0);
+    setIsTimerStarted(false);
     setOriginCoords(null);
     setDestinationCoords(null);
     setRouteDistance(null);
@@ -220,7 +252,17 @@ const WalkingMap = () => {
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
-      <WalkingTimer time={time} setTime={setTime} />
+      <WalkingTimer time={time} setTime={setTime} onStart={handleTimerStart} />
+
+      {/* 지도 표시 부분 */}
+      {isTimerStarted && (
+        <MissingPetAlert
+          pet={missingPet}
+          distance={missingPetDistance}
+          isOpen={isMissingPetAlertOpen}
+          onClose={handleMissingPetAlertClose}
+        />
+      )}
     </Container>
   );
 };

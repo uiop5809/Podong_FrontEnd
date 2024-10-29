@@ -2,12 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const MissingPetAlert = ({ pet, distance, isOpen, onClose }) => {
-  console.log(pet, distance, isOpen, onClose);
   if (!pet || !isOpen) return null;
 
   return (
     <>
-      <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialog open={isOpen} onClick={onClose}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
