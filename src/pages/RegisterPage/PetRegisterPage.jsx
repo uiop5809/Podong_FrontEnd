@@ -134,27 +134,41 @@ const PetRegisterPage = () => {
 
   const handleRegister = async (event) => {
     event.preventDefault(); 
-    if(!validateForm()) return;
-    try {
-      const petData = {
-        petName: petName,
-        dogOrCat: selectedPetType,
-        petType: selectedPetType === '고양이' ? selectCatList : selectDogList,
-        petWeight: parseInt(weight), 
-        neutering: isNeutered === '네', 
-        petAllergy: isAllergic === '네', 
-        gender: selectedGender === '남아', 
-        createdAt: new Date().toISOString(), 
-        user: parseInt(userId), 
-        petAge: calculateAge(birthdate), 
-      };
+    if (!validateForm()) return; 
+  
+    const formData = new FormData();
 
-      const response = await axios.post('http://localhost:8080/api/pets', petData, {
+    if (imgPath) {
+      formData.append('image', imgPath);
+    }
+  
+    // 반려동물 정보 설정
+    const petData = {
+      petName: petName,
+      dogOrCat: selectedPetType,
+      petType: selectedPetType === '고양이' ? selectCatList : selectDogList,
+      petWeight: parseInt(weight), 
+      neutering: isNeutered === '네', 
+      petAllergy: isAllergic === '네', 
+      gender: selectedGender === '남아', 
+      createdAt: new Date().toISOString(), 
+      user: parseInt(userId), 
+      petAge: calculateAge(birthdate), 
+    };
+  
+    for (const key in petData) {
+      if (petData.hasOwnProperty(key)) {
+        formData.append(key, petData[key]);
+      }
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:8080/api/pets', formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         alert('반려동물 등록이 완료되었습니다.');
         navigate('/userRegister'); 
         console.log('Pet data:', petData);
@@ -166,7 +180,7 @@ const PetRegisterPage = () => {
       alert('서버와 통신 중 오류가 발생했습니다.');
     }
   };
-
+  
   const calculateAge = (birthdate) => {
     const today = new Date();
     const birthDate = new Date(birthdate);
@@ -177,7 +191,6 @@ const PetRegisterPage = () => {
     }
     return age;
   };
-
   const validateForm = () => {
     if (!selectedPetType) {
       alert('반려동물 종류를 선택해주세요.');

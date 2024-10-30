@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
 import { useNavigate } from 'react-router-dom';
+import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 
@@ -71,7 +72,7 @@ const PostSearchContainer = styled.input`
   border-radius: 5px; 
   font-size: 11px;
   background-color: white;
-  width: 60%;
+  width: 65%;
 `; 
 
 const StyledInput = styled.input`
@@ -82,6 +83,12 @@ const StyledInput = styled.input`
   border-radius: 5px;
   font-size: 11px;
 `; //입력 폼
+
+const AddressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+`;
 
 const SearchAddressButton = styled.button` 
   position: absolute;
@@ -102,8 +109,7 @@ const SearchAddressButton = styled.button`
 
   &:hover { 
     background-color: #FFD3D3;
-  }
-`;
+  }`;
 
 const Divider = styled.div`
   background-color: #F7F7F7;
@@ -155,10 +161,44 @@ const TextContainer = styled.div`
     margin-bottom: 10px;
   `;
 
-const AddressContainer = styled.div`
+
+const PhoneContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;  
   margin-top: 5px;
+`;
+
+
+const PhonenumberInputrequired = styled.input`
+  padding: 13px 13px;
+  margin-bottom: 8px;
+  border: 1px solid #E4E4E4;
+  border-radius: 5px; 
+  font-size: 11px;
+  background-color: white;
+  width: 65%;
+`; 
+
+const PhoneNumberAuthorization = styled.button`
+position: absolute;
+  width: 100px;
+  height: 40px;
+  top: 43px;
+  right: 5px;
+  transform: translateY(-50%);
+  background-color: #FFEFEF; 
+  color: #FF6E00;
+  border: none;
+  border-radius: 5px; 
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+
+  &:hover { 
+    background-color: #FFD3D3;
+  }
 `;
 
 const AlarmAgreementContainer = styled.div`
@@ -297,11 +337,14 @@ const RegisterButton = styled.button`
 const UserEditPage = () => {
   const navigate = useNavigate(); 
 
+  const [imgPath, setImgPath] = useState(''); //이미지
   const [toggleStates, setToggleStates] = useState([false, false, false]);
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [address, setAddress] = useState('');
-  const [zoneCode, setZoneCode] = useState('');
-
+  const [zoneCode, setZoneCode] = useState(''); 
+  const [nickname, setNickname] = useState(''); // 사용자 닉네임
+  const [phoneNumber, setPhoneNumber] = useState(''); // 전화번호
+  
   const openPostCode = () => {
     setIsPopupOpen(true)
   }
@@ -309,6 +352,12 @@ const UserEditPage = () => {
   const closePostCode = () => {
     setIsPopupOpen(false)
   }
+
+  const handleNicknameChange = (e) => setNickname(e.target.value);//닉네임
+  const handleAddressChange = (e) => setAddress(e.target.value); //주소
+  const handleZoneCodeChange = (e) => setZoneCode(e.target.value); //우편번호
+  const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value); //전화번호
+
 
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
@@ -334,13 +383,13 @@ const UserEditPage = () => {
     navigate('/');
   };
 
-
   return (
     <ScrollableContainer>
       <Container>
         <Description>
           <HightLight>발바닥 천국</HightLight>과🐾 당신의 반려동물 이야기를 시작해 볼까요?<br /> 정보를 입력해 주시면 더 행복한 발걸음을 만들어 드릴게요!
         </Description>
+        <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
         <Label>이메일</Label>
         <InputContainer>
           <KakaoEmail placeholder="ttnqls0217@gmail.com" disabled />
@@ -351,7 +400,15 @@ const UserEditPage = () => {
         <InputContainer>
           <StyledInput placeholder="닉네임을 입력해주세요" required />
         </InputContainer>
-        
+
+        <InputContainer>
+          <Label>휴대폰 번호</Label>
+          <PhoneContainer>
+            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요'></PhonenumberInputrequired>
+            <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
+          </PhoneContainer>
+        </InputContainer>
+
         <InputContainer>
         <Label>주소</Label>
         <AddressContainer>
