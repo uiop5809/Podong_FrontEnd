@@ -10,23 +10,14 @@ const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
-`;
+  width: 100%; 
+`; 
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%; 
-`;
-
-const SubContainer = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  background-color: #F5F5F5;
-  padding: 15px;
-  box-sizing: border-box;
 `;
 
 const MainContainer = styled.div`
@@ -41,31 +32,61 @@ const StyledAvatar = styled(RxAvatar)`
   width: 64px;
   height: 64px;
   margin-top: 36px;
-  margin-left: 30px;
+  margin-left: 40px;
   margin-bottom: 21px;
 `;
 
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center; 
+const UserInfo = styled.span`
   font-size: 16px;
   font-weight: bold;
-  margin-top: 12px;
-  margin-left: 20px;
+  margin-top: 20px;
+  margin-left: 5%;
+  text-align: left; 
 `;
 
+const EditButton = styled.button` 
+  width: 67px;
+  height: 22px;
+  background-color: #FFEFEF; 
+  color: #FF6E00;
+  border: none;
+  border-radius: 20px; 
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: bold;
+  margin-left: 10px;
+  margin-top: 3px;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+
+  &:hover { 
+    background-color: #FFD3D3;
+  }
+`;
+
+
 //두번째 section
+
+const SubContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background-color: #F5F5F5;
+  padding: 15px;
+  box-sizing: border-box;
+`;
 
 const PetProfile = styled.div`
   width: 100%;
   height: auto;
   display: flex;
-  flex-direction: column; //아래로
+  flex-direction: column; 
   margin-bottom: 8px;
   background-color: #FFFFFF;
   border: 1px solid #ddd;
   border-radius: 5px;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
 `;
 
@@ -74,6 +95,7 @@ const PetProfileContainer = styled.div`
   flex-direction: column;
   margin-top: 5px;
   margin-left: 5px;
+  padding: 13px;
 `;
 
 const PetInfoFirstRow = styled.div`
@@ -82,7 +104,7 @@ const PetInfoFirstRow = styled.div`
 `; 
 
 const PetInfo = styled.span`
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
   display: flex;
   flex-direction: column;
@@ -106,27 +128,29 @@ const PetDetailInfo = styled.div`
 const PetProfileEditButton = styled.button` 
   width: 67px;
   height: 22px;
-  margin-left: 153px;
+  margin-left: 46%;
   background-color: #FFEFEF; 
   color: #FF6E00;
   border: none;
   border-radius: 20px; 
   cursor: pointer;
+  padding: 5px 10px 10px 10px; 
   font-size: 8px;
   font-weight: bold;
-  padding: 5px 10px;
   transition: background-color 0.3s;
 
   &:hover { 
     background-color: #FFD3D3;
   }
 `;
+
 const ActivePet = styled.p`
   font-size: 10px;
   font-weight: 500;
   margin-bottom: 5px;
   color: #FF6E00;
 `
+
 const ActivePetName = styled.p`
   font-size: 12px;
   font-weight: bold;
@@ -157,7 +181,7 @@ const PetButtonContainer = styled.div`
 const RegisterMissing = styled.button`
   font-size: 10px;
   margin-left: 60px;
-  margin-right:110px;
+  margin-right:30%;
 
   &:hover { 
     color: #FF6E00;
@@ -304,25 +328,6 @@ const MissingIcon = styled.img`
   margin-right: 4px;
 `;
 
-const EditButton = styled.button` 
-  width: 67px;
-  height: 22px;
-  margin-left: 20px;
-  background-color: #FFEFEF; 
-  color: #FF6E00;
-  border: none;
-  border-radius: 20px; 
-  cursor: pointer;
-  font-size: 8px;
-  font-weight: bold;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-
-  &:hover { 
-    background-color: #FFD3D3;
-  }
-`;
-
 function MyPage() {
   const navigate = useNavigate(); 
 
@@ -331,10 +336,10 @@ function MyPage() {
       <Container>
         <MainContainer>
           <StyledAvatar />
-          <UserInfo>
-            고양이가 세상을 구한다
-            <EditButton onClick={() => navigate('/editUserRegister')}>수정</EditButton>
-          </UserInfo>
+              <UserInfo>
+                고양이가 세상을 구한다
+                <EditButton onClick={() => navigate('/myPage/editUserRegister')}>수정</EditButton>
+              </UserInfo>
         </MainContainer>
 
         <SubContainer>
@@ -342,7 +347,7 @@ function MyPage() {
             <PetProfileContainer>
               <PetInfoFirstRow>
               <PetInfo>우리응애 프로필</PetInfo>
-              <PetProfileEditButton onClick={()=> navigate('/editPetRegister')}>수정</PetProfileEditButton>
+              <PetProfileEditButton onClick={()=> navigate('/mypage/editPetRegister')}>수정</PetProfileEditButton>
               </PetInfoFirstRow>
 
               <PetInfoSecondRow>
@@ -355,7 +360,7 @@ function MyPage() {
               </PetInfoSecondRow>
 
               <PetButtonContainer>
-              <RegisterMissing onClick={() => navigate('/missingRegister')}>
+              <RegisterMissing onClick={() => navigate('/mypage/missingRegister')}>
                 실종등록 
               </RegisterMissing>
               <AddPetButton onClick={() => navigate('/petRegister')}>

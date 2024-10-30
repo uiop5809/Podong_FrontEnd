@@ -6,17 +6,16 @@ const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
-`; // 스크롤 
+  width: 100%; 
+`; //스크롤 
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%; 
   margin-top: 5%;
-  margin-left: 5%;
-  overflow-y: auto; 
-`; // 전체 컨테이너 
-
+  margin-left: 4%;
+`; 
 const MapContainer = styled.div`
   width: 100%;
   height: 250px;
@@ -110,13 +109,12 @@ const RegisterButton = styled.button`
   justify-content: center; 
   align-items: center; 
   border: 1px solid #E4E4E4;
-  width: 328px;
+  width: 100%;
   height: 43px; 
   text-align: center; 
   border-radius: 8px; 
   margin-top: 10px;
   margin-bottom: 20px;
-  margin-left: 4px;
 
   &:hover {
     background-color: #FF6E00;

@@ -53,30 +53,36 @@ const ImageContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`
+`;
+
+const CameraIcon = styled(TbCameraHeart)`
+  color: white; 
+  font-size: 50px;
+`;
 
 const UploadImg = ({ imgPath, setImgPath }) => {
   const addImage = (e) => {
     const files = e.target.files;
     if (files.length > 0) {
-      const newPath = [URL.createObjectURL(files[0])];
-      setImgPath(newPath);
+      const file = files[0];
+      const fileType = file.type.split('/')[0];
+
+      if (fileType === 'image') {
+        setImgPath(file); 
+      } else {
+        alert('이미지 파일만 업로드 가능합니다.');
+      }
     }
   };
-
-const CameraIcon = styled(TbCameraHeart)`
-  color: white; 
-  font-size:50px;
-`;
 
   return (
     <Container>
       <ImageBox>
-        {imgPath.length > 0 ? (
-          <StyledImage src={imgPath[0]} alt="애완동물 사진" />
+        {imgPath instanceof File ? ( 
+          <StyledImage src={URL.createObjectURL(imgPath)} alt="애완동물 사진" />
         ) : (
           <ImageContainer>
-          <CameraIcon />
+            <CameraIcon />
           </ImageContainer>
         )}
       </ImageBox>
@@ -85,7 +91,8 @@ const CameraIcon = styled(TbCameraHeart)`
         <HiddenInput
           type="file"
           id="inputForm"
-          onChange={addImage}
+          accept="image/*" 
+          onChange={addImage} 
         />
       </InputFile>
     </Container>
