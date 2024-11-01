@@ -35,12 +35,12 @@
   },
   "proxy": {
     "/v1/search/shop": {
-      "target": "https://openapi.naver.com",
+      "target": "https://openapi.naver.com/",
       "changeOrigin": true,
       "secure": false
     },
     "/proxy": {
-      "target": "http://localhost:8080",
+      "target": "http://localhost:8080/",
       "changeOrigin": true
     }
   }
