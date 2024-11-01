@@ -35,15 +35,6 @@ const StyledInput = styled.input`
   font-size: 11px;
 `; // 폼 input 
 
-const Icon = styled.img`
-  position: absolute;
-  top: 40%;
-  left: 300px; 
-  transform: translateY(-8px);
-  width: 20px;
-  height: 20px;
-`; //카카오 아이콘
-
 const SelectButtonContainer = styled.div`
   display: flex;
   gap: 8px; 
@@ -113,19 +104,15 @@ const PetRegisterPage = () => {
   const [selectedPetType, setSelectedPetType] = useState(''); // 강아지 or 고양이
   const [petName, setPetName] = useState(''); // 이름
   const [birthdate, setBirthdate] = useState(''); // 생일
-  const [selectedGender, setSelectedGender] = useState(null); // 성별
-  const [isNeutered, setIsNeutered] = useState(null); // 중성화
+  const [selectedGender, setSelectedGender] = useState(null); //성별
+  const [isNeutered, setIsNeutered] = useState(null); //중성화
   const [isAllergic, setIsAllergic] = useState(null); // 알러지
   const [weight, setWeight] = useState(''); // 몸무게
   const [selectCatList, setSelectCatList] = useState(null); // cat list
+  const [age, setAge] = useState('');
   const [selectDogList, setSelectDogList] = useState(null); // dog list
   const [jwtToken, setJwtToken] = useState('');
-  
-  
-  
-  
-  
-  
+    
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
     setUserId(storedUserId); // 가져온 유저 ID를 상태에 저장
@@ -133,9 +120,7 @@ const PetRegisterPage = () => {
   }, []);
 
 
-
-
- useEffect(() => {
+useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tokenFromUrl = queryParams.get('jwtToken');
     const accessFromUrl = queryParams.get('accessToken');
@@ -162,7 +147,12 @@ const PetRegisterPage = () => {
   const handleNeuteredClick = (value) => setIsNeutered(value);
   const handleAllergicClick = (value) => setIsAllergic(value);
   const handlePetNameChange = (e) => setPetName(e.target.value);
-  const handleBirthdateChange = (e) => setBirthdate(e.target.value);
+  const handleBirthdateChange = (e) => {
+    const selectedDate = e.target.value;
+    setBirthdate(selectedDate);
+    setAge(calculateAge(selectedDate));
+  };
+
   const handleUserIdChange = (e) => setUserId(e.target.value);
   const handleCatChange = (e) => setSelectCatList(e.target.value);
   const handleDogChange = (e) => setSelectDogList(e.target.value);
@@ -181,6 +171,7 @@ const PetRegisterPage = () => {
     if (imgPath) {
       formData.append('image', imgPath);
     }
+  
   
     // 반려동물 정보 설정
     const petData = {
@@ -210,10 +201,18 @@ const PetRegisterPage = () => {
           Authorization: `Bearer ${jwtToken}`, // 토큰 사용
         },
       });
-      if (response.status === 200) {
-        alert('반려동물 등록이 완료되었습니다.');
-        navigate('/userRegister'); 
-        console.log('Pet data:', petData);
+      
+      console.log('Server response:', response.data);
+      
+      if (response.status === 201) {
+        const petId = response.data; 
+        if (petId) {
+          alert('반려동물 등록이 완료되었습니다.');
+          navigate(`/userRegister/${petId}`);
+        } else {
+          console.error('PetId not found in response');
+          alert('반려동물 ID를 받아오는데 실패했습니다.');
+        }
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
@@ -221,8 +220,9 @@ const PetRegisterPage = () => {
       console.error('Error registering pet:', error);
       alert('서버와 통신 중 오류가 발생했습니다.');
     }
-  };
+  }
   
+
   const calculateAge = (birthdate) => {
     const today = new Date();
     const birthDate = new Date(birthdate);
@@ -233,6 +233,7 @@ const PetRegisterPage = () => {
     }
     return age;
   };
+
   const validateForm = () => {
     if (!selectedPetType) {
       alert('반려동물 종류를 선택해주세요.');
@@ -336,8 +337,11 @@ const PetRegisterPage = () => {
         <StyledInput 
           type="date"
           value={birthdate} 
+          max={new Date().toISOString().split("T")[0]} 
           onChange={handleBirthdateChange}
         />
+        
+        <Label>나이: {age}세</Label>
 
         <Label>성별</Label>
         <SelectButtonContainer>
@@ -390,7 +394,7 @@ const PetRegisterPage = () => {
         </SelectButtonContainer>
 
         <RegisterButton onClick={handleRegister}>등록하기</RegisterButton>
-        <LastComment onClick={() => navigate('/userRegister/:userId')}>
+        <LastComment onClick={() => navigate('/userRegister')}>
           예비 집사입니다
         </LastComment>
       </Container>

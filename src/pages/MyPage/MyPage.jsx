@@ -347,7 +347,7 @@ function MyPage() {
             <PetProfileContainer>
               <PetInfoFirstRow>
               <PetInfo>우리응애 프로필</PetInfo>
-              <PetProfileEditButton onClick={()=> navigate('/mypage/editPetRegister')}>수정</PetProfileEditButton>
+              <PetProfileEditButton onClick={()=> navigate(`/mypage/editPetRegister/${petId}`)}>수정</PetProfileEditButton>
               </PetInfoFirstRow>
 
               <PetInfoSecondRow>
@@ -367,7 +367,7 @@ function MyPage() {
                 응애추가
               </AddPetButton>
               </PetButtonContainer>
-            </PetProfileContainer> {/*버튼 부분만 수정하면 될 것 같은데 ,,, */}
+            </PetProfileContainer> {/*버튼 부분만 수정하면 될 것 같은데 ,,, 한숨 가득 */}
           </PetProfile>
 
           <OrderContainer>
@@ -376,8 +376,8 @@ function MyPage() {
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>
-              <OrderReviewImage src={images.review} alt="구매후기" />
-              <span>구매후기</span>
+              <OrderReviewImage src={images.review} alt="결제내역" />
+              <span>결제내역</span>
             </OrderIconContainer>
             <OrderIconContainer>
               <OrderPointImage src={images.point} alt="포인트" />
@@ -403,8 +403,8 @@ function MyPage() {
               <ActivityText>보관 게시글</ActivityText>
             </UserActiveList>
             <UserActiveList>
-              <StyledImage src={images.imseeJeojang} alt="임시저장 게시글" />
-              <ActivityText>임시저장 게시글</ActivityText>
+              <StyledImage src={images.imseeJeojang} alt="결제내역" />
+              <ActivityText>결제내역</ActivityText>
             </UserActiveList>
             <UserActiveList>
               <StyledImage src={images.alert} alt="알림 목록" />

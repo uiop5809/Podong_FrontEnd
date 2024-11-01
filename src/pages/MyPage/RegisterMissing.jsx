@@ -1,31 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%; 
-`; //스크롤 
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 90%; 
-  margin-top: 5%;
-  margin-left: 4%;
 `; 
+const SubContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+`; 
+
 const MapContainer = styled.div`
   width: 100%;
   height: 250px;
   margin-bottom: 30px;
   border: 1px solid #ddd;
-`; // 지도
+`;
 
 const LocationContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  margin-left: 5%;
+  margin-right: 5%;
 `;
 
 const SubTitle = styled.label`
@@ -34,23 +42,23 @@ const SubTitle = styled.label`
   margin-bottom: 10px;
   flex-grow: 1; 
   margin-top: 5px;
-`; 
+`;
 
 const InputContainer = styled.div`
   position: relative; 
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 `;
 
 const StyledInput = styled.input`
   width: 100%;
-  padding: 10px 110px 10px 10px;
+  padding: 10px 20px 10px 10px;
   border: 1px solid #E4E4E4;
   border-radius: 5px; 
   font-size: 11px;
   margin-bottom: 10px;
-`; // 폼 input 
+`;
 
 const AddressContainer = styled.div`
   display: flex;
@@ -85,7 +93,7 @@ const EditButton = styled.button`
   &:hover { 
     background-color: #FFD3D3;
   }
-`; // 수정버튼
+`;
 
 const ImageContainer = styled.input`
   width: 125px;
@@ -102,7 +110,7 @@ const StyledTextarea = styled.textarea`
   font-size: 11px;
   resize: none; 
   height: 100px; 
-`; 
+`;
 
 const RegisterButton = styled.button`
   display: flex;
@@ -120,108 +128,169 @@ const RegisterButton = styled.button`
     background-color: #FF6E00;
     color: white; 
   }
-`; // 마지막 저장 버튼
+`;
 
 const RegisterMissing = () => {
   const navigate = useNavigate(); 
-  const [date, setDate] = useState('');
-  const [phone, setPhone] = useState('');
+
+  const [petName, setPetName] = useState(''); // 이름 
+  const [date, setDate] = useState(''); // 잃어버린 날짜
+  const [address, setAddress] = useState(''); // 주소
+  const [phone, setPhone] = useState(''); 
+  const [description, setDescription] = useState(''); // 상세정보
+  const [locationInput, setLocationInput] = useState(''); // 위치 정보
+  const [map, setMap] = useState(null); 
+  const [marker, setMarker] = useState(null); 
+  const [latitude, setLatitude] = useState(37.5665); 
+  const [longitude, setLongitude] = useState(126.978); 
+
+  const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 형식 설정
+
+  // Axios 요청을 handle하는 부분
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append('petName', petName);
+    formData.append('date', date);
+    formData.append('address', address);
+    formData.append('phone', phone);
+    formData.append('description', description);
+    formData.append('createdAt', new Date().toISOString());
+    // 사진 파일 추가
+    const imageInput = document.querySelector('input[type="file"]');
+    if (imageInput.files[0]) {
+      formData.append('image', imageInput.files[0]);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/missings', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 201) {
+        const petId = response.data; 
+        if (petId) {
+          alert('반려동물 등록이 완료되었습니다.');
+          navigate(`/userRegister/${petId}`);
+        } else {
+          console.error('PetId not found in response');
+          alert('반려동물 ID를 받아오는데 실패했습니다.');
+        }
+      } else {
+        alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Error registering pet:', error);
+      alert('서버와 통신 중 오류가 발생했습니다.');
+    }
+  }
+
+  useEffect(() => {
+    const container = document.getElementById('map'); 
+    const options = {
+      center: new window.kakao.maps.LatLng(latitude, longitude),
+      level: 1,
+    };
+    
+    const newMap = new window.kakao.maps.Map(container, options);
+    setMap(newMap);
+
+    const newMarker = new window.kakao.maps.Marker({
+      position: new window.kakao.maps.LatLng(latitude, longitude),
+    });
+    newMarker.setMap(newMap);
+    setMarker(newMarker);
+
+    // 클릭 이벤트 리스너 추가
+    window.kakao.maps.event.addListener(newMap, 'click', (mouseEvent) => {
+      const clickedPosition = mouseEvent.latLng;
+
+      // 마커 위치 변경
+      newMarker.setPosition(clickedPosition);
+      setLatitude(clickedPosition.getLat());
+      setLongitude(clickedPosition.getLng());
+      setLocationInput(`위도: ${clickedPosition.getLat().toFixed(6)}, 경도: ${clickedPosition.getLng().toFixed(6)}`); // 위도 경도 업데이트
+    });
+  }, [latitude, longitude]); 
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setLocationInput(`위도: ${latitude}, 경도: ${longitude}`); // 위도 경도 저장
+      }, (error) => {
+        console.error("위치 정보에 접근할 수 없습니다.", error);
+      });
+    } else {
+      alert("이 브라우저는 Geolocation을 지원하지 않습니다.");
+    }
+  };
 
   const handleDateChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, ''); 
     let formattedValue = '';
 
     if (value.length > 4) {
-      formattedValue += value.substring(0, 4); // 연도
+      formattedValue += value.substring(0, 4); 
       formattedValue += '-';
       if (value.length > 6) {
-        formattedValue += value.substring(4, 6); // 월
+        formattedValue += value.substring(4, 6); 
         formattedValue += '-';
-        formattedValue += value.substring(6, 8); // 일
+        formattedValue += value.substring(6, 8); 
       } else if (value.length > 4) {
-        formattedValue += value.substring(4, 6); // 월
+        formattedValue += value.substring(4, 6); 
       }
     } else {
-      formattedValue += value; // 연도
+      formattedValue += value; 
     }
 
     setDate(formattedValue);
   };
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
-    if (value.length <= 11) { // 최대 11자리로 제한
-      setPhone(value);
+    const value = e.target.value.replace(/[^0-9]/g, ''); 
+    let formattedValue = '';
+  
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 3); 
     }
+    if (value.length > 3) {
+      formattedValue += '-' + value.substring(3, 7); 
+    }
+    if (value.length > 7) {
+      formattedValue += '-' + value.substring(7,11); 
+    }
+  
+    setPhone(formattedValue); 
   };
 
   return (
     <ScrollableContainer>
       <Container>
-        <MapContainer />
+        <MapContainer id="map"></MapContainer>
         <LocationContainer>
-          <SubTitle>실종된 위치</SubTitle>
+          <SubTitle>위치 정보</SubTitle>
           <InputContainer>
-            <StyledInput placeholder="위치 입력" />
-            <EditButton>수정</EditButton>
+            <StyledInput value={locationInput} readOnly />
+            <EditButton onClick={getCurrentLocation}>위치 확인</EditButton>
           </InputContainer>
-        </LocationContainer>
-
-        <AddressContainer>
-          <SubTitle>실종된 날짜</SubTitle>
+          <SubTitle>실종 날짜</SubTitle>
           <DateContainer>
-            <StyledInput
-              type="text"
-              value={date}
-              onChange={handleDateChange}
-              placeholder='YYYY-MM-DD 형태로 입력하세요'
-            />
+            <StyledInput type="date" placeholder="YYYY-MM-DD" value={date} onChange={handleDateChange} max={today} />
           </DateContainer>
-        </AddressContainer>
-
-        <LocationContainer>
-          <SubTitle>아이 이름</SubTitle>
-          <InputContainer>
-            <StyledInput placeholder="아이 이름을 입력해주세요" />
-            <EditButton>수정</EditButton>
-          </InputContainer>
+          <AddressContainer>
+          <SubTitle>핸드폰 번호</SubTitle>
+            <StyledInput placeholder="연락처를 입력해주세요" value={phone} onChange={handlePhoneChange} />
+          </AddressContainer>
+          <SubTitle>아이 사진</SubTitle>
+          <ImageContainer type="file" />
+          <SubTitle>상세정보</SubTitle>
+          <StyledTextarea value={description} placeholder="최대한 자세하게 작성해주세요" onChange={(e) => setDescription(e.target.value)} />
+          <RegisterButton onClick={handleSubmit}>등록하기</RegisterButton>
         </LocationContainer>
-
-        <LocationContainer>
-          <SubTitle>휴대폰 번호</SubTitle>
-          <InputContainer>
-            <StyledInput
-              type="text"
-              value={phone}
-              onChange={handlePhoneChange}
-              placeholder="휴대폰 번호를 입력해주세요" 
-            />
-            <EditButton>수정</EditButton>
-          </InputContainer>
-        </LocationContainer>
-
-        <AddressContainer>
-          <SubTitle>사진 등록</SubTitle>
-          <ImageContainer type='file' />
-        </AddressContainer>
-
-        <AddressContainer>
-          <SubTitle>아이 특징</SubTitle>
-          <InputContainer>
-            <StyledTextarea 
-              placeholder="최대한 자세하게 작성해주세요."
-            />
-          </InputContainer>
-        </AddressContainer>
-
-        <RegisterButton 
-          onClick={() => {
-            alert("저장 되었습니다");
-            navigate('/missingSave');
-          }} 
-        >
-          저장하기
-        </RegisterButton>
       </Container>
     </ScrollableContainer>
   );

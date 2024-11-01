@@ -54,11 +54,11 @@ const LoginPage = () => {
     }
 };
 
-  const handleKakaoLogin = () => {
-    const REST_API_KEY = 'f0fb0454cb68748fc7a9707be176e0c7';
-    const REDIRECT_URI = 'http://localhost:8080/test';
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-  };
+const handleKakaoLogin = () => {
+  const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
+  const REDIRECT_URI = 'http://localhost:8080/test';
+  window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+};
 
   return (
     <Container>
