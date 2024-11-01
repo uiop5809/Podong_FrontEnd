@@ -283,7 +283,8 @@ const SecondToggleContainer = styled.div`
 `; 
 
 
-const ThirdToggleContainer = styled.div`  position: relative;
+const ThirdToggleContainer = styled.div`  
+position: relative;
 cursor: pointer;
 margin-bottom:10px;
 margin-left: 100px;
@@ -416,11 +417,7 @@ const UserEditPage = () => {
     }
   };
 
-  const toggleHandler = (index) => {
-    const updatedToggles = [...toggleStates];
-    updatedToggles[index] = !updatedToggles[index];
-    setToggleStates(updatedToggles);
-  };
+
 
 
   return (

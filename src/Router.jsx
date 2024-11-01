@@ -14,7 +14,6 @@ import NanumWrite from "./pages/NanumPage/NanumWrite.jsx";
 import NanumList from "./pages/NanumPage/NanumList.jsx";
 import NanumDetail from "./pages/NanumPage/NanumDetail.jsx";
 import UserRegisterPage from "./pages/RegisterPage/UserRegisterPage.jsx";
-import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
 import UserEditPage from "./pages/MyPage/UserEditPage.jsx";
 import MyPage from "./pages/MyPage/MyPage.jsx";
 import RegisterMissingSavePage from "./pages/MyPage/RegisterMissingSavePage.jsx";
@@ -23,6 +22,7 @@ import PetRegisterPage from "./pages/RegisterPage/PetRegisterPage.jsx";
 import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
 import SideNav from "./components/common/SideNav.jsx";
 import WalkPage from "./pages/WalkPage/WalkPage.jsx";
+import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
 
 function Router() {
   return (
@@ -52,8 +52,8 @@ function Router() {
 
           <Route path="myPage" element={<Outlet />}>
             <Route index element={<MyPage />} />
-            <Route path="editUserRegister" element={<UserEditPage />} />
             <Route path="editPetRegister" element={<PetEditPage />} />
+            <Route path="editUserRegister" element={<UserEditPage />} />
             <Route path="missingSave" element={<RegisterMissingSavePage />} />
             <Route path="missingRegister" element={<RegisterMissing />} />
             
