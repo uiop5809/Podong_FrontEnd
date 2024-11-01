@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
+import axios from 'axios';
+
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -335,53 +337,91 @@ const RegisterButton = styled.button`
 `; // 저장버튼
 
 const UserEditPage = () => {
-  const navigate = useNavigate(); 
-
-  const [imgPath, setImgPath] = useState(''); //이미지
-  const [toggleStates, setToggleStates] = useState([false, false, false]);
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [address, setAddress] = useState('');
-  const [zoneCode, setZoneCode] = useState(''); 
-  const [nickname, setNickname] = useState(''); // 사용자 닉네임
-  const [phoneNumber, setPhoneNumber] = useState(''); // 전화번호
+  const navigate = useNavigate();
   
-  const openPostCode = () => {
-    setIsPopupOpen(true)
-  }
+  const [imgPath, setImgPath] = useState('');
+  const [toggleStates, setToggleStates] = useState([false, false, false]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [address, setAddress] = useState('');
+  const [zoneCode, setZoneCode] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [detailedAddress, setDetailedAddress] = useState('');
+  const [email, setEmail] = useState('');
 
-  const closePostCode = () => {
-    setIsPopupOpen(false)
-  }
+  const jwtToken = localStorage.getItem('jwtToken');
+  const accessToken = localStorage.getItem('accessToken');
+  const storedUserId = localStorage.getItem('userId'); // 로컬 스토리지에서 userId 불러오기
 
-  const handleNicknameChange = (e) => setNickname(e.target.value);//닉네임
-  const handleAddressChange = (e) => setAddress(e.target.value); //주소
-  const handleZoneCodeChange = (e) => setZoneCode(e.target.value); //우편번호
-  const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value); //전화번호
+  const openPostCode = () => setIsPopupOpen(true);
+  const closePostCode = () => setIsPopupOpen(false);
 
+  useEffect(() => {
+    if (accessToken) {
+      axios.get('https://kapi.kakao.com/v2/user/me', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+      .then(response => setEmail(response.data.kakao_account.email))
+      .catch(error => {
+        console.error("Error fetching email:", error);
+        alert("이메일 정보를 불러올 수 없습니다.");
+      });
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (storedUserId) {  // 로컬 스토리지에서 userId가 있는지 확인
+      axios.get(`http://localhost:8080/api/users/${storedUserId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` }
+      })
+      .then((response) => {
+        const { nickname, phoneNumber, address, zoneCode, detailedAddress } = response.data;
+        setNickname(nickname);
+        setPhoneNumber(phoneNumber);
+        setAddress(address);
+        setZoneCode(zoneCode);
+        setDetailedAddress(detailedAddress);
+      })
+      .catch((error) => console.error("Error fetching user data:", error));
+    } else {
+      console.error("No userId found in localStorage.");
+    }
+  }, [storedUserId, jwtToken]);
+
+  const handleRegister = async () => {
+    if (!nickname || !address) {
+      alert('닉네임과 주소를 입력해주세요.');
+      return;
+    }
+
+    try {
+      await axios.put(`http://localhost:8080/api/users/${storedUserId}`, {
+        nickname,
+        phoneNumber,
+        address,
+        detailedAddress,
+        zoneCode,
+        createdAt: new Date().toISOString(),
+        accountEmail: email,
+        profileNickname: nickname,
+        notifications: toggleStates
+      }, {
+        headers: { Authorization: `Bearer ${jwtToken}` }
+      });
+      alert('사용자 정보가 저장되었습니다.');
+      navigate('/');
+    } catch (error) {
+      console.error("Error updating user information:", error);
+      alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
+    }
+  };
 
   const toggleHandler = (index) => {
-    const newToggleStates = [...toggleStates];
-    newToggleStates[index] = !newToggleStates[index]; 
-    setToggleStates(newToggleStates);
+    const updatedToggles = [...toggleStates];
+    updatedToggles[index] = !updatedToggles[index];
+    setToggleStates(updatedToggles);
   };
-  
-  const handleRegister = () => {
-    const nickname = document.querySelector('input[placeholder="닉네임을 입력해주세요"]').value;
-    const addressInput = document.querySelector('input[placeholder="기본주소를 입력해주세요"]').value;
 
-    if (!nickname) {
-      alert('닉네임을 입력해주세요.');
-      return;
-    }
-
-    if (!addressInput) {
-      alert('주소를 입력해주세요.');
-      return;
-    }
-
-    alert('사용자 정보가 등록되었습니다.');
-    navigate('/');
-  };
 
   return (
     <ScrollableContainer>
@@ -390,69 +430,68 @@ const UserEditPage = () => {
           <HightLight>발바닥 천국</HightLight>과🐾 당신의 반려동물 이야기를 시작해 볼까요?<br /> 정보를 입력해 주시면 더 행복한 발걸음을 만들어 드릴게요!
         </Description>
         <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
+        
         <Label>이메일</Label>
         <InputContainer>
-          <KakaoEmail placeholder="ttnqls0217@gmail.com" disabled />
+          <KakaoEmail placeholder="이메일을 불러오고 있습니다..." value={email} disabled />
           <Icon src={images.kakaoIcon} alt="카카오 아이콘" />
         </InputContainer>
 
         <Label>닉네임</Label>
         <InputContainer>
-          <StyledInput placeholder="닉네임을 입력해주세요" required />
+          <StyledInput placeholder="닉네임을 입력해주세요" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
         </InputContainer>
 
         <InputContainer>
           <Label>휴대폰 번호</Label>
           <PhoneContainer>
-            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요'></PhonenumberInputrequired>
+            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
 
         <InputContainer>
-        <Label>주소</Label>
-        <AddressContainer>
+          <Label>주소</Label>
+          <AddressContainer>
             <PostSearchContainer 
               placeholder="우편번호" 
               value={zoneCode} 
               readOnly 
             />
-          <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-          <div id='popupDom'>
-            {isPopupOpen && (
-              <PopupDom>
-                <PopupPostCode 
-                  onClose={closePostCode} 
-                  setAddress={setAddress} 
-                  setZoneCode={setZoneCode} 
-                />
-            </PopupDom>
-            )}
-          </div>
-          <StyledInput 
-                placeholder="기본주소를 입력해주세요" 
-                value={address} 
-                readOnly
-                required 
+            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+            <div id='popupDom'>
+              {isPopupOpen && (
+                <PopupDom>
+                  <PopupPostCode 
+                    onClose={closePostCode} 
+                    setAddress={setAddress} 
+                    setZoneCode={setZoneCode} 
+                  />
+                </PopupDom>
+              )}
+            </div>
+            <StyledInput 
+              placeholder="기본주소를 입력해주세요" 
+              value={address} 
+              onChange={(e) => setAddress(e.target.value)}
+              required 
             />
-            <StyledInput placeholder="상세 주소를 입력해주세요" required />
-        </AddressContainer>
+            <StyledInput placeholder="상세 주소를 입력해주세요" value={detailedAddress} onChange={(e) => setDetailedAddress(e.target.value)} required />
+          </AddressContainer>
         </InputContainer>
       </Container>
       <Divider />
 
       <Container>
         <AlarmAgreementContainer>
-          <SubTitle>
-            앱 푸시 알림 
-          </SubTitle>
+          <SubTitle>앱 푸시 알림</SubTitle>
         </AlarmAgreementContainer>
 
         <SubContainer>
           <TextContainer>
-          <SubTitleList>우리응애 건강관리</SubTitleList>
-          <DescriptionContainer>
-            <SubDescription>예방접종일과 병원 정보를 빠르게 받아보세요!</SubDescription>
+            <SubTitleList>우리응애 건강관리</SubTitleList>
+            <DescriptionContainer>
+              <SubDescription>예방접종일과 병원 정보를 빠르게 받아보세요!</SubDescription>
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
@@ -462,38 +501,35 @@ const UserEditPage = () => {
         </SubContainer>
 
         <SubContainer>
-        <TextContainer>
-        <SubTitleList>집사 생활</SubTitleList>
-        <DescriptionContainer>
-        <SubDescription>
-          내가 작성한 글의 댓글을 빠르게 확인하세요!
-        </SubDescription>
-        </DescriptionContainer>
-        </TextContainer>
-        <SecondToggleContainer onClick={() => toggleHandler(1)}>
-          <div className={`toggle-container ${toggleStates[1] ? "toggle--checked" : ""}`} />
-          <div className={`toggle-circle ${toggleStates[1] ? "toggle--checked" : ""}`} />
-        </SecondToggleContainer>
+          <TextContainer>
+            <SubTitleList>집사 생활</SubTitleList>
+            <DescriptionContainer>
+              <SubDescription>내가 작성한 글의 댓글을 빠르게 확인하세요!</SubDescription>
+            </DescriptionContainer>
+          </TextContainer>
+          <SecondToggleContainer onClick={() => toggleHandler(1)}>
+            <div className={`toggle-container ${toggleStates[1] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-circle ${toggleStates[1] ? "toggle--checked" : ""}`} />
+          </SecondToggleContainer>
         </SubContainer>
 
         <SubContainer>
-        <TextContainer>
-        <SubTitleList> 실종 알림</SubTitleList>
-        <DescriptionContainer>
-        <SubDescription>
-          다른 아이의 등록된 실종 위치 근처에 도착하면 알림을 보내드려요
-          <AlertAgreementDescription>가족의 품으로 가는 길, 도와주시면 감사하겠습니다*</AlertAgreementDescription>
-        </SubDescription>
-        </DescriptionContainer>
-        </TextContainer>
-        <ThirdToggleContainer onClick={() => toggleHandler(2)}>
-          <div className={`toggle-container ${toggleStates[2] ? "toggle--checked" : ""}`} />
-          <div className={`toggle-circle ${toggleStates[2] ? "toggle--checked" : ""}`} />
-        </ThirdToggleContainer>
+          <TextContainer>
+            <SubTitleList>실종 알림</SubTitleList>
+            <DescriptionContainer>
+              <SubDescription>
+                다른 아이의 등록된 실종 위치 근처에 도착하면 알림을 보내드려요
+                <AlertAgreementDescription>가족의 품으로 가는 길, 도와주시면 감사하겠습니다*</AlertAgreementDescription>
+              </SubDescription>
+            </DescriptionContainer>
+          </TextContainer>
+          <ThirdToggleContainer onClick={() => toggleHandler(2)}>
+            <div className={`toggle-container ${toggleStates[2] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-circle ${toggleStates[2] ? "toggle--checked" : ""}`} />
+          </ThirdToggleContainer>
         </SubContainer>
       </Container>
-      <RegisterButton 
-        onClick={handleRegister}>저장하기</RegisterButton>
+      <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
     </ScrollableContainer>
   );
 };

@@ -44,7 +44,8 @@ function Router() {
             <Route path="detail/:no" element={<NanumDetail />} />
           </Route>
 
-          <Route path="userRegister" element={<UserRegisterPage />} />
+          <Route path="userRegister/:userId" element={<UserRegisterPage />} />
+          
           <Route path="petRegister" element={<PetRegisterPage />} />
 
           <Route path="walking" element={<WalkPage />} />
@@ -55,6 +56,7 @@ function Router() {
             <Route path="editPetRegister" element={<PetEditPage />} />
             <Route path="missingSave" element={<RegisterMissingSavePage />} />
             <Route path="missingRegister" element={<RegisterMissing />} />
+            
           </Route>
         </Route>
       </Routes>
