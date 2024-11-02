@@ -1,6 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Lottie from 'lottie-react';
+import PaymentAnimation from '../PaymentPage/PaymentAnimation.json';
+import PropTypes from 'prop-types'; 
 
 const Container = styled.div`
   display: flex;
@@ -187,6 +190,11 @@ const OrderInfoRow = ({ label, value }) => {
   );
 };
 
+OrderInfoRow.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+};
+
 // 배송 정보 Row 컴포넌트
 const DeliveryInfoRow = ({ label, value }) => {
   return (
@@ -195,6 +203,11 @@ const DeliveryInfoRow = ({ label, value }) => {
       <DeliveryValue>{value}</DeliveryValue>
     </DeliveryInfoRowContainer>
   );
+};
+
+DeliveryInfoRow.propTypes = {
+  label: PropTypes.string.isRequired, 
+  value: PropTypes.string.isRequired, 
 };
 
 // Component
@@ -217,7 +230,7 @@ const PaymentEnd = () => {
       <PaymentEndHeader>주문 완료</PaymentEndHeader>
 
       <ImageContainer>
-        <img src="/images/payment/Payment_image1.gif" style={{ width: '250px', height: '250px' }} />
+      <Lottie animationData={PaymentAnimation} style={{ width: '250px', height: '250px' }} />
       </ImageContainer>
       <Header>우리응애가 좋아할 선물 <br />금방 도착할게요!</Header>
 
