@@ -4,14 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
 import DisplayPetImage from '../../components/Register/DisplayImg'; 
+import { useParams } from 'react-router-dom';
+import UploadImg from '../../components/Register/UploadImg';
 import axios from "axios";
 
+// 스타일 컴포넌트 설정
 const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%; 
-`;
+`; // 스크롤이 가능한 컨테이너
 
 const Container = styled.div`
   display: flex;
@@ -25,7 +28,7 @@ const Label = styled.label`
   color: #B3B3B3;
   margin-bottom: 5px;
   margin-top: 8px;
-`;
+`; // 각 폼의 설명 텍스트
 
 const StyledInput = styled.input`
   padding: 13px;
@@ -33,13 +36,13 @@ const StyledInput = styled.input`
   border: 1px solid #E4E4E4;
   border-radius: 5px; 
   font-size: 11px;
-`;
+`; // 입력 필드 스타일
 
 const SelectButtonContainer = styled.div`
   display: flex;
   gap: 8px; 
   margin-bottom: 8px;
-`;
+`; // 선택 버튼 컨테이너
 
 const SelectButton = styled.button`
   color: ${({ selected }) => (selected ? 'white' : 'black')}; 
@@ -55,11 +58,12 @@ const SelectButton = styled.button`
   cursor: pointer;
   font-size: 11px;
   font-weight: 500;
+
   &:hover {
     background-color: #FF6E00;
     color: white; 
   }
-`;
+`; // 선택 버튼
 
 const RegisterButton = styled.button`
   display: flex;
@@ -72,11 +76,25 @@ const RegisterButton = styled.button`
   border-radius: 8px; 
   margin-top: 10px;
   margin-bottom: 20px;
+
   &:hover {
     background-color: #FF6E00;
     color: white; 
   }
-`;
+`; // 등록 버튼
+
+const LastComment = styled.span`
+  font-size: 11px;
+  color: #8D8D8D;
+  text-align: center;
+  margin-bottom: 20px;
+  cursor: pointer;
+
+    &:hover {
+      color: #FF6E00;
+      font-weight: bold;
+  }
+`
 
 const PetEditPage = () => {
   const petId = 7;
