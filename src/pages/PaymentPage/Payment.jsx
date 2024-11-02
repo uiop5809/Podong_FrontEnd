@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { requestPayment } from './PGpay';
-
+import PopupDom from '../../components/Register/PopUpDom';
+import PopupPostCode from '../../components/Register/PopupPostCode';
+import axios from 'axios';
+// 결제1차백
 const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [deliveryNote, setDeliveryNote] = useState('');
@@ -12,8 +14,14 @@ const Payment = () => {
     const [textInputForEntrance, setTextInputForEntrance] = useState('');
     const [textInputForOther, setTextInputForOther] = useState('');
     const [orderDetails, setOrderDetails] = useState(null); 
+    const [addressDetails, setAddressDetails] = useState(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [address, setAddress] = useState('');
+    const [zoneCode, setZoneCode] = useState('');
+    const [detailedAddress, setDetailedAddress] = useState('');
 
-    // push 3
+
+
     useEffect(() => {
         
         const fetchOrderDetails = async () => {
@@ -33,9 +41,27 @@ const Payment = () => {
                 console.error('Error fetching order details:', error);
             }
         };
-
+        
         fetchOrderDetails();
     }, []); // 컴포넌트가 처음 마운트될 때 한 번 실행
+    
+    // useEffect(() => {
+    //     const fetchAddressDetails = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:8080/api/userInfo");
+    //             const userData = response.data;
+    //             // const data = await response.json();
+    //             // setAddressDetails(data);
+    //             // setAddress(data.address);
+    //             // setZoneCode(data.postalCode);
+    //             // setDetailedAddress(data.detailedAddress || '');
+    //         } catch (error) {
+    //             console.error('Error fetching address details:', error);
+    //         }
+    //     };
+    
+    //     fetchAddressDetails();
+    // }, []); // 컴포넌트가 처음 마운트될 때 한 번 실행
 
     // 결제 방법 선택 시 실행되는 함수
     const handlePaymentChange = (method) => {
@@ -79,6 +105,10 @@ const Payment = () => {
         setIsModalOpen(false);
     };
 
+    // 주소 검색 팝업 열기
+    const openPostCode = () => setIsPopupOpen(true);
+    const closePostCode = () => setIsPopupOpen(false);
+
     // 결제 버튼 클릭 시 실행되는 함수
     const handlePaymentButtonClick = () => {
         if (paymentMethod === '카드&간편결제') {
@@ -86,27 +116,114 @@ const Payment = () => {
         }
     };
 
+    const requestPayment = async () => {
+        console.log("결제 요청 함수 호출"); // 결제 함수 호출 여부 확인
+        const { IMP } = window; // 포트원 SDK 로드 확인
+        if (!IMP) {
+          console.error("포트원 SDK 로드 실패");
+          return;
+        }
+        IMP.init("imp02101050"); // 포트원 가맹점 식별코드
+      
+        const userId = 1;
+        const response = await axios.get(`http://localhost:8080/api/user/getInfo/${userId}`);
+        const userData = response.data;
+        console.log("User Data:", userData);
+      
+        // 결제 요청
+        IMP.request_pay({
+          pg : "html5_inicis", // PG사명
+          pay_method: "card", // 결제수단
+          merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
+          name: "테스트 결제", // 결제명
+          amount: 1000, // 결제 금액
+          buyer_email: userData.buyer_email, // 구매자 이메일
+          buyer_name: userData.buyer_name, // 구매자 이름
+          buyer_tel: userData.buyer_tel, // 구매자 전화번호
+          buyer_addr: userData.buyer_addr, // 구매자 주소
+          buyer_postcode: "000-000", // 구매자 우편번호
+        }, (rsp) => {
+          if (rsp.success) { // 프론트에서 결제가 완료되면
+            axios.post(`http://localhost:8080/api/payment/list/${rsp.imp_uid}/${userId}`)
+            .then((res) => {
+                  // 결제완료 
+            })
+            .catch((error) => {
+              // 에러발생시
+            });
+    } else {
+          // 에러발생시
+    }
+    });
+    }
+
+
+
+
     return (
         <PaymentPage>
-            <Header>
-                <BackButton>{'<'}</BackButton> {/* 뒤로가기 버튼 */}
-                <Title>주문 / 결제</Title>
-            </Header>
             
-            {/* 주문자 | 배송지 섹션 */}
-            <Section>
+ {/* 주문자 | 배송지 섹션 */}
+ <Section>
                 <SectionTitle>주문자 | 배송지</SectionTitle>
-                <AddressDetails>
-                    <p><strong>고창준</strong> <DefaultBadge>기본배송지</DefaultBadge> <EditButton>변경</EditButton></p>
-                    <p>경기 성남시 엘지구 엘지로 101 (엘지동) 엘지마을, 엘지아파트 104동 1004호</p>
-                    <p>고창준 010-1111-1111</p>
-                </AddressDetails>
+                <p>이름</p>
+                {/* {addressDetails ? (
+                    <AddressDetails>
+                        <p><strong>{addressDetails.userName}</strong> <DefaultBadge>기본배송지</DefaultBadge> <AddressEditButton onClick={openPostCode}>변경</AddressEditButton></p>
+                        <p>{addressDetails.address}, {addressDetails.postalCode}</p>
+                        <p>{addressDetails.userName} {addressDetails.phoneNumber}</p>
+                    </AddressDetails>
+                ) : (
+                    <p>로딩 중...</p>
+                )} */}
 
-                <InputGroup>
-                    <LabelWrapper>
+                <div id='popupDom'>
+                    {isPopupOpen && (
+                        <PopupDom>
+                            <PopupPostCode 
+                                onClose={closePostCode} 
+                                setAddress={setAddress} 
+                                setZoneCode={setZoneCode} 
+                            />
+                        </PopupDom>
+                    )}
+                </div>
+
+                <AddressInputGroup>
+                    <AddressLabelWrapper>
+                        <label>주소</label>
+                    </AddressLabelWrapper>
+                    <AddressInputWrapper>
+                        <PostSearchContainer 
+                            placeholder="우편번호" 
+                            value={zoneCode} 
+                            readOnly 
+                        />
+                        <SearchAddressButton onClick={openPostCode}>주소변경</SearchAddressButton>
+                    </AddressInputWrapper>
+                    <AddressInputWrapper>
+                        <StyledInput 
+                            placeholder="기본주소 불러오기" 
+                            value={address} 
+                            onChange={(e) => setAddress(e.target.value)}
+                            required 
+                        />
+                    </AddressInputWrapper>
+                    <AddressInputWrapper>
+                        <StyledInput 
+                            placeholder="상세 주소불러오기" 
+                            value={detailedAddress} 
+                            onChange={(e) => setDetailedAddress(e.target.value)}
+                            required 
+                        />
+                    </AddressInputWrapper>
+                </AddressInputGroup>
+
+                <DeliveryMethodInputGroup>
+                    <DeliveryMethodLabelWrapper>
                         <label>배송지 출입방법 *</label>
-                    </LabelWrapper>
-                    <InputWrapper>
+                    </DeliveryMethodLabelWrapper>
+                    <DeliveryMethodInputWrapper>
                         <Input 
                             type="text" 
                             value={deliveryMethod}
@@ -114,14 +231,14 @@ const Payment = () => {
                             placeholder="공동현관 비밀번호 #1234"
                         />
                         <EditButton onClick={openModal}>변경</EditButton> {/* 변경 버튼 클릭 시 모달 열기 */}
-                    </InputWrapper>
-                </InputGroup>
+                    </DeliveryMethodInputWrapper>
+                </DeliveryMethodInputGroup>
 
-                <InputGroup>
-                    <LabelWrapper>
+                <DeliveryNoteInputGroup>
+                    <DeliveryNoteLabelWrapper>
                         <label>배송지 메모</label>
-                    </LabelWrapper>
-                    <InputWrapper>
+                    </DeliveryNoteLabelWrapper>
+                    <DeliveryNoteInputWrapper>
                         <Input 
                             type="text" 
                             value={deliveryNote} 
@@ -129,9 +246,10 @@ const Payment = () => {
                             placeholder="메모를 입력해주세요."
                         />
                         <EditButton>변경</EditButton>
-                    </InputWrapper>
-                </InputGroup>
+                    </DeliveryNoteInputWrapper>
+                </DeliveryNoteInputGroup>
             </Section>
+
 
         {/* 모달 팝업 */}
         {isModalOpen && (
@@ -299,26 +417,121 @@ const PaymentPage = styled.div`
     padding: 20px;
 `;
 
-const Header = styled.header`
+const AddressEditButton = styled.button`
+    background-color: #ffefef;
+    color: #ff6e00;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: bold;
+`;
+
+const PostSearchContainer = styled.input`
+    padding: 13px 13px;
+    margin-bottom: 8px;
+    border: 1px solid #E4E4E4;
+    border-radius: 5px; 
+    font-size: 11px;
+    background-color: white;
+    width: 65%;
+`;
+
+const StyledInput = styled.input`
+    padding: 13px 50px 13px 13px;
+    width: 100%;
+    margin-top: 4px;
+    border: 1px solid #E4E4E4;
+    border-radius: 5px;
+    font-size: 11px;
+`;
+
+const SearchAddressButton = styled.button` 
+    position: absolute;
+    width: 70px;
+    height: 30px;
+    top: 20px;
+    right: 15px;
+    transform: translateY(-50%);
+    background-color: #FFEFEF; 
+    color: #FF6E00;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: background-color 0.3s;
+
+    &:hover { 
+        background-color: #FFD3D3;
+    }
+`;
+
+const AddressInputGroup = styled.div`
+    margin-top: 20px;
+`;
+
+const DeliveryMethodInputGroup = styled.div`
+    margin-top: 20px;
+`;
+
+const DeliveryNoteInputGroup = styled.div`
+    margin-top: 20px;
+`;
+
+const AddressLabelWrapper = styled.div`
+    margin-bottom: 5px;
+    font-weight: bold;
+`;
+
+const DeliveryMethodLabelWrapper = styled.div`
+    margin-bottom: 5px;
+    font-weight: bold;
+`;
+
+const DeliveryNoteLabelWrapper = styled.div`
+    margin-bottom: 5px;
+    font-weight: bold;
+`;
+
+const AddressInputWrapper = styled.div`
     display: flex;
     align-items: center;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
+    position: relative;
 `;
 
-const Title = styled.h1`
-    font-size: 24px;
-    font-weight: bold;
-    flex: 1;
-    text-align : center;
+const DeliveryMethodInputWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    position: relative;
 `;
 
-const BackButton = styled.button`
-    background: none;
+const DeliveryNoteInputWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    position: relative;
+`;
+
+const EditButton = styled.button`
+    background-color: #ffefef;
+    color: #ff6e00;
+    padding: 6px 14px;
     border: none;
-    font-size: 24px;
+    border-radius: 4px;
+    margin-left : 4px;
+    font-size: 10px;
     cursor: pointer;
+    font-weight : bold;
+
+    &:hover {
+    background-color: #FFD3D3;
+}
 `;
+
+
 
 const Section = styled.section`
     border-bottom: 1px solid #ddd;
@@ -349,17 +562,6 @@ const DefaultBadge = styled.span`
     font-size: 11px;
 `;
 
-const EditButton = styled.button`
-    background-color: #ffefef;
-    color: #ff6e00;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 4px;
-    margin-left : 4px;
-    font-size: 10px;
-    cursor: pointer;
-    font-weight : bold;
-`;
 
 const InputGroup = styled.div`
     margin-top: 20px;
@@ -399,7 +601,7 @@ const Button = styled.button`
     font-size: 10px;
 
     &:hover {
-        background-color: #ff6e00;
+        background-color: #FFD3D3;
     }
 `;
 
@@ -452,7 +654,7 @@ const PaymentButton = styled.button`
     cursor: pointer;
 
     &:hover {
-        background-color: #ff6e00;
+        background-color: #FFD3D3;
     }
 `;
 
