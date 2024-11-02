@@ -11,14 +11,14 @@ const Payment = () => {
     const [selectedOption, setSelectedOption] = useState('');
     const [textInputForEntrance, setTextInputForEntrance] = useState('');
     const [textInputForOther, setTextInputForOther] = useState('');
-    const [orderDetails, setOrderDetails] = useState(null); // 주문 요약 데이터를 위한 상태 추가
+    const [orderDetails, setOrderDetails] = useState(null); 
 
-    // 주문 요약 데이터 불러오기 (useEffect 사용)
+    // push 3
     useEffect(() => {
-        // 여기에 실제 API 호출을 넣을 수 있습니다.
+        
         const fetchOrderDetails = async () => {
             try {
-                // 예시로 설정한 주문 요약 데이터
+                // 예시
                 const data = {
                     totalAmount: 12345,
                     shippingFee: 0,
@@ -27,7 +27,7 @@ const Payment = () => {
                     finalAmount: 12345,
                     pointsEarned: 0,
                 };
-                // 데이터 설정
+                
                 setOrderDetails(data);
             } catch (error) {
                 console.error('Error fetching order details:', error);
