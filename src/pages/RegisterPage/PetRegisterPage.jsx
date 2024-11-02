@@ -394,7 +394,7 @@ useEffect(() => {
         </SelectButtonContainer>
 
         <RegisterButton onClick={handleRegister}>등록하기</RegisterButton>
-        <LastComment onClick={() => navigate('/userRegister')}>
+        <LastComment onClick={() => navigate('/')}>
           예비 집사입니다
         </LastComment>
       </Container>
