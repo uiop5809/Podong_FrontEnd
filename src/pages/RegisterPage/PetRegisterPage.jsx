@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
 import UploadImg from '../../components/Register/UploadImg';
@@ -34,6 +34,16 @@ const StyledInput = styled.input`
   border-radius: 5px; 
   font-size: 11px;
 `; // 폼 input 
+
+const Icon = styled.img`
+  position: absolute;
+  top: 40%;
+  left: 300px; 
+  transform: translateY(-8px);
+  width: 20px;
+  height: 20px;
+`; //카카오 아이콘
+
 
 const SelectButtonContainer = styled.div`
   display: flex;
@@ -87,72 +97,40 @@ const LastComment = styled.span`
   margin-bottom: 20px;
   cursor: pointer;
 
-  &:hover {
-    color: #FF6E00;
-    font-weight: bold;
+    &:hover {
+      color: #FF6E00;
+      font-weight: bold;
   }
-`;
+`
 
-//js
+const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const PetRegisterPage = () => {
   const navigate = useNavigate(); 
-  const location = useLocation();
-  const [accessToken, setAccessToken] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
-  const [userId, setUserId] = useState(''); // 유저 ID
-  const [imgPath, setImgPath] = useState(''); // 이미지
-  const [selectedPetType, setSelectedPetType] = useState(''); // 강아지 or 고양이
-  const [petName, setPetName] = useState(''); // 이름
+  const [imgPath, setImgPath] = useState(''); //이미지
+  const [selectedPetType, setSelectedPetType] = useState(''); //강아지 or 고양이
+  const [petName, setPetName] = useState(''); // 이름 
   const [birthdate, setBirthdate] = useState(''); // 생일
   const [selectedGender, setSelectedGender] = useState(null); //성별
   const [isNeutered, setIsNeutered] = useState(null); //중성화
   const [isAllergic, setIsAllergic] = useState(null); // 알러지
-  const [weight, setWeight] = useState(''); // 몸무게
-  const [selectCatList, setSelectCatList] = useState(null); // cat list
-  const [age, setAge] = useState('');
-  const [selectDogList, setSelectDogList] = useState(null); // dog list
-  const [jwtToken, setJwtToken] = useState('');
-    
-  useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
-    setUserId(storedUserId); // 가져온 유저 ID를 상태에 저장
-    console.log('Loaded userId from localStorage:', storedUserId);
-  }, []);
+  const [weight, setWeight] = useState(''); //몸무게
+  const [userId, setUserId] = useState('1'); // 유저 ID
+  const [selectCatList, setSelectCatList] = useState(null); //cat list
+  const [selectDogList, setSelectDogList] = useState(null); //dog list
 
-
-useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const tokenFromUrl = queryParams.get('jwtToken');
-    const accessFromUrl = queryParams.get('accessToken');
-    const refreshFromUrl = queryParams.get('refreshToken');
-    const userId = queryParams.get('userId');
-
-    if (tokenFromUrl && accessFromUrl && refreshFromUrl) {
-      localStorage.setItem('jwtToken', tokenFromUrl);
-      localStorage.setItem('accessToken', accessFromUrl);
-      localStorage.setItem('refreshToken', refreshFromUrl);
-      localStorage.setItem('userId',userId);
-      setJwtToken(tokenFromUrl);
-      setAccessToken(accessFromUrl);
-      setRefreshToken(refreshFromUrl);
-      setUserId(userId);
-      console.log('Tokens saved to localStorage:', { tokenFromUrl, accessFromUrl, refreshFromUrl,userId });
-    } else {
-      console.log('Tokens not found in URL');
-    }
-  }, [location]);
-  
   const handlePetTypeClick = (value) => setSelectedPetType(value);
   const handleGenderClick = (gender) => setSelectedGender(gender);
   const handleNeuteredClick = (value) => setIsNeutered(value);
   const handleAllergicClick = (value) => setIsAllergic(value);
   const handlePetNameChange = (e) => setPetName(e.target.value);
-  const handleBirthdateChange = (e) => {
-    const selectedDate = e.target.value;
-    setBirthdate(selectedDate);
-    setAge(calculateAge(selectedDate));
-  };
-
+  const handleBirthdateChange = (e) => setBirthdate(e.target.value);
   const handleUserIdChange = (e) => setUserId(e.target.value);
   const handleCatChange = (e) => setSelectCatList(e.target.value);
   const handleDogChange = (e) => setSelectDogList(e.target.value);
@@ -160,7 +138,6 @@ useEffect(() => {
     const value = e.target.value;
     if (/^\d*\.?\d*$/.test(value)) setWeight(value);
   };
-  
 
   const handleRegister = async (event) => {
     event.preventDefault(); 
@@ -172,8 +149,6 @@ useEffect(() => {
       formData.append('image', imgPath);
     }
   
-  
-    // 반려동물 정보 설정
     const petData = {
       petName: petName,
       dogOrCat: selectedPetType,
@@ -183,10 +158,9 @@ useEffect(() => {
       petAllergy: isAllergic === '네', 
       gender: selectedGender === '남아', 
       createdAt: new Date().toISOString(), 
-      user: parseInt(userId), 
+      user: parseInt(userId),  // 일단 userId 고정값 사용함 > 변경 해야함
       petAge: calculateAge(birthdate), 
     };
-    
   
     for (const key in petData) {
       if (petData.hasOwnProperty(key)) {
@@ -198,21 +172,12 @@ useEffect(() => {
       const response = await axios.post('http://localhost:8080/api/pets', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${jwtToken}`, // 토큰 사용
         },
       });
-      
-      console.log('Server response:', response.data);
-      
       if (response.status === 201) {
-        const petId = response.data; 
-        if (petId) {
-          alert('반려동물 등록이 완료되었습니다.');
-          navigate(`/userRegister/${petId}`);
-        } else {
-          console.error('PetId not found in response');
-          alert('반려동물 ID를 받아오는데 실패했습니다.');
-        }
+        alert('반려동물 등록이 완료되었습니다.');
+        navigate('/'); 
+        console.log('Pet data:', petData);
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
@@ -220,9 +185,8 @@ useEffect(() => {
       console.error('Error registering pet:', error);
       alert('서버와 통신 중 오류가 발생했습니다.');
     }
-  }
+  };
   
-
   const calculateAge = (birthdate) => {
     const today = new Date();
     const birthDate = new Date(birthdate);
@@ -233,7 +197,6 @@ useEffect(() => {
     }
     return age;
   };
-
   const validateForm = () => {
     if (!selectedPetType) {
       alert('반려동물 종류를 선택해주세요.');
@@ -271,14 +234,13 @@ useEffect(() => {
       alert('알러지 여부를 선택해주세요.');
       return false;
     }
-    
     return true;
   };
   
   return (
     <ScrollableContainer>
       <Container>
-        <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
+      <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
         <Label>어떤 반려동물과 함께하고 계신가요?</Label>
         <SelectButtonContainer>
           <SelectButton
@@ -299,49 +261,56 @@ useEffect(() => {
           value={petName}
           onChange={handlePetNameChange}
           required
-        />
+      />
 
         <Label>유저이름</Label>
-        <StyledInput
-          placeholder="유저이름을 입력해주세요."
-          required
-        />
+          <StyledInput
+            placeholder="유저이름을 입력해주세요."
+            value={userId}
+            onChange={handleUserIdChange}
+            required
+          />
 
-        {selectedPetType === '고양이' && (
-          <>
-            <Label>묘종</Label>
-            <SelectBox
-              options={CatList} 
-              value={selectCatList} 
-              onChange={handleCatChange} 
-              placeholder="묘종을 선택해주세요"
-              required
-            />
-          </>
-        )}
+{selectedPetType === '고양이' && (
+  <>
+    <Label>묘종</Label>
+    <SelectBox
+      options={CatList.map((cat, index) => ({
+        key: `cat-${index}`, // 고유한 키 설정
+        value: cat.value,
+        label: cat.label,
+      }))}
+      value={selectCatList}
+      onChange={handleCatChange}
+      placeholder="묘종을 선택해주세요"
+      required
+    />
+  </>
+)}
 
-        {selectedPetType === '강아지' && (
-          <>
-            <Label>견종</Label>
-            <SelectBox
-              options={DogList} 
-              value={selectDogList} 
-              onChange={handleDogChange} 
-              placeholder="견종을 선택해주세요"
-              required
-            />
-          </>
-        )}
-
+{selectedPetType === '강아지' && (
+  <>
+    <Label>견종</Label>
+    <SelectBox
+      options={DogList.map((dog, index) => ({
+        key: `dog-${index}`, // 고유한 키 설정
+        value: dog.value,
+        label: dog.label,
+      }))}
+      value={selectDogList}
+      onChange={handleDogChange}
+      placeholder="견종을 선택해주세요"
+      required
+    />
+  </>
+)}
         <Label>생일</Label>
         <StyledInput 
           type="date"
           value={birthdate} 
-          max={new Date().toISOString().split("T")[0]} 
+          max={getCurrentDate()}  
           onChange={handleBirthdateChange}
         />
-        
-        <Label>나이: {age}세</Label>
 
         <Label>성별</Label>
         <SelectButtonContainer>

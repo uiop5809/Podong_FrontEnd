@@ -14,6 +14,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `; 
+
 const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,10 +96,31 @@ const EditButton = styled.button`
   }
 `;
 
-const ImageContainer = styled.input`
+const ImageContainer = styled.div`
   width: 125px;
   height: 125px;
   border: 1px solid #E4E4E4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background-color: #f8f8f8;
+`;
+
+const PlaceholderText = styled.span`
+  color: #888;
+  font-size: 12px;
+  text-align: center;
+`;
+
+const PreviewImage = styled.img`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
 `;
 
@@ -133,20 +155,33 @@ const RegisterButton = styled.button`
 const RegisterMissing = () => {
   const navigate = useNavigate(); 
 
-  const [petName, setPetName] = useState(''); // 이름 
-  const [date, setDate] = useState(''); // 잃어버린 날짜
-  const [address, setAddress] = useState(''); // 주소
+  const [petName, setPetName] = useState(''); 
+  const [date, setDate] = useState(''); 
+  const [address, setAddress] = useState(''); 
   const [phone, setPhone] = useState(''); 
-  const [description, setDescription] = useState(''); // 상세정보
-  const [locationInput, setLocationInput] = useState(''); // 위치 정보
+  const [description, setDescription] = useState(''); 
+  const [locationInput, setLocationInput] = useState(''); 
   const [map, setMap] = useState(null); 
   const [marker, setMarker] = useState(null); 
   const [latitude, setLatitude] = useState(37.5665); 
   const [longitude, setLongitude] = useState(126.978); 
+  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 상태 추가
 
-  const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 형식 설정
+  const today = new Date().toISOString().split("T")[0]; 
 
-  // Axios 요청을 handle하는 부분
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result); // 미리보기 이미지 설정
+      };
+      reader.readAsDataURL(file); // 파일을 Data URL로 읽음
+    } else {
+      setPreviewImage(null); // 이미지가 없으면 미리보기 초기화
+    }
+  };
+
   const handleSubmit = async () => {
     const formData = new FormData();
     formData.append('petName', petName);
@@ -155,7 +190,7 @@ const RegisterMissing = () => {
     formData.append('phone', phone);
     formData.append('description', description);
     formData.append('createdAt', new Date().toISOString());
-    // 사진 파일 추가
+    
     const imageInput = document.querySelector('input[type="file"]');
     if (imageInput.files[0]) {
       formData.append('image', imageInput.files[0]);
@@ -202,15 +237,12 @@ const RegisterMissing = () => {
     newMarker.setMap(newMap);
     setMarker(newMarker);
 
-    // 클릭 이벤트 리스너 추가
     window.kakao.maps.event.addListener(newMap, 'click', (mouseEvent) => {
       const clickedPosition = mouseEvent.latLng;
-
-      // 마커 위치 변경
       newMarker.setPosition(clickedPosition);
       setLatitude(clickedPosition.getLat());
       setLongitude(clickedPosition.getLng());
-      setLocationInput(`위도: ${clickedPosition.getLat().toFixed(6)}, 경도: ${clickedPosition.getLng().toFixed(6)}`); // 위도 경도 업데이트
+      setLocationInput(`위도: ${clickedPosition.getLat().toFixed(6)}, 경도: ${clickedPosition.getLng().toFixed(6)}`);
     });
   }, [latitude, longitude]); 
 
@@ -220,7 +252,7 @@ const RegisterMissing = () => {
         const { latitude, longitude } = position.coords;
         setLatitude(latitude);
         setLongitude(longitude);
-        setLocationInput(`위도: ${latitude}, 경도: ${longitude}`); // 위도 경도 저장
+        setLocationInput(`위도: ${latitude}, 경도: ${longitude}`);
       }, (error) => {
         console.error("위치 정보에 접근할 수 없습니다.", error);
       });
@@ -282,11 +314,23 @@ const RegisterMissing = () => {
             <StyledInput type="date" placeholder="YYYY-MM-DD" value={date} onChange={handleDateChange} max={today} />
           </DateContainer>
           <AddressContainer>
-          <SubTitle>핸드폰 번호</SubTitle>
+            <SubTitle>핸드폰 번호</SubTitle>
             <StyledInput placeholder="연락처를 입력해주세요" value={phone} onChange={handlePhoneChange} />
           </AddressContainer>
           <SubTitle>아이 사진</SubTitle>
-          <ImageContainer type="file" />
+          <input 
+            type="file" 
+            onChange={handleImageChange} 
+            style={{ display: 'none' }} 
+            id="imageUpload" 
+          />
+          <ImageContainer onClick={() => document.getElementById('imageUpload').click()}>
+            {previewImage ? (
+              <PreviewImage src={previewImage} alt="미리보기" />
+            ) : (
+              <PlaceholderText>사진 등록</PlaceholderText>
+            )}
+          </ImageContainer>
           <SubTitle>상세정보</SubTitle>
           <StyledTextarea value={description} placeholder="최대한 자세하게 작성해주세요" onChange={(e) => setDescription(e.target.value)} />
           <RegisterButton onClick={handleSubmit}>등록하기</RegisterButton>
