@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { requestPayment } from './PGpay';
 
@@ -6,52 +6,70 @@ const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [deliveryNote, setDeliveryNote] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
-    const [points, setPoints] = useState(0);  // 사용 가능한 포인트
+    const [points, setPoints] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(''); // 모달에서 선택된 옵션
-    const [textInputForEntrance, setTextInputForEntrance] = useState('');  // 공동현관 비밀번호 입력값
-    const [textInputForOther, setTextInputForOther] = useState('');  // 기타 입력값
+    const [selectedOption, setSelectedOption] = useState('');
+    const [textInputForEntrance, setTextInputForEntrance] = useState('');
+    const [textInputForOther, setTextInputForOther] = useState('');
+    const [orderDetails, setOrderDetails] = useState(null); 
+
+    // push 3
+    useEffect(() => {
+        
+        const fetchOrderDetails = async () => {
+            try {
+                // 예시
+                const data = {
+                    totalAmount: 12345,
+                    shippingFee: 0,
+                    couponDiscount: 0,
+                    pointsUsed: 0,
+                    finalAmount: 12345,
+                    pointsEarned: 0,
+                };
+                
+                setOrderDetails(data);
+            } catch (error) {
+                console.error('Error fetching order details:', error);
+            }
+        };
+
+        fetchOrderDetails();
+    }, []); // 컴포넌트가 처음 마운트될 때 한 번 실행
 
     // 결제 방법 선택 시 실행되는 함수
     const handlePaymentChange = (method) => {
         setPaymentMethod(method);
-        if (method === '카드&간편결제') {
-        requestPayment();  // 카드&간편결제 선택 시 requestPayment 함수 호출
-        }
     };
 
     // 옵션 선택 시 실행되는 함수
     const handleOptionChange = (e) => {
-        setSelectedOption(e.target.value);  // 선택된 옵션을 상태에 저장
+        setSelectedOption(e.target.value);
     };
 
     // 공동현관 비밀번호 입력 시 실행되는 함수
     const handleEntranceTextInputChange = (e) => {
-        setTextInputForEntrance(e.target.value);  // 공동현관 비밀번호 값을 상태에 저장
+        setTextInputForEntrance(e.target.value);
     };
 
     // 기타 입력 시 실행되는 함수
     const handleOtherTextInputChange = (e) => {
-        setTextInputForOther(e.target.value);  // 기타 값을 상태에 저장
+        setTextInputForOther(e.target.value);
     };
 
     // 모달 닫기 및 저장
     const saveAndCloseModal = () => {
-        // '공동현관 비밀번호' 옵션이 선택된 경우 해당 TextInput 값을 deliveryMethod에 반영
         if (selectedOption === '공동현관 비밀번호') {
-            setDeliveryMethod(`공동현관 비밀번호 : ${textInputForEntrance}`);  // 공동현관 비밀번호 값 저장
-        } 
-        // '기타' 옵션이 선택된 경우 해당 TextInput 값을 deliveryMethod에 반영
-        else if (selectedOption === '기타') {
-            setDeliveryMethod(`기타 : ${textInputForOther}`);  // 기타 값 저장
-        } 
-        // 다른 옵션이 선택된 경우 해당 라디오 버튼 값을 저장
-        else {
+            setDeliveryMethod(`공동현관 비밀번호 : ${textInputForEntrance}`);
+        } else if (selectedOption === '기타') {
+            setDeliveryMethod(`기타 : ${textInputForOther}`);
+        } else {
             setDeliveryMethod(selectedOption);
         }
-            setIsModalOpen(false);  // 모달 닫기
+        setIsModalOpen(false);
     };
-        // 모달 열기
+
+    // 모달 열기
     const openModal = () => {
         setIsModalOpen(true);
     };
@@ -61,52 +79,59 @@ const Payment = () => {
         setIsModalOpen(false);
     };
 
+    // 결제 버튼 클릭 시 실행되는 함수
+    const handlePaymentButtonClick = () => {
+        if (paymentMethod === '카드&간편결제') {
+            requestPayment();
+        }
+    };
 
     return (
         <PaymentPage>
-        <Header>
-            <BackButton>{'<'}</BackButton> {/* 뒤로가기 버튼 */}
-            <Title>주문 / 결제</Title>
-        </Header>
-        
-        <Section>
-            <SectionTitle>주문자 | 배송지</SectionTitle>
-            <AddressDetails>
-            <p><strong>고창준</strong> <DefaultBadge>기본배송지</DefaultBadge> <EditButton>변경</EditButton></p>
-            <p>경기 성남시 엘지구 엘지로 101 (엘지동) 엘지마을, 엘지아파트 104동 1004호</p>
-            <p>고창준 010-1111-1111</p>
-            </AddressDetails>
+            <Header>
+                <BackButton>{'<'}</BackButton> {/* 뒤로가기 버튼 */}
+                <Title>주문 / 결제</Title>
+            </Header>
+            
+            {/* 주문자 | 배송지 섹션 */}
+            <Section>
+                <SectionTitle>주문자 | 배송지</SectionTitle>
+                <AddressDetails>
+                    <p><strong>고창준</strong> <DefaultBadge>기본배송지</DefaultBadge> <EditButton>변경</EditButton></p>
+                    <p>경기 성남시 엘지구 엘지로 101 (엘지동) 엘지마을, 엘지아파트 104동 1004호</p>
+                    <p>고창준 010-1111-1111</p>
+                </AddressDetails>
 
-            <InputGroup>
-            <LabelWrapper>
-                <label>배송지 출입방법 *</label>
-            </LabelWrapper>
-            <InputWrapper>
-                <Input 
-                type="text" 
-                value={deliveryMethod}  // 선택된 옵션이 input에 반영됨
-                readOnly
-                placeholder="공동현관 비밀번호 #1234" 
-                />
-                <EditButton onClick={openModal}>변경</EditButton> {/* 변경 버튼 클릭 시 모달 열기 */}
-            </InputWrapper>
-            </InputGroup>
+                <InputGroup>
+                    <LabelWrapper>
+                        <label>배송지 출입방법 *</label>
+                    </LabelWrapper>
+                    <InputWrapper>
+                        <Input 
+                            type="text" 
+                            value={deliveryMethod}
+                            readOnly
+                            placeholder="공동현관 비밀번호 #1234"
+                        />
+                        <EditButton onClick={openModal}>변경</EditButton> {/* 변경 버튼 클릭 시 모달 열기 */}
+                    </InputWrapper>
+                </InputGroup>
 
-            <InputGroup>
-            <LabelWrapper>
-                <label>배송지 메모</label>
-            </LabelWrapper>
-            <InputWrapper>
-                <Input 
-                type="text" 
-                value={deliveryNote} 
-                onChange={(e) => setDeliveryNote(e.target.value)} 
-                placeholder="메모를 입력해주세요." 
-                />
-                <EditButton>변경</EditButton>
-            </InputWrapper>
-            </InputGroup>
-        </Section>
+                <InputGroup>
+                    <LabelWrapper>
+                        <label>배송지 메모</label>
+                    </LabelWrapper>
+                    <InputWrapper>
+                        <Input 
+                            type="text" 
+                            value={deliveryNote} 
+                            onChange={(e) => setDeliveryNote(e.target.value)} 
+                            placeholder="메모를 입력해주세요."
+                        />
+                        <EditButton>변경</EditButton>
+                    </InputWrapper>
+                </InputGroup>
+            </Section>
 
         {/* 모달 팝업 */}
         {isModalOpen && (
@@ -180,75 +205,86 @@ const Payment = () => {
             </ModalOverlay>
         )}
 
-        <Section>
-            <SectionTitle>포인트</SectionTitle>
-            <PointsBox>
-            <Input readOnly value={`사용 가능한 포인트 ${points.toLocaleString()} P`} />
-            <Button>전액사용</Button>
-            </PointsBox>
-        </Section>
+            {/* 포인트 섹션 */}
+            <Section>
+                <SectionTitle>포인트</SectionTitle>
+                <PointsBox>
+                    <Input readOnly value={`사용 가능한 포인트 ${points.toLocaleString()} P`} />
+                    <Button>전액사용</Button>
+                </PointsBox>
+            </Section>
 
-        <Section>
-            <SectionTitle>결제수단</SectionTitle>
-            <PaymentMethods>
-            <label>
-                <input 
-                type="radio" 
-                name="payment" 
-                value="카드&간편결제" 
-                onChange={() => handlePaymentChange('카드&간편결제')}
-                />
-                카드&간편결제
-            </label>
-            <label>
-                <input 
-                type="radio" 
-                name="payment" 
-                value="무통장입금" 
-                onChange={() => handlePaymentChange('무통장입금')}
-                />
-                무통장입금
-            </label>
-            <label>
-                <input 
-                type="radio" 
-                name="payment" 
-                value="핸드폰" 
-                onChange={() => handlePaymentChange('핸드폰')}
-                />
-                핸드폰
-            </label>
-            </PaymentMethods>
-        </Section>
+            {/* 결제수단 섹션 */}
+            <Section>
+                <SectionTitle>결제수단</SectionTitle>
+                <PaymentMethods>
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="payment" 
+                            value="카드&간편결제"
+                            onChange={() => handlePaymentChange('카드&간편결제')}
+                        />
+                        카드&간편결제
+                    </label>
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="payment" 
+                            value="무통장입금"
+                            onChange={() => handlePaymentChange('무통장입금')}
+                        />
+                        무통장입금
+                    </label>
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="payment" 
+                            value="핸드폰"
+                            onChange={() => handlePaymentChange('핸드폰')}
+                        />
+                        핸드폰
+                    </label>
+                </PaymentMethods>
+            </Section>
 
-        <Section>
-            <SectionTitle>결제금액</SectionTitle>
-            <OrderSummary>
-            <p>총 상품 금액: <span>37,000원</span></p>
-            <p>배송비: <span>0원</span></p>
-            <p>쿠폰 사용: <span>0원</span></p>
-            <p>포인트 사용: <span>0원</span></p>
-            </OrderSummary>
-            <FinalAmount>
-            <p>최종 결제 금액: <span>37,000원</span></p>
-            <p>37 P 적립 예정</p>
-            </FinalAmount>
-        </Section>
+            {/* 결제금액 섹션 */}
+            <Section>
+                <SectionTitle>결제금액</SectionTitle>
+                {orderDetails ? (
+                    <>
+                        <OrderSummary>
+                            <p>총 상품 금액: <span>{orderDetails.totalAmount}원</span></p>
+                            <p>배송비: <span>{orderDetails.shippingFee}원</span></p>
+                            <p>쿠폰 사용: <span>{orderDetails.couponDiscount}원</span></p>
+                            <p>포인트 사용: <span>{orderDetails.pointsUsed}원</span></p>
+                        </OrderSummary>
+                        <FinalAmount>
+                            <p>최종 결제 금액: <span>{orderDetails.finalAmount}원</span></p>
+                            <p>{orderDetails.pointsEarned} P 적립 예정</p>
+                        </FinalAmount>
+                    </>
+                ) : (
+                    <p>로딩 중...</p>
+                )}
+            </Section>
 
-        <Section>
-            <TermsLabel>
-            <input type="checkbox" />
-            주문 내용을 확인했으며 결제에 동의합니다. (필수)
-            </TermsLabel>
-            <TermsLabel>
-            <input type="checkbox" />
-            개인정보 수집 이용 및 제 3자 제공 동의 (필수)
-            </TermsLabel>
-        </Section>
+            {/* 동의 섹션 */}
+            <Section>
+                <TermsLabel>
+                    <input type="checkbox" />
+                    주문 내용을 확인했으며 결제에 동의합니다. (필수)
+                </TermsLabel>
+                <TermsLabel>
+                    <input type="checkbox" />
+                    개인정보 수집 이용 및 제 3자 제공 동의 (필수)
+                </TermsLabel>
+            </Section>
 
-        <PaymentButton>
-            37,000원 결제하기
-        </PaymentButton>
+            {/* 결제 버튼 */}
+            <PaymentButton onClick={handlePaymentButtonClick}>
+                {orderDetails ? `${orderDetails.finalAmount}원 결제하기` : '결제하기'}
+            </PaymentButton>
         </PaymentPage>
     );
 };

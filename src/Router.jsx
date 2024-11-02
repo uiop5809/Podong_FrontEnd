@@ -22,6 +22,9 @@ import PetRegisterPage from "./pages/RegisterPage/PetRegisterPage.jsx";
 import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
 import SideNav from "./components/common/SideNav.jsx";
 import WalkPage from "./pages/WalkPage/WalkPage.jsx";
+import Payment from "./pages/PaymentPage/Payment.jsx";
+import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
+import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
 
 function Router() {
@@ -31,7 +34,7 @@ function Router() {
       <NavSelector />
       <Routes>
         <Route path="/" element={<Outlet />}>
-          <Route index element={<MainPage />} />
+          <Route index element={<Payment />} />
           <Route path="login" element={<LoginPage />} />
           <Route
             path="shoppingDetail/:productId"
