@@ -307,7 +307,7 @@ const RegisterMissing = () => {
           <SubTitle>위치 정보</SubTitle>
           <InputContainer>
             <StyledInput value={locationInput} readOnly />
-            <EditButton onClick={getCurrentLocation}>위치 확인</EditButton>
+            <EditButton onClick={getCurrentLocation}>현재 위치</EditButton>
           </InputContainer>
           <SubTitle>실종 날짜</SubTitle>
           <DateContainer>
