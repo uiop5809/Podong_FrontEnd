@@ -208,13 +208,12 @@ const Comment1 = styled(IoChatbubbleEllipsesOutline)`
 `;
 const Contents = styled.div`
   font-size: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-top: 10px;
 `;
-const Line = styled.hr`
-  border: none;   
+const Line = styled.div`  
   border-top: 1px solid #FF6E00;
-  margin-bottom: 20px;
+  margin: 10px 0px;
 `;
 const User2 = styled.div`
   display: flex;

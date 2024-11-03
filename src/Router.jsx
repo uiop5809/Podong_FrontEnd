@@ -26,13 +26,10 @@ import Payment from "./pages/PaymentPage/Payment.jsx";
 import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
 import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
-<<<<<<< HEAD
 import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
 import CommunityList from './pages/CommunityPage/CommunityList.jsx';
 import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
 
-=======
->>>>>>> 46d73af3923b0937b40a6c9d65d1e0946b6c6be0
 function Router() {
   return (
     <BrowserRouter>
@@ -51,22 +48,12 @@ function Router() {
             <Route path="write" element={<NanumWrite />} />
             <Route path="detail/:no" element={<NanumDetail />} />
           </Route>
-<<<<<<< HEAD
-
           <Route path="community" element={<Outlet />}>
-            <Route index element={<CommunityList/>} />
+            <Route index element={<CommunityList />} />
             <Route path="write" element={<ComunityWrite />} />
             <Route path="detail/:no" element={<CommunityDetail />} />
           </Route>
-
-          <Route path="community" element={<Outlet />}>
-            <Route index element={<CommunityList/>} />
-            <Route path="write" element={<ComunityWrite />} />
-            <Route path="detail/:no" element={<CommunityDetail />} />
-          </Route>
-
-=======
->>>>>>> 46d73af3923b0937b40a6c9d65d1e0946b6c6be0
+          
           <Route path="userRegister/:userId" element={<UserRegisterPage />} />
           <Route path="petRegister" element={<PetRegisterPage />} />
           <Route path="walking" element={<WalkPage />} />
