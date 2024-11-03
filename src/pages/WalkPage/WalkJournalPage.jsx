@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
+import MonthlySummary from "../../components/walking/MonthlySummary";
 
 const WalkingJournal = () => {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [walkingLogs] = useState({
     "2024-11-01": { duration: "30:00", distance: "2.5" },
     "2024-11-03": { duration: "45:00", distance: "3.8" },
@@ -49,47 +51,53 @@ const WalkingJournal = () => {
     setSelectedDate(date);
   };
 
-  return (
-    <StyledCard>
-      <StyledCardContent>
-        <CalendarContainer>
-          <StyledCalendar
-            onChange={handleDateClick}
-            value={selectedDate}
-            tileContent={tileContent}
-            tileClassName={tileClassName}
-          />
-        </CalendarContainer>
+  const handleMonthChange = ({ activeStartDate }) => {
+    setSelectedMonth(activeStartDate);
+  };
 
-        {selectedDate && (
-          <LogContainer>
-            <LogTitle>
-              {selectedDate.toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </LogTitle>
-            {walkingLogs[formatDate(selectedDate)] ? (
-              <LogDetails>
-                <LogItem>
-                  산책 시간: {walkingLogs[formatDate(selectedDate)].duration}
-                </LogItem>
-                <LogItem>
-                  산책 거리: {walkingLogs[formatDate(selectedDate)].distance}km
-                </LogItem>
-              </LogDetails>
-            ) : (
-              <NoLogMessage>산책 기록이 없습니다.</NoLogMessage>
-            )}
-          </LogContainer>
-        )}
-      </StyledCardContent>
-      <br />
-      <br />
-      <br />
-      <br />
-    </StyledCard>
+  return (
+    <>
+      <MonthlySummary selectedMonth={selectedMonth} walkingLogs={walkingLogs} />
+
+      <StyledCard>
+        <StyledCardContent>
+          <CalendarContainer>
+            <StyledCalendar
+              onChange={handleDateClick}
+              value={selectedDate}
+              tileContent={tileContent}
+              tileClassName={tileClassName}
+              onActiveStartDateChange={handleMonthChange}
+            />
+          </CalendarContainer>
+
+          {selectedDate && (
+            <LogContainer>
+              <LogTitle>
+                {selectedDate.toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </LogTitle>
+              {walkingLogs[formatDate(selectedDate)] ? (
+                <LogDetails>
+                  <LogItem>
+                    산책 시간: {walkingLogs[formatDate(selectedDate)].duration}
+                  </LogItem>
+                  <LogItem>
+                    산책 거리: {walkingLogs[formatDate(selectedDate)].distance}
+                    km
+                  </LogItem>
+                </LogDetails>
+              ) : (
+                <NoLogMessage>산책 기록이 없습니다.</NoLogMessage>
+              )}
+            </LogContainer>
+          )}
+        </StyledCardContent>
+      </StyledCard>
+    </>
   );
 };
 
@@ -100,7 +108,7 @@ const StyledCard = styled.div`
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  transform: translateY(-20px);
+  transform: translateY(-60px);
 `;
 
 const StyledCardContent = styled.div`
