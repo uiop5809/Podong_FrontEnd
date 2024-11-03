@@ -46,10 +46,10 @@ const MonthlySummary = ({ selectedMonth, walkingLogs }) => {
           <SummaryLabel>누적 산책 시간</SummaryLabel>
           <SummaryValue>{totalTime}</SummaryValue>
         </SummaryCard>
-        <SummaryCard>
+        <DistanceCard>
           <SummaryLabel>누적 산책 거리</SummaryLabel>
           <SummaryValue>{totalDistance}km</SummaryValue>
-        </SummaryCard>
+        </DistanceCard>
       </SummaryCards>
     </SummaryContainer>
   );
@@ -85,6 +85,10 @@ const SummaryCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;
+`;
+
+const DistanceCard = styled(SummaryCard)`
+  background-color: #fec079;
 `;
 
 const SummaryLabel = styled.p`
