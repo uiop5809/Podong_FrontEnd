@@ -26,7 +26,6 @@ import Payment from "./pages/PaymentPage/Payment.jsx";
 import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
 import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
-
 function Router() {
   return (
     <BrowserRouter>
@@ -40,26 +39,20 @@ function Router() {
             path="shoppingDetail/:productId"
             element={<ShoppingDetail />}
           />
-
           <Route path="nanumList" element={<Outlet />}>
             <Route index element={<NanumList />} />
             <Route path="write" element={<NanumWrite />} />
             <Route path="detail/:no" element={<NanumDetail />} />
           </Route>
-
           <Route path="userRegister/:userId" element={<UserRegisterPage />} />
-          
           <Route path="petRegister" element={<PetRegisterPage />} />
-
           <Route path="walking" element={<WalkPage />} />
-
           <Route path="myPage" element={<Outlet />}>
             <Route index element={<MyPage />} />
             <Route path="editPetRegister" element={<PetEditPage />} />
             <Route path="editUserRegister" element={<UserEditPage />} />
             <Route path="missingSave" element={<RegisterMissingSavePage />} />
             <Route path="missingRegister" element={<RegisterMissing />} />
-            
           </Route>
         </Route>
       </Routes>
@@ -67,7 +60,6 @@ function Router() {
     </BrowserRouter>
   );
 }
-
 function NavSelector() {
   const location = useLocation();
   const path = location.pathname;
@@ -78,8 +70,6 @@ function NavSelector() {
     "/myPage",
   ];
   const isNavPath = navPaths.some((navPath) => path.startsWith(navPath));
-
   return isNavPath ? <SideNav /> : <MainNav />;
 }
-
 export default Router;
