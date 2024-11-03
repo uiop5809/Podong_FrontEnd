@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import { HiOutlineShoppingCart } from "react-icons/hi";
-import { FaRegUserCircle, FaRegBell } from "react-icons/fa";
-import { HiArrowLeft } from "react-icons/hi";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { FaRegUserCircle, FaRegBell } from 'react-icons/fa';
+import { PiDogBold } from 'react-icons/pi';
+import { Link } from 'react-router-dom';
 
-const SideNav = () => {
+const MainNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,65 +17,25 @@ const SideNav = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  const pageTitles = [
-    { path: "/shoppingDetail", title: "상품상세정보" },
-    { path: "/cart", title: "장바구니" },
-    { path: "/payment", title: "주문&결제" },
-    { path: "/nanumList", title: "나눔 목록" },
-    { path: "/nanumList/write", title: "나눔 글 작성" },
-    { path: "/nanumDetail", title: "나눔상세정보" },
-    { path: "/health", title: "건강관리" },
-    { path: "/walking", title: "산책 시작" },
-    { path: "/walkingRecord", title: "산책일지" },
-    { path: "/community", title: "커뮤니티" },
-    { path: "/communityDetail", title: "상세 정보" },
-    { path: "/communityWrite", title: "커뮤니티 작성" },
-    { path: "/myPage", title: "마이 페이지" },
-    { path: "/myPage/editUserRegister", title: "회원 정보 수정" },
-    { path: "/myPage/editPetRegister", title: "응애 정보 수정" },
-    { path: "/myPage/missingRegister", title: "실종 등록" },
-    { path: "/myPage/missingSave", title: "실종 등록 완료" },
-    { path: "/orderList", title: "주문 내역" },
-    { path: "/orderList/orderDetail", title: "주문 상세" },
-    { path: "/orderList/orderDetail/orderCancel", title: "주문 취소" },
-    { path: "/alert", title: "알림" },
-  ];
-
-  const getPageTitle = (pathname) => {
-    const exactMatch = pageTitles.find((page) => page.path === pathname);
-    if (exactMatch) return exactMatch.title;
-
-    const partialMatch = pageTitles.find((page) =>
-      pathname.startsWith(page.path)
-    );
-    return partialMatch ? partialMatch.title : "제목";
-  };
-
-  const pageTitle = getPageTitle(location.pathname);
-
   const icons = [
-    { icon: <FaRegBell />, link: "/notifications" },
-    { icon: <HiOutlineShoppingCart size={17} />, link: "/cart" },
-    { icon: <FaRegUserCircle />, link: "/Login" },
+    { icon: <FaRegBell />, link: '/notifications' },
+    { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
+    { icon: <FaRegUserCircle />, link: '/Login' },
   ];
 
   return (
     <>
       <Navbar $isScrolled={isScrolled}>
-        <BackBtn
-          onClick={() => {
-            navigate(-1); // 한 단계 뒤로 이동
-          }}
-        >
-          <HiArrowLeft size={18} />
-        </BackBtn>
-        <SideNaveTitle>{pageTitle}</SideNaveTitle>
+        <AnimalWrap>
+          <PiDogBold color="#FF6E00" />
+          <AnimalName>반려동물 이름</AnimalName>
+        </AnimalWrap>
         <NavIconWrap>
           {icons.map((item, index) => (
             <Link to={item.link} key={index}>
@@ -90,7 +48,7 @@ const SideNav = () => {
   );
 };
 
-export default SideNav;
+export default MainNav;
 
 const Navbar = styled.div`
   position: fixed;
@@ -102,9 +60,8 @@ const Navbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${({ $isScrolled }) =>
-    $isScrolled ? "rgba(255, 255, 255, 0.7)" : "#ffffff"};
-  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? "blur(4px)" : "none")};
+  background-color: ${({ $isScrolled }) => ($isScrolled ? 'rgba(255, 255, 255, 0.7)' : '#ffffff')};
+  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? 'blur(4px)' : 'none')};
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 
   @media (min-width: 375px) {
@@ -115,18 +72,26 @@ const Navbar = styled.div`
     width: 100vw;
   }
 `;
-const BackBtn = styled.button`
-  width: 75px;
-  display: flex;
-  justify-content: start;
-`;
-const SideNaveTitle = styled.div`
-  font-size: 18px;
+
+const AnimalWrap = styled.div`
+  @font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  font-family: 'yg-jalnan';
   font-weight: bold;
-  padding-bottom: 2px;
+  display: flex;
+  align-items: center;
 `;
+
+const AnimalName = styled.div`
+  margin-left: 4px;
+`;
+
 const NavIconWrap = styled.div`
-  width: 75px;
+  width: 90px;
   display: flex;
   justify-content: space-between;
 `;
