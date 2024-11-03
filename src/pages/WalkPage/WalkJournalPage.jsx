@@ -5,6 +5,7 @@ import MonthlySummary from "../../components/walking/MonthlySummary";
 import noWalkingAnimation from "../../components/walking/noWalking.json";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
+import { images } from "../../components/Images";
 
 const WalkingJournal = () => {
   const navigate = useNavigate();
@@ -91,11 +92,21 @@ const WalkingJournal = () => {
               {walkingLogs[formatDate(selectedDate)] ? (
                 <LogDetails>
                   <LogItem>
-                    산책 시간: {walkingLogs[formatDate(selectedDate)].duration}
+                    <img src={images.walkingDistance} alt="산책 시간" />
+                    <div>
+                      <h5>산책 시간</h5>
+                      <p>{walkingLogs[formatDate(selectedDate)].duration}</p>
+                    </div>
                   </LogItem>
                   <LogItem>
-                    산책 거리: {walkingLogs[formatDate(selectedDate)].distance}
-                    km
+                    <img src={images.walkingTime} alt="산책 시간" />
+                    <div>
+                      <h5>산책 거리</h5>
+                      <p>
+                        {walkingLogs[formatDate(selectedDate)].distance}
+                        km
+                      </p>
+                    </div>
                   </LogItem>
                 </LogDetails>
               ) : (
@@ -230,13 +241,31 @@ const LogTitle = styled.h3`
 
 const LogDetails = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-around;
+  margin: 30px 0;
 `;
 
 const LogItem = styled.p`
   font-size: 0.875rem;
   color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  h5 {
+    font-size: 12px;
+    color: #818181;
+  }
+  p {
+    font-size: 16px;
+    font-weight: 800;
+  }
 `;
 
 const NoLogMessage = styled.p`

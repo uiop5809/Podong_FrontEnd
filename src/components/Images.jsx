@@ -45,4 +45,6 @@ export const images = {
   walkStopWatch: "/images/walk/walkStopWatch.svg",
   walkAnimation: "/images/walk/walkHeader.json",
   missingPet: "/images/walk/missingPet.svg",
+  walkingTime: "/images/walk/walkingTime.svg",
+  walkingDistance: "/images/walk/walkingDistance.svg",
 };
