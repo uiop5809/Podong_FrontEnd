@@ -5,10 +5,11 @@
 */
 export const images = {
   // common
-  cameraIcon: '/images/common/cameraIcon.svg',
-  loginDogCat: '/images/common/loginDogCat.svg',
-  logo: '/images/common/logo.svg',
-  paw: '/images/common/paw.svg',
+  cameraIcon: "/images/common/cameraIcon.svg",
+  loginDogCat: "/images/common/loginDogCat.svg",
+  logo: "/images/common/logo.svg",
+  paw: "/images/common/paw.svg",
+  cancel: "/images/common/cancelButton.svg",
 
   // community
   categoryAll: "/images/community/categoryAll.svg",
@@ -52,4 +53,7 @@ export const images = {
   walkMap: "/images/walk/walkMap.svg",
   walkStopWatch: "/images/walk/walkStopWatch.svg",
   walkAnimation: "/images/walk/walkHeader.json",
+  missingPet: "/images/walk/missingPet.svg",
+  walkingTime: "/images/walk/walkingTime.svg",
+  walkingDistance: "/images/walk/walkingDistance.svg",
 };

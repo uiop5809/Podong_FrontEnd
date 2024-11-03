@@ -1,12 +1,12 @@
-import WalkingMap from "../../components/walking/WalkingMap.jsx";
 import WalkingHeader from "../../components/walking/WalkingHeader.jsx";
 import styled from "styled-components";
+import { Outlet } from "react-router-dom";
 
 function WalkPage() {
   return (
     <Container>
       <WalkingHeader />
-      <WalkingMap />
+      <Outlet />
     </Container>
   );
 }

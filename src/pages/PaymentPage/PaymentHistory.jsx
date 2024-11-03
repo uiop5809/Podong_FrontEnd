@@ -9,7 +9,7 @@ const Container = styled.div`
 
 const SearchContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: center; 
   margin-bottom: 20px;
   background-color: #fff;
   padding: 10px;
