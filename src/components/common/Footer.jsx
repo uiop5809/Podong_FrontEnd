@@ -49,7 +49,7 @@ const Footer = () => {
       key: 'community',
       image: activeTab === '/community' ? images.communityIconOn : images.communityIconOff,
       text: '집사생활',
-      link: '/petRegister',
+      link: '/userRegister/:userId',
     },
   ];
 
