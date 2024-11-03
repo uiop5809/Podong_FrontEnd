@@ -28,6 +28,9 @@ import Payment from "./pages/PaymentPage/Payment.jsx";
 import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
 import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
+import PayListTest from "./pages/PaymentPage/paylisttest.jsx";
+import PaymentCancelList from "./pages/PaymentPage/PaymentCancelList.jsx";
+import PaymentHistory from "./pages/PaymentPage/PaymentHistory.jsx";
 import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
 import CommunityList from './pages/CommunityPage/CommunityList.jsx';
 import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
@@ -35,16 +38,24 @@ import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
 function Router() {
   return (
     <BrowserRouter>
-      <ScrollTop />
-      <NavSelector />
+      {/* <ScrollTop /> */}
+      {/* <NavSelector /> */}
       <Routes>
         <Route path="/" element={<Outlet />}>
-          <Route index element={<Payment />} />
+          <Route index element={<MainPage/>} />
           <Route path="login" element={<LoginPage />} />
           <Route
             path="shoppingDetail/:productId"
             element={<ShoppingDetail />}
           />
+
+        <Route path="payment" element={<Payment />} /> 
+        <Route path="paymentCancelList" element={<PaymentCancelList />}/>
+        <Route path="paymentEnd" element={<PaymentEnd />}/>
+        <Route path="paymentHistory" element={<PaymentHistory />}/>
+        <Route path="cancelpay" element={<CancelPay />}/>
+        <Route path="paymentlist" element={<PayListTest />}/>
+
           <Route path="nanumList" element={<Outlet />}>
             <Route index element={<NanumList />} />
             <Route path="write" element={<NanumWrite />} />

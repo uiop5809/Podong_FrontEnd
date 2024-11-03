@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
-// 결제1차백
+
 const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [deliveryNote, setDeliveryNote] = useState('');
