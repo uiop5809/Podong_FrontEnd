@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
 import styled from 'styled-components';
-import dummyData from '../../dummy.json';
 import { Link } from 'react-router-dom';
+import { images } from '../../components/Images';
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
@@ -13,46 +13,51 @@ const MainPage = () => {
   const [page, setPage] = useState(1);
   const [pageRange, setPageRange] = useState([1]);
   const [searchQuery, setSearchQuery] = useState('');
-  const useDummyData = true;
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const itemsPerPage = 8;
 
   const tabs = ['댕댕이', '고냥이'];
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
 
-  const shoppingData = async () => {
-    if (useDummyData) {
-      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
+  const carouselImages = [
+    images.carouselImage1,
+    images.carouselImage2,
+    images.carouselImage3,
+    images.carouselImage4,
+    images.carouselImage5,
+    images.carouselImage6,
+    images.carouselImage7,
+    images.carouselImage8,
+  ];
+
+  const handleNextImage = () => {
+    setCarouselIndex(prevIndex => (prevIndex + 1) % carouselImages.length);
+  };
+
+  const handlePrevImage = () => {
+    setCarouselIndex(prevIndex =>
+      prevIndex === 0 ? carouselImages.length - 1 : (prevIndex - 1 + carouselImages.length) % carouselImages.length,
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(handleNextImage, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/products');
+      const products = response.data || [];
+      const filteredData = products.filter(
+        item =>
+          item.productTitle.includes(searchQuery) &&
+          (activeCategory === '전체' || item.productCategory2 === activeCategory),
+      );
       setData(filteredData);
       updatePageRange(filteredData.length);
-      console.log('Using dummy data:', filteredData);
-    } else {
-      const URL = '/v1/search/shop.json';
-      const ClientID = 'pbrU5z9Fz5jVwPM575m5';
-      const ClientSecret = 'En9XTv8UVY';
-
-      const categoryQuery = activeCategory === '전체' ? '' : ` ${activeCategory}`;
-      const finalQuery = `강아지${categoryQuery}${searchQuery ? ` ${searchQuery}` : ''}`;
-      console.log('Final Query:', finalQuery);
-
-      try {
-        const response = await axios.get(URL, {
-          params: {
-            query: finalQuery,
-            display: 50,
-          },
-          headers: {
-            'X-Naver-Client-Id': ClientID,
-            'X-Naver-Client-Secret': ClientSecret,
-          },
-        });
-        console.log('Response Data:', response.data.items);
-        setData(response.data.items || []);
-        updatePageRange(response.data.items.length); // 검색된 데이터 길이에 따라 페이지 범위 업데이트
-      } catch (error) {
-        console.error('Error fetching shopping data:', error);
-        setData([]);
-        updatePageRange(0); // 데이터가 없을 경우 페이지 범위를 초기화
-      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -60,32 +65,24 @@ const MainPage = () => {
     const totalPageCount = Math.ceil(dataLength / itemsPerPage);
     const newRange = Array.from({ length: Math.min(totalPageCount, 5) }, (_, idx) => idx + 1);
     setPageRange(newRange);
-    setPage(1); // 검색 시 첫 페이지로 이동
+    setPage(1);
   };
 
   useEffect(() => {
-    shoppingData();
+    fetchData();
   }, [activeCategory, searchQuery]);
 
   const paginatedData = data.length > 0 ? data.slice((page - 1) * itemsPerPage, page * itemsPerPage) : [];
 
-  const handlePageChange = newPage => {
-    setPage(newPage);
-  };
+  const handlePageChange = newPage => setPage(newPage);
 
-  const handleSearch = () => {
-    shoppingData();
-  };
+  const handleSearch = () => fetchData();
 
   const handleNextPageRange = () => {
     const maxPage = Math.ceil(data.length / itemsPerPage);
     if (pageRange[pageRange.length - 1] < maxPage) {
       const nextRangeStart = pageRange[pageRange.length - 1] + 1;
-      const newRange = Array.from(
-        { length: Math.min(5, maxPage - nextRangeStart + 1) },
-        (_, idx) => nextRangeStart + idx,
-      );
-      setPageRange(newRange);
+      setPageRange(Array.from({ length: Math.min(5, maxPage - nextRangeStart + 1) }, (_, idx) => nextRangeStart + idx));
       setPage(nextRangeStart);
     }
   };
@@ -93,19 +90,25 @@ const MainPage = () => {
   const handlePrevPageRange = () => {
     if (pageRange[0] > 1) {
       const prevRangeStart = pageRange[0] - 5;
-      const newRange = Array.from({ length: 5 }, (_, idx) => prevRangeStart + idx);
-      setPageRange(newRange);
+      setPageRange(Array.from({ length: 5 }, (_, idx) => prevRangeStart + idx));
       setPage(prevRangeStart);
     }
   };
 
   return (
     <>
-      <MainCarousel>캐러셀</MainCarousel>
+      <CarouselContainer>
+        <CarouselImagesWrap>
+          <CarouselImage src={carouselImages[carouselIndex]} alt={`carousel ${carouselIndex + 1}`} />
+          <CarouselImage
+            src={carouselImages[(carouselIndex + 1) % carouselImages.length]}
+            alt={`carousel ${carouselIndex + 2}`}
+          />
+        </CarouselImagesWrap>
+      </CarouselContainer>
       <TextWrap>
         <TextSm>
-          <MainTextColor>사랑하는 우리응애</MainTextColor>
-          용품 한 곳에서 해결하세요!
+          <MainTextColor>사랑하는 우리응애</MainTextColor>용품 한 곳에서 해결하세요!
         </TextSm>
         <SearchBarWrap>
           <SearchInputWrap>
@@ -138,9 +141,9 @@ const MainPage = () => {
         {paginatedData.map(product => (
           <ProductWrap key={product.productId}>
             <Link to={`/shoppingDetail/${product.productId}`} state={{ product }}>
-              <ProductImage src={product.image} alt={product.title} />
-              <ProductTitle>{product.title.replace(/<b>/g, '').replace(/<\/b>/g, '')}</ProductTitle>
-              <ProductPrice>{Number(product.lprice).toLocaleString()}원</ProductPrice>
+              <ProductImage src={product.productImage} alt={product.productTitle} />
+              <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
+              <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>
             </Link>
           </ProductWrap>
         ))}
@@ -167,14 +170,45 @@ const MainPage = () => {
 
 export default MainPage;
 
-const MainCarousel = styled.div`
+const CarouselContainer = styled.div`
+  position: relative;
   width: 100%;
   height: 140px;
-  background-color: #d9d9d9;
   margin-top: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const CarouselImagesWrap = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const CarouselImage = styled.img`
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+const CarouselButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8d8d8d;
+  border: none;
+  padding: 10px;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+
+  &:first-of-type {
+    left: 10px;
+  }
+  &:last-of-type {
+    right: 10px;
+  }
 `;
 
 const TextWrap = styled.div`
@@ -293,9 +327,9 @@ const ProductWrap = styled.div`
 
 const ProductImage = styled.img`
   width: 100%;
-  height: auto;
+  height: 147.5px;
   border-radius: 8px;
-  background-image: cover;
+  object-fit: cover;
 `;
 
 const ProductTitle = styled.div`
@@ -315,7 +349,7 @@ const ProductPrice = styled.div`
 const Pagination = styled.div`
   display: flex;
   justify-content: center;
-  margin: 0 0 80px 0;
+  padding: 0 0 80px 0;
 `;
 
 const PageButton = styled.button`
