@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Lottie from "react-lottie-player";
-import walkAnimation from "../../../public/images/walk/walkHeader.json";
+import walkAnimation from "./walkHeader.json";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const WalkingHeader = () => {
   const [name, setName] = useState("환타 왕자");
   const navigate = useNavigate();
-  const location = useLocation(); // 현재 경로 가져오기
+  const location = useLocation();
 
   const handleTabClick = (path) => {
     navigate(path);
