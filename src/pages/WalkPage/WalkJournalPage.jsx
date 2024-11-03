@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import MonthlySummary from "../../components/walking/MonthlySummary";
+import noWalkingAnimation from "../../components/walking/noWalking.json";
+import Lottie from "react-lottie-player";
+import { useNavigate } from "react-router-dom";
 
 const WalkingJournal = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [walkingLogs] = useState({
@@ -54,6 +58,9 @@ const WalkingJournal = () => {
   const handleMonthChange = ({ activeStartDate }) => {
     setSelectedMonth(activeStartDate);
   };
+  const handleGoButtonClick = () => {
+    navigate("/walking/map");
+  };
 
   return (
     <>
@@ -79,6 +86,7 @@ const WalkingJournal = () => {
                   month: "long",
                   day: "numeric",
                 })}
+                의 산책 기록🔥
               </LogTitle>
               {walkingLogs[formatDate(selectedDate)] ? (
                 <LogDetails>
@@ -91,7 +99,18 @@ const WalkingJournal = () => {
                   </LogItem>
                 </LogDetails>
               ) : (
-                <NoLogMessage>산책 기록이 없습니다.</NoLogMessage>
+                <NoLogMessage>
+                  <Lottie
+                    loop
+                    animationData={noWalkingAnimation}
+                    play
+                    style={{ width: 160, height: 160 }}
+                  />
+                  이날은 산책 기록이 없어요
+                  <GoWalkingButton onClick={handleGoButtonClick}>
+                    산책 하러가기
+                  </GoWalkingButton>
+                </NoLogMessage>
               )}
             </LogContainer>
           )}
@@ -200,16 +219,13 @@ const WalkingDot = styled.div`
 `;
 
 const LogContainer = styled.div`
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 8px;
+  padding-top: 20px;
 `;
 
 const LogTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 10px;
 `;
 
 const LogDetails = styled.div`
@@ -225,7 +241,36 @@ const LogItem = styled.p`
 
 const NoLogMessage = styled.p`
   font-size: 0.875rem;
-  color: #6b7280;
+  font-weight: 800;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  div {
+    width: 100%;
+    margin: 0 auto;
+  }
+`;
+
+const GoWalkingButton = styled.button`
+  background-color: #fff3f0;
+  color: #ff6e00;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 15px auto 0;
+
+  &:hover {
+    background-color: #ffe0d9;
+  }
+
+  &:active {
+    background-color: #ffd0c5;
+  }
 `;
 
 export default WalkingJournal;

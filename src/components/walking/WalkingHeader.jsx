@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Lottie from "react-lottie-player";
 import walkAnimation from "../../../public/images/walk/walkHeader.json";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const WalkingHeader = () => {
   const [name, setName] = useState("환타 왕자");
-  const [activeTab, setActiveTab] = useState("산책하기");
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 경로 가져오기
 
-  const handleTabClick = (tabName, path) => {
-    setActiveTab(tabName);
+  const handleTabClick = (path) => {
     navigate(path);
   };
 
@@ -30,14 +29,14 @@ const WalkingHeader = () => {
       </Header>
       <HeaderContainer>
         <Tab
-          selected={activeTab === "산책 하기"}
-          onClick={() => handleTabClick("산책 하기", "/walking/map")}
+          selected={location.pathname === "/walking/map"} // 현재 경로가 "/walking/map"인지 확인
+          onClick={() => handleTabClick("/walking/map")}
         >
           산책 하기
         </Tab>
         <Tab
-          selected={activeTab === "산책 일지"}
-          onClick={() => handleTabClick("산책 일지", "/walking/journal")}
+          selected={location.pathname === "/walking/journal"} // 현재 경로가 "/walking/journal"인지 확인
+          onClick={() => handleTabClick("/walking/journal")}
         >
           산책 일지
         </Tab>
