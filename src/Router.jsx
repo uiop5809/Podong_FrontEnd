@@ -22,6 +22,8 @@ import PetRegisterPage from "./pages/RegisterPage/PetRegisterPage.jsx";
 import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
 import SideNav from "./components/common/SideNav.jsx";
 import WalkPage from "./pages/WalkPage/WalkPage.jsx";
+import WalkMapPage from "./pages/WalkPage/WalkMapPage.jsx";
+import WalkJournalPage from "./pages/WalkPage/WalkJournalPage.jsx";
 import Payment from "./pages/PaymentPage/Payment.jsx";
 import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
 import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
@@ -29,6 +31,9 @@ import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
 import PayListTest from "./pages/PaymentPage/paylisttest.jsx";
 import PaymentCancelList from "./pages/PaymentPage/PaymentCancelList.jsx";
 import PaymentHistory from "./pages/PaymentPage/PaymentHistory.jsx";
+import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
+import CommunityList from './pages/CommunityPage/CommunityList.jsx';
+import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
 
 function Router() {
   return (
@@ -57,27 +62,34 @@ function Router() {
             <Route path="detail/:no" element={<NanumDetail />} />
           </Route>
 
+          <Route path="community" element={<Outlet />}>
+            <Route index element={<CommunityList/>} />
+            <Route path="write" element={<ComunityWrite />} />
+            <Route path="detail/:no" element={<CommunityDetail />} />
+          </Route>
+
           <Route path="userRegister/:userId" element={<UserRegisterPage />} />
-          
           <Route path="petRegister" element={<PetRegisterPage />} />
 
-          <Route path="walking" element={<WalkPage />} />
-
+          <Route path="walking" element={<WalkPage />}>
+            <Route path="map" element={<WalkMapPage />} />
+            <Route path="journal" element={<WalkJournalPage />} />
+          </Route>
+            
           <Route path="myPage" element={<Outlet />}>
             <Route index element={<MyPage />} />
             <Route path="editPetRegister" element={<PetEditPage />} />
             <Route path="editUserRegister" element={<UserEditPage />} />
             <Route path="missingSave" element={<RegisterMissingSavePage />} />
             <Route path="missingRegister" element={<RegisterMissing />} />
-            
           </Route>
+
         </Route>
       </Routes>
       <Footer />
     </BrowserRouter>
   );
 }
-
 function NavSelector() {
   const location = useLocation();
   const path = location.pathname;
@@ -88,8 +100,6 @@ function NavSelector() {
     "/myPage",
   ];
   const isNavPath = navPaths.some((navPath) => path.startsWith(navPath));
-
   return isNavPath ? <SideNav /> : <MainNav />;
 }
-
 export default Router;

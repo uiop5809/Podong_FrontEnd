@@ -396,7 +396,7 @@ const UserEditPage = () => {
     }
 
     try {
-      await axios.put(`http://localhost:8080/api/users/${storedUserId}`, {
+      await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
         phoneNumber,
         address,
@@ -526,7 +526,7 @@ const UserEditPage = () => {
           </ThirdToggleContainer>
         </SubContainer>
       </Container>
-      <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
+      <RegisterButton onClick={handleRegister}>저장하기</RegisterButton> 
     </ScrollableContainer>
   );
 };
