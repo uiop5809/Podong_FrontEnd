@@ -2,8 +2,18 @@ import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import WalkingTimer from "./WalkingTimer";
 import MissingPetAlert from "./MissingPetAlert";
+import { images } from "../Images";
 
 const { kakao } = window;
+
+const sampleMissingPet = {
+  name: "멍멍이",
+  phone: "010-1234-5678",
+  image: `${images.missingPet}`,
+  description:
+    "아이를 발견하시면 즉시 연락 부탁드립니다. 아이는 사람을 좋아하고, 낯선 사람에게도 친근하게 다가갈 수 있습니다.",
+  radius: 300,
+};
 
 const WalkingMap = () => {
   const [map, setMap] = useState(null);
@@ -28,12 +38,6 @@ const WalkingMap = () => {
   const [isMissingPetAlertOpen, setIsMissingPetAlertOpen] = useState(false);
 
   const handleTimerStart = () => {
-    const sampleMissingPet = {
-      name: "멍멍이",
-      image: "https://via.placeholder.com/150",
-      description: "귀여운 강아지입니다.",
-      radius: 300,
-    };
     setMissingPet(sampleMissingPet);
     setMissingPetDistance(200);
     setIsMissingPetAlertOpen(true);

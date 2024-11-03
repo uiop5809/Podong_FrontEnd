@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { images } from "../Images";
 
 const MissingPetAlert = ({ pet, distance, isOpen, onClose }) => {
   if (!pet || !isOpen) return null;
@@ -8,22 +9,34 @@ const MissingPetAlert = ({ pet, distance, isOpen, onClose }) => {
     <>
       <AlertDialog open={isOpen} onClick={onClose}>
         <AlertDialogContent>
-          <AlertDialogHeader>
+          <AlertHeader>
             <AlertDialogTitle>
-              {distance}m 반경 내에 실종된 반려동물이 있습니다!
+              {distance}m 반경 내에 <br />
+              실종된 반려동물이 있습니다!
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              <PetImage src={pet.image} alt={pet.name} />
-              <PetInfo>
-                <PetName>{pet.name}</PetName>
-                <PetDescription>{pet.description}</PetDescription>
-                <PetRadius>
-                  반경 {pet.radius}m 이내에서 실종되었습니다
-                </PetRadius>
-              </PetInfo>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <button onClick={onClose}>확인</button>
+            <img src={images.cancel} onClick={onClose} />
+          </AlertHeader>
+          <AlertDialogDescription>
+            <PetInfo>
+              <InfoBox>
+                <Title>아이 이름</Title>
+                <Info>{pet.name}</Info>
+              </InfoBox>
+
+              <InfoBox>
+                <Title>휴대폰 번호</Title>
+                <Info>{pet.phone}</Info>
+              </InfoBox>
+
+              <InfoBox>
+                <ImageBox>
+                  <Title>사진</Title>
+                  <PetImage src={pet.image} alt={pet.name} />
+                </ImageBox>
+                <Description>{pet.description}</Description>
+              </InfoBox>
+            </PetInfo>
+          </AlertDialogDescription>
         </AlertDialogContent>
       </AlertDialog>
     </>
@@ -31,12 +44,6 @@ const MissingPetAlert = ({ pet, distance, isOpen, onClose }) => {
 };
 
 export default MissingPetAlert;
-
-const AlertDialogHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
 
 const AlertDialog = styled.div`
   display: ${({ open }) => (open ? "flex" : "none")};
@@ -51,6 +58,12 @@ const AlertDialog = styled.div`
   justify-content: center;
 `;
 
+const AlertHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const AlertDialogContent = styled.div`
   background: white;
   max-width: 20rem;
@@ -61,7 +74,7 @@ const AlertDialogContent = styled.div`
 `;
 
 const AlertDialogTitle = styled.h2`
-  font-size: 1.25rem;
+  font-size: 18px;
   font-weight: bold;
   color: #f97316;
 `;
@@ -73,31 +86,48 @@ const AlertDialogDescription = styled.div`
   margin-top: 1rem;
 `;
 
+const ImageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 const PetImage = styled.img`
   width: 6rem;
   height: 6rem;
-  border-radius: 50%;
+  border-radius: 10px;
   object-fit: cover;
   border: 2px solid #fb923c;
 `;
 
 const PetInfo = styled.div`
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
-const PetName = styled.p`
-  font-size: 1.125rem;
-  font-weight: 600;
+const Title = styled.div`
+  font-size: 15px;
+  font-weight: 800;
   color: #1f2937;
 `;
 
-const PetDescription = styled.p`
+const Description = styled.div`
   font-size: 0.875rem;
   color: #4b5563;
 `;
 
-const PetRadius = styled.p`
-  font-size: 0.875rem;
-  color: #2563eb;
-  margin-top: 0.5rem;
+const InfoBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+
+  div {
+    width: 100%;
+  }
+`;
+
+const Info = styled.div`
+  font-size: 15px;
+  color: #4b5563;
 `;
