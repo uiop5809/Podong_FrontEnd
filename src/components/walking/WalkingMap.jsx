@@ -13,6 +13,45 @@ const sampleMissingPet = {
   description:
     "아이를 발견하시면 즉시 연락 부탁드립니다. 아이는 사람을 좋아하고, 낯선 사람에게도 친근하게 다가갈 수 있습니다.",
   radius: 300,
+  location: {
+    latitude: 37.53716987316825,
+    longitude: 127.08617177992514,
+  },
+};
+
+// 두 지점 간의 거리를 계산하는 함수 (미터 단위)
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371e3;
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+// 경로와 특정 지점 사이의 최소 거리를 계산하는 함수
+const calculateMinDistanceToRoute = (routePath, point) => {
+  if (!routePath || routePath.length < 2) return Infinity;
+
+  let minDistance = Infinity;
+
+  for (let i = 0; i < routePath.length - 1; i++) {
+    const start = routePath[i];
+    const end = routePath[i + 1];
+    const distance = calculateDistance(
+      point.latitude,
+      point.longitude,
+      start.getLat(),
+      start.getLng()
+    );
+    minDistance = Math.min(minDistance, distance);
+  }
+  return minDistance;
 };
 
 const WalkingMap = () => {
@@ -36,11 +75,21 @@ const WalkingMap = () => {
   const [missingPet, setMissingPet] = useState(null);
   const [missingPetDistance, setMissingPetDistance] = useState(0);
   const [isMissingPetAlertOpen, setIsMissingPetAlertOpen] = useState(false);
+  const [routePath, setRoutePath] = useState([]);
 
   const handleTimerStart = () => {
-    setMissingPet(sampleMissingPet);
-    setMissingPetDistance(200);
-    setIsMissingPetAlertOpen(true);
+    if (!routePath.length) return;
+    const minDistance = calculateMinDistanceToRoute(
+      routePath,
+      sampleMissingPet.location
+    );
+
+    // 실종동물이 경로 반경 300m 이내에 있을 경우에만 알림을 표시
+    if (minDistance <= sampleMissingPet.radius) {
+      setMissingPet(sampleMissingPet);
+      setMissingPetDistance(Math.round(minDistance));
+      setIsMissingPetAlertOpen(true);
+    }
     setIsTimerStarted(true);
   };
 
@@ -155,20 +204,18 @@ const WalkingMap = () => {
       data.routes[0].sections[0].roads.forEach((road) => {
         road.vertexes.forEach((vertex, index) => {
           if (index % 2 === 0) {
-            linePath.push(
-              new kakao.maps.LatLng(
-                road.vertexes[index + 1],
-                road.vertexes[index]
-              )
+            const point = new kakao.maps.LatLng(
+              road.vertexes[index + 1],
+              road.vertexes[index]
             );
+            linePath.push(point);
           }
         });
       });
-      // 경로 길이 설정
+      setRoutePath(linePath);
       const distance = data.routes[0].summary.distance;
       setRouteDistance(distance);
 
-      // 경로선 그리기
       const newPolyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 5,
@@ -205,6 +252,7 @@ const WalkingMap = () => {
       polyline.setMap(null);
       setPolyline(null);
     }
+    setRoutePath([]);
     setTime(0);
     setIsStarted(false);
     setIsRunning(false);

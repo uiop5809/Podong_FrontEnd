@@ -11,10 +11,10 @@ const MissingPetAlert = ({ pet, distance, isOpen, onClose }) => {
         <AlertDialogContent>
           <AlertHeader>
             <AlertDialogTitle>
-              {distance}m 반경 내에 <br />
+              산책 경로 {distance}m 반경 내에 <br />
               실종된 반려동물이 있습니다!
             </AlertDialogTitle>
-            <img src={images.cancel} onClick={onClose} />
+            <CancelButton src={images.cancel} onClick={onClose} />
           </AlertHeader>
           <AlertDialogDescription>
             <PetInfo>
@@ -130,4 +130,10 @@ const InfoBox = styled.div`
 const Info = styled.div`
   font-size: 15px;
   color: #4b5563;
+`;
+
+const CancelButton = styled.img`
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
 `;
