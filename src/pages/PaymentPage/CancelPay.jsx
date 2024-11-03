@@ -4,13 +4,13 @@ import axios from "axios";
 const CancelPay = () => {
   // 결제 취소 함수
   const handleCancel = async () => {
-    // const imp_uid = "740599988108"; // 테스트용 결제번호
-    // const confirm = window.confirm(`${imp_uid} / 결제를 취소하시겠습니까?`);
+    const imp_uid = "imp_624092379683"; // 테스트용 결제번호
+    const confirm = window.confirm(`${imp_uid} / 결제를 취소하시겠습니까?`);
     if (confirm) {
       try {
         // Access token 요청
         const getToken = await axios({
-          url: "https://api.iamport.kr/users/getToken",
+          url: "/iamport/users/getToken",
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
@@ -34,15 +34,15 @@ const CancelPay = () => {
   const getCancelData = async (access_token, imp_uid) => {
     try {
       const response = await axios.post(
-        "https://api.iamport.kr/payments/cancel",
+        "/iamport/payments/cancel",
         {
-          imp_uid: 740599988108, // 주문번호 (필수)
+          imp_uid: "imp_624092379683", // 결제번호 (필수)
           cancel_request_amount: 1000
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: access_token, // 엑세스 토큰 (필수)
+            Authorization: `Bearer ${access_token}`, 
           },
         }
       );
