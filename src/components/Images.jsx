@@ -39,6 +39,15 @@ export const images = {
   hide: "/images/myPage/hide.svg",
   imseeJeojang: "/images/myPage/imseeJeojang.svg",
   myActivity: "/images/myPage/myActivity.svg",
+  bag: "/images/myPage/bag.svg",
+  calendar: "/images/myPage/calendar.svg",
+  coupon: "/images/myPage/coupon.svg",
+  missing: "/images/myPage/missing.svg",
+  paw: "/images/myPage/paw.svg",
+  point:"/images/myPage/point.svg",
+  review:"/images/myPage/review.svg",
+  
+
 
   // walk
   walkMap: "/images/walk/walkMap.svg",

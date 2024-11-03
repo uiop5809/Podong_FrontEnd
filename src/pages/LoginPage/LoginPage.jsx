@@ -1,27 +1,23 @@
 import styled from "styled-components";
 import { images } from "../../components/Images";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-    const handleKakaoLogin = () => {
-        const REST_API_KEY = 'f0fb0454cb68748fc7a9707be176e0c7';
-        const REDIRECT_URI = 'http://localhost:8080/test';
+    const navigate = useNavigate(); // useNavigate 훅 사용
 
-        // 카카오 인증 URL로 리다이렉트
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    };
+   
 
     return (
         <Container>
             <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
             <Title>지금 가입하면 5천원 즉시 할인!</Title>
             <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
-            <KakaoButton onClick={handleKakaoLogin}>카카오 계정으로 로그인</KakaoButton>
+            <KakaoButton ><a href="http://localhost:8080/api/oauth2/authorization/kakao">카카오 계정으로 로그인</a></KakaoButton>
             <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
-            <SkipButton>일단 둘러보기</SkipButton>
+            <SkipButton onClick={() => navigate('/main')}>일단 둘러보기</SkipButton>
         </Container>
     );
 };
-
 
 export default LoginPage;
 
@@ -75,7 +71,7 @@ const KakaoButton = styled(Button)`
 
   &:hover {
     background-color: #ffd600;
-    transform: scale(1.05); /* 살짝 커지는 효과 */
+    transform: scale(1.05); 
   }
 `;
 
@@ -85,7 +81,7 @@ const OtherMethodButton = styled(Button)`
 
   &:hover {
     background-color: #e0e0e0;
-    transform: scale(1.05); /* 살짝 커지는 효과 */
+    transform: scale(1.05); 
   }
 `;
 
@@ -94,8 +90,8 @@ const SkipButton = styled.p`
   color: #888888;
   cursor: pointer;
   text-decoration: underline;
-  margin-top: 70px; /* 위와의 간격 */
-  margin-bottom: 80px; /* 아래 간격을 더 늘림 */
+  margin-top: 70px; 
+  margin-bottom: 80px; 
 `;
 
 

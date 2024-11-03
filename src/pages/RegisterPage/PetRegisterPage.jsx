@@ -103,7 +103,14 @@ const LastComment = styled.span`
   }
 `
 
-//js
+const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const PetRegisterPage = () => {
   const navigate = useNavigate(); 
   const [imgPath, setImgPath] = useState(''); //이미지
@@ -114,7 +121,7 @@ const PetRegisterPage = () => {
   const [isNeutered, setIsNeutered] = useState(null); //중성화
   const [isAllergic, setIsAllergic] = useState(null); // 알러지
   const [weight, setWeight] = useState(''); //몸무게
-  const [userId, setUserId] = useState(''); // 유저 ID
+  const [userId, setUserId] = useState('1'); // 유저 ID
   const [selectCatList, setSelectCatList] = useState(null); //cat list
   const [selectDogList, setSelectDogList] = useState(null); //dog list
 
@@ -134,29 +141,42 @@ const PetRegisterPage = () => {
 
   const handleRegister = async (event) => {
     event.preventDefault(); 
-    if(!validateForm()) return;
-    try {
-      const petData = {
-        petName: petName,
-        dogOrCat: selectedPetType,
-        petType: selectedPetType === '고양이' ? selectCatList : selectDogList,
-        petWeight: parseInt(weight), 
-        neutering: isNeutered === '네', 
-        petAllergy: isAllergic === '네', 
-        gender: selectedGender === '남아', 
-        createdAt: new Date().toISOString(), 
-        user: parseInt(userId), 
-        petAge: calculateAge(birthdate), 
-      };
+    if (!validateForm()) return; 
+  
+    const formData = new FormData();
 
-      const response = await axios.post('http://localhost:8080/api/pets', petData, {
+    if (imgPath) {
+      formData.append('image', imgPath);
+    }
+  
+    const petData = {
+      petName: petName,
+      dogOrCat: selectedPetType,
+      petType: selectedPetType === '고양이' ? selectCatList : selectDogList,
+      petWeight: parseInt(weight), 
+      neutering: isNeutered === '네', 
+      petAllergy: isAllergic === '네', 
+      gender: selectedGender === '남아', 
+      createdAt: new Date().toISOString(), 
+      user: parseInt(userId),  // 일단 userId 고정값 사용함 > 변경 해야함
+      petAge: calculateAge(birthdate), 
+    };
+  
+    for (const key in petData) {
+      if (petData.hasOwnProperty(key)) {
+        formData.append(key, petData[key]);
+      }
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:8080/api/pets', formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
       if (response.status === 201) {
         alert('반려동물 등록이 완료되었습니다.');
-        navigate('/userRegister'); 
+        navigate('/'); 
         console.log('Pet data:', petData);
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -166,7 +186,7 @@ const PetRegisterPage = () => {
       alert('서버와 통신 중 오류가 발생했습니다.');
     }
   };
-
+  
   const calculateAge = (birthdate) => {
     const today = new Date();
     const birthDate = new Date(birthdate);
@@ -177,7 +197,6 @@ const PetRegisterPage = () => {
     }
     return age;
   };
-
   const validateForm = () => {
     if (!selectedPetType) {
       alert('반려동물 종류를 선택해주세요.');
@@ -252,36 +271,44 @@ const PetRegisterPage = () => {
             required
           />
 
-        {selectedPetType === '고양이' && (
-          <>
-            <Label>묘종</Label>
-            <SelectBox
-              options={CatList} 
-              value={selectCatList} 
-              onChange={handleCatChange} 
-              placeholder="묘종을 선택해주세요"
-              required
-            />
-          </>
-        )}
+{selectedPetType === '고양이' && (
+  <>
+    <Label>묘종</Label>
+    <SelectBox
+      options={CatList.map((cat, index) => ({
+        key: `cat-${index}`, // 고유한 키 설정
+        value: cat.value,
+        label: cat.label,
+      }))}
+      value={selectCatList}
+      onChange={handleCatChange}
+      placeholder="묘종을 선택해주세요"
+      required
+    />
+  </>
+)}
 
-        {selectedPetType === '강아지' && (
-          <>
-            <Label>견종</Label>
-            <SelectBox
-              options={DogList} 
-              value={selectDogList} 
-              onChange={handleDogChange} 
-              placeholder="견종을 선택해주세요"
-              required
-            />
-          </>
-        )}
-
+{selectedPetType === '강아지' && (
+  <>
+    <Label>견종</Label>
+    <SelectBox
+      options={DogList.map((dog, index) => ({
+        key: `dog-${index}`, // 고유한 키 설정
+        value: dog.value,
+        label: dog.label,
+      }))}
+      value={selectDogList}
+      onChange={handleDogChange}
+      placeholder="견종을 선택해주세요"
+      required
+    />
+  </>
+)}
         <Label>생일</Label>
         <StyledInput 
           type="date"
           value={birthdate} 
+          max={getCurrentDate()}  
           onChange={handleBirthdateChange}
         />
 
@@ -336,7 +363,7 @@ const PetRegisterPage = () => {
         </SelectButtonContainer>
 
         <RegisterButton onClick={handleRegister}>등록하기</RegisterButton>
-        <LastComment onClick={() => navigate('/userRegister')}>
+        <LastComment onClick={() => navigate('/')}>
           예비 집사입니다
         </LastComment>
       </Container>

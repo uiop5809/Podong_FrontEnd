@@ -42,6 +42,8 @@ const SideNav = () => {
     { path: '/myPage/editPetRegister', title: '응애 정보 수정' },
     { path: '/myPage/missingRegister', title: '실종 등록' },
     { path: '/myPage/missingSave', title: '실종 등록 완료' },
+    {path : '/petRegister', title: '우리응애 등록'},
+    {path : '/userRegister/:userId', title: '회원정보 등록'},
     { path: '/myPage', title: '마이 페이지' },
     { path: '/orderList/orderDetail/orderCancel', title: '주문 취소' },
     { path: '/orderList/orderDetail', title: '주문 상세' },

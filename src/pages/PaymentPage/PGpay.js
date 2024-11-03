@@ -1,5 +1,4 @@
-import React from "react";
-import styled from "styled-components";
+import axios from "axios";
 
 // 결제 요청 함수
 export const requestPayment = () => {
@@ -11,7 +10,8 @@ export const requestPayment = () => {
   }
   IMP.init("imp02101050"); // 포트원 가맹점 식별코드
 
-  const data = {
+  // 결제 요청
+  IMP.request_pay({
     pg: "html5_inicis", // PG사명
     pay_method: "card", // 결제수단
     merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
@@ -22,24 +22,19 @@ export const requestPayment = () => {
     buyer_tel: "010-1234-5678", // 구매자 전화번호
     buyer_addr: "서울특별시 강남구 삼성동", // 구매자 주소
     buyer_postcode: "123-456", // 구매자 우편번호
-  };
-
-  // 결제 요청
-  IMP.request_pay(data, callback);
-};
-
-// 결제 완료 후 콜백 함수
-const callback = (response) => {
-  const { success, error_msg } = response;
-  if (success) {
-    alert("결제가 완료되었습니다!");
-  } else {
-    alert(`결제에 실패하였습니다: ${error_msg}`);
-  }
-};
-
-const Page = styled.div`
-  margin: 64px 0;
-`;
+  }, (rsp) => {
+    if (rsp.success) { // 프론트에서 결}제가 완료되면
+    console.log(axios.post(`http://localhost:8080/api/v1/order/payment/${rsp.imp_uid}`))
+        .then((res) => {
+            // 결제완료 
+        })
+        .catch((error) => {
+            // 에러발생시
+        });
+} else {
+    // 에러발생시
+}
+});
+}
 
 export default requestPayment;
