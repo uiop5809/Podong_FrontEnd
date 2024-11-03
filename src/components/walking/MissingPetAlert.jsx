@@ -53,7 +53,7 @@ const AlertDialog = styled.div`
 
 const AlertDialogContent = styled.div`
   background: white;
-  max-width: 24rem;
+  max-width: 20rem;
   width: 100%;
   padding: 1.5rem;
   border-radius: 0.5rem;
@@ -63,7 +63,7 @@ const AlertDialogContent = styled.div`
 const AlertDialogTitle = styled.h2`
   font-size: 1.25rem;
   font-weight: bold;
-  color: #f97316; /* orange-500 */
+  color: #f97316;
 `;
 
 const AlertDialogDescription = styled.div`
@@ -78,7 +78,7 @@ const PetImage = styled.img`
   height: 6rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #fb923c; /* orange-400 */
+  border: 2px solid #fb923c;
 `;
 
 const PetInfo = styled.div`
@@ -88,16 +88,16 @@ const PetInfo = styled.div`
 const PetName = styled.p`
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1f2937; /* gray-900 */
+  color: #1f2937;
 `;
 
 const PetDescription = styled.p`
   font-size: 0.875rem;
-  color: #4b5563; /* gray-600 */
+  color: #4b5563;
 `;
 
 const PetRadius = styled.p`
   font-size: 0.875rem;
-  color: #2563eb; /* blue-600 */
+  color: #2563eb;
   margin-top: 0.5rem;
 `;

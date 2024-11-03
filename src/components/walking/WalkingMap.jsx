@@ -7,7 +7,11 @@ const { kakao } = window;
 
 const WalkingMap = () => {
   const [map, setMap] = useState(null);
-  const [time, setTime] = useState(0); // 산책 시간
+  const [time, setTime] = useState(0);
+  const [isTimerStarted, setIsTimerStarted] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+
   const [originMarker, setOriginMarker] = useState(null);
   const [destinationMarker, setDestinationMarker] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
@@ -19,19 +23,10 @@ const WalkingMap = () => {
     longitude: 126.570667,
   });
 
-  const [startLocation, setStartLocation] = useState("");
-  const [destinationLocation, setDestinationLocation] = useState("");
-  const [isTimerStarted, setIsTimerStarted] = useState(false);
   const [missingPet, setMissingPet] = useState(null);
   const [missingPetDistance, setMissingPetDistance] = useState(0);
   const [isMissingPetAlertOpen, setIsMissingPetAlertOpen] = useState(false);
 
-  const handleStartLocationChange = (e) => {
-    setStartLocation(e.target.value);
-  };
-  const handleDestinationLocationChange = (e) => {
-    setDestinationLocation(e.target.value);
-  };
   const handleTimerStart = () => {
     const sampleMissingPet = {
       name: "멍멍이",
@@ -51,7 +46,6 @@ const WalkingMap = () => {
 
   /* 위치 관련*/
   useEffect(() => {
-    // 위치 동의 받기
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         setCurrentPosition({
@@ -85,7 +79,7 @@ const WalkingMap = () => {
       level: 3,
     };
     const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
-    setMap(kakaoMap); // 지도 객체 저장
+    setMap(kakaoMap);
   }, [currentPosition.latitude, currentPosition.longitude]);
 
   // 지도 클릭하여 출발지, 목적지 설정
@@ -208,6 +202,8 @@ const WalkingMap = () => {
       setPolyline(null);
     }
     setTime(0);
+    setIsStarted(false);
+    setIsRunning(false);
     setIsTimerStarted(false);
     setOriginCoords(null);
     setDestinationCoords(null);
@@ -252,7 +248,15 @@ const WalkingMap = () => {
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
-      <WalkingTimer time={time} setTime={setTime} onStart={handleTimerStart} />
+      <WalkingTimer
+        time={time}
+        setTime={setTime}
+        onStart={handleTimerStart}
+        isStarted={isStarted}
+        setIsStarted={setIsStarted}
+        isRunning={isRunning}
+        setIsRunning={setIsRunning}
+      />
 
       {/* 지도 표시 부분 */}
       {isTimerStarted && (
