@@ -23,6 +23,9 @@ import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
 import SideNav from "./components/common/SideNav.jsx";
 import WalkPage from "./pages/WalkPage/WalkPage.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
+import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
+import CommunityList from './pages/CommunityPage/CommunityList.jsx';
+import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
 
 function Router() {
   return (
@@ -42,6 +45,18 @@ function Router() {
             <Route index element={<NanumList />} />
             <Route path="write" element={<NanumWrite />} />
             <Route path="detail/:no" element={<NanumDetail />} />
+          </Route>
+
+          <Route path="community" element={<Outlet />}>
+            <Route index element={<CommunityList/>} />
+            <Route path="write" element={<ComunityWrite />} />
+            <Route path="detail/:no" element={<CommunityDetail />} />
+          </Route>
+
+          <Route path="community" element={<Outlet />}>
+            <Route index element={<CommunityList/>} />
+            <Route path="write" element={<ComunityWrite />} />
+            <Route path="detail/:no" element={<CommunityDetail />} />
           </Route>
 
           <Route path="userRegister/:userId" element={<UserRegisterPage />} />
