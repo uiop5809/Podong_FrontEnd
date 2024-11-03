@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Container = styled.div`
   padding: 20px;
@@ -9,7 +10,7 @@ const Container = styled.div`
 
 const SearchContainer = styled.div`
   display: flex;
-  align-items: center; 
+  align-items: center;
   margin-bottom: 20px;
   background-color: #fff;
   padding: 10px;
@@ -58,95 +59,72 @@ const TabContainer = styled.div`
   display: flex;
   margin-bottom: 20px;
   gap: 10px;
+  flex-wrap: wrap;
 `;
 
 const Tab = styled.div`
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: 7px 10px;
+  font-size: 12px;
   background-color: #e0e0e0;
   border-radius: 20px;
   cursor: pointer;
+  white-space: nowrap;
   &.active {
     background-color: #add8e6;
   }
 `;
 
-const Table = styled.div`
-  width: 100%;
+const CardContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width:320%
+`;
+
+const Card = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-`;
-
-const TableHeader = styled.div`
+  padding: 20px;
+  width: calc(33.333% - 20px);
+  box-sizing: border-box;
   display: flex;
-  background-color: #f0f0f0;
-  padding: 10px;
-  font-size: 10px;
-  font-weight: bold;
-`;
-
-const TableBody = styled.div`
-  padding: 10px;
-  
-`;
-
-const TableRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 20px;
-  border-bottom: 1px solid #e0e0e0;
+  flex-direction: column;
+  gap: 10px;
   font-size: 11px;
 `;
 
-const TableHeaderCell = styled.div`
-  flex: 1;
-  display : flex;
-  justify-content : center;
-  text-align: center;
-  font-weight: bold;
-  padding: 6px;
-`;
-
-const TableCell = styled.div`
-  flex: 1;
-  text-align: left;
-  padding: 5px;
+const CardItem = styled.div`
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 `;
 
 const PaymentHistory = () => {
+  const userId = 1;
   const [payments, setPayments] = useState([]);
   const [tabCounts, setTabCounts] = useState({ total: 0, completed: 0, cancelled: 0, failed: 0 });
 
   useEffect(() => {
-    // 데이터 가져와야하는 부분
-    const fetchData = async () => {
-      const fetchedPayments = [
-        {
-          status: '완료',
-          date: '24/10/23',
-          orderNumber: 'merchant_1602...',
-          productName: '공주가 되는 드레스',
-          paymentMethod: '신용카드',
-          amount: '37,000'
-        }
-      ];
+    const fetchPaymentLogs = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/payment/list/${userId}`);
+        setPayments(response.data);
 
-      setPayments(fetchedPayments);
+        // 탭 카운트 계산
+        const total = response.data.length;
+        const completed = response.data.filter(payment => payment.payStatus === '완료').length;
+        const cancelled = response.data.filter(payment => payment.payStatus === '취소').length;
+        const failed = response.data.filter(payment => payment.payStatus === '실패').length;
 
-      // 탭 카운트 계산
-      const total = fetchedPayments.length;
-      const completed = fetchedPayments.filter(payment => payment.status === '완료').length;
-      const cancelled = fetchedPayments.filter(payment => payment.status === '취소').length;
-      const failed = fetchedPayments.filter(payment => payment.status === '실패').length;
-
-      setTabCounts({ total, completed, cancelled, failed });
+        setTabCounts({ total, completed, cancelled, failed });
+      } catch (error) {
+        console.error("Error fetching payment logs:", error);
+      }
     };
 
-    fetchData();
-  }, []);
+    fetchPaymentLogs();
+  }, [userId]);
 
   return (
     <Container>
@@ -160,33 +138,57 @@ const PaymentHistory = () => {
         </SearchInputContainer>
       </SearchContainer>
       <TabContainer>
-        <Tab>전체 {tabCounts.total}</Tab>
-        <Tab className="active">결제완료 {tabCounts.completed}</Tab>
+        <Tab className="active">전체 {tabCounts.total}</Tab>
+        <Tab>결제완료 {tabCounts.completed}</Tab>
         <Tab>결제취소 {tabCounts.cancelled}</Tab>
         <Tab>결제실패 {tabCounts.failed}</Tab>
       </TabContainer>
-      <Table>
-        <TableHeader>
-          <TableHeaderCell>결제상태</TableHeaderCell>
-          <TableHeaderCell>주문날짜</TableHeaderCell>
-          <TableHeaderCell>주문번호</TableHeaderCell>
-          <TableHeaderCell>상품명</TableHeaderCell>
-          <TableHeaderCell>결제수단</TableHeaderCell>
-          <TableHeaderCell>금액</TableHeaderCell>
-        </TableHeader>
-        <TableBody>
-          {payments.map((payment, index) => (
-            <TableRow key={index}>
-              <TableCell>{payment.status}</TableCell>
-              <TableCell>{payment.date}</TableCell>
-              <TableCell>{payment.orderNumber}</TableCell>
-              <TableCell>{payment.productName}</TableCell>
-              <TableCell>{payment.paymentMethod}</TableCell>
-              <TableCell>{payment.amount}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <CardContainer>
+        {payments.map((payment, index) => (
+          <Card key={index}>
+            <CardItem>
+              <strong>결제 상태 :</strong>
+              <span>{payment.payStatus}</span>
+            </CardItem>
+            <CardItem>
+              <strong>주문 날짜 :</strong>
+              <span>{new Date(payment.createdAt).toLocaleString()}</span>
+            </CardItem>
+            <CardItem>
+              <strong>주문 번호 :</strong>
+              <span>{payment.merchantId}</span>
+            </CardItem>
+            <CardItem>
+              <strong>상품명 :</strong>
+              <span>{payment.payName}</span>
+            </CardItem>
+            <CardItem>
+              <strong>결제 수단 :</strong>
+              <span>{payment.payMethod}</span>
+            </CardItem>
+            <CardItem>
+              <strong>금액 :</strong>
+              <span>{payment.payAmount.toLocaleString()} 원</span>
+            </CardItem>
+            <CardItem>
+              <strong>카드명 :</strong>
+              <span>{payment.cardName}</span>
+            </CardItem>
+            <CardItem>
+              <strong>카드 번호 :</strong>
+              <span>{payment.cardNumber}</span>
+            </CardItem>
+            <CardItem>
+              <strong>할부 개월 수:</strong>
+              <span>{payment.installmentMonths}</span>
+            </CardItem>
+            <CardItem>
+              <strong>PG사명:</strong>
+              <span>{payment.pg}</span>
+            </CardItem>
+          </Card>
+        ))}
+      </CardContainer>
     </Container>
   );
 };
