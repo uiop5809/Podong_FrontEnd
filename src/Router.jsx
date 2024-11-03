@@ -42,7 +42,7 @@ function Router() {
       {/* <NavSelector /> */}
       <Routes>
         <Route path="/" element={<Outlet />}>
-          <Route index element={<MainPage/>} />
+          <Route index element={<CancelPay/>} />
           <Route path="login" element={<LoginPage />} />
           <Route
             path="shoppingDetail/:productId"
