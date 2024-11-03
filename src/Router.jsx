@@ -28,9 +28,12 @@ import Payment from "./pages/PaymentPage/Payment.jsx";
 import PaymentEnd from "./pages/PaymentPage/PaymentEnd.jsx";
 import CancelPay from "./pages/PaymentPage/CancelPay.jsx";
 import PetEditPage from "./pages/MyPage/PetEditPage.jsx";
+
+
 import PayListTest from "./pages/PaymentPage/paylisttest.jsx";
 import PaymentCancelList from "./pages/PaymentPage/PaymentCancelList.jsx";
 import PaymentHistory from "./pages/PaymentPage/PaymentHistory.jsx";
+
 import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
 import CommunityList from './pages/CommunityPage/CommunityList.jsx';
 import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
@@ -63,7 +66,7 @@ function Router() {
           </Route>
 
           <Route path="community" element={<Outlet />}>
-            <Route index element={<CommunityList/>} />
+            <Route index element={<CommunityList />} />
             <Route path="write" element={<ComunityWrite />} />
             <Route path="detail/:no" element={<CommunityDetail />} />
           </Route>
