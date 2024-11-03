@@ -41,15 +41,20 @@ const Footer = () => {
     {
       key: "walking",
       image:
-        activeTab === "/walking" ? images.dogWalkingOn : images.dogWalkingOff,
+        activeTab === "/walking/map"
+          ? images.dogWalkingOn
+          : images.dogWalkingOff,
       text: "산책",
-      link: "/walking",
+      link: "/walking/map",
     },
     {
-      key: 'community',
-      image: activeTab === '/community' ? images.communityIconOn : images.communityIconOff,
-      text: '집사생활',
-      link: '/userRegister/:userId',
+      key: "community",
+      image:
+        activeTab === "/community"
+          ? images.communityIconOn
+          : images.communityIconOff,
+      text: "집사생활",
+      link: "/userRegister/:userId",
     },
   ];
 
