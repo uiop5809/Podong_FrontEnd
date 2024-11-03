@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
-import WalkingTimer from "./WalkingTimer";
-import MissingPetAlert from "./MissingPetAlert";
-import { images } from "../Images";
+import WalkingTimer from "../../components/walking/WalkingTimer";
+import MissingPetAlert from "../../components/walking/MissingPetAlert";
+import { images } from "../../components/Images";
 
 const { kakao } = window;
 
@@ -54,7 +54,7 @@ const calculateMinDistanceToRoute = (routePath, point) => {
   return minDistance;
 };
 
-const WalkingMap = () => {
+const WalkMapPage = () => {
   const [map, setMap] = useState(null);
   const [time, setTime] = useState(0);
   const [isTimerStarted, setIsTimerStarted] = useState(false);
@@ -323,7 +323,7 @@ const WalkingMap = () => {
   );
 };
 
-export default WalkingMap;
+export default WalkMapPage;
 
 const Container = styled.div`
   display: flex;

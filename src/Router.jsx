@@ -23,6 +23,8 @@ import PetRegisterPage from "./pages/RegisterPage/PetRegisterPage.jsx";
 import ShoppingDetail from "./pages/MainPage/ShoppingDetail.jsx";
 import SideNav from "./components/common/SideNav.jsx";
 import WalkPage from "./pages/WalkPage/WalkPage.jsx";
+import WalkMapPage from "./pages/WalkPage/WalkMapPage.jsx";
+import WalkJournalPage from "./pages/WalkPage/WalkJournalPage.jsx";
 
 function Router() {
   return (
@@ -47,7 +49,10 @@ function Router() {
           <Route path="userRegister" element={<UserRegisterPage />} />
           <Route path="petRegister" element={<PetRegisterPage />} />
 
-          <Route path="walking" element={<WalkPage />} />
+          <Route path="walking" element={<WalkPage />}>
+            <Route path="map" element={<WalkMapPage />} />
+            <Route path="journal" element={<WalkJournalPage />} />
+          </Route>
 
           <Route path="myPage" element={<Outlet />}>
             <Route index element={<MyPage />} />
