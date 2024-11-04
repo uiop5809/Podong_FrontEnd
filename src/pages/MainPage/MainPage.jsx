@@ -4,7 +4,9 @@ import { FaSearch } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
 import { images } from '../../components/Images';
+
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
@@ -18,6 +20,15 @@ const MainPage = () => {
 
   const tabs = ['댕댕이', '고냥이'];
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
+
+
+  const { userId } = useParams();
+  localStorage.setItem('userId', userId); 
+  console.log(userId); 
+
+  const shoppingData = async () => {
+    if (useDummyData) {
+      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
 
   const carouselImages = [
     images.carouselImage1,
@@ -54,6 +65,7 @@ const MainPage = () => {
           item.productTitle.includes(searchQuery) &&
           (activeCategory === '전체' || item.productCategory2 === activeCategory),
       );
+
       setData(filteredData);
       updatePageRange(filteredData.length);
     } catch (error) {
