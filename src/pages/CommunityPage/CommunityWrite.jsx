@@ -1,68 +1,68 @@
-import styled from "styled-components";
-import { MdPhotoCamera } from "react-icons/md";
-import axios from "axios";
-import { useState } from "react";
+import axios from 'axios';
+import styled from 'styled-components';
+import { images } from '../../components/Images';
+import { MdPhotoCamera } from 'react-icons/md';
+import { useState } from 'react';
 
-const PetItemPage = () => {
-  const [selectedSaleType, setSelectedSaleType] = useState(""); // 버튼 판매 or 나눔
-  const [showPriceBox, setShowPriceBox] = useState(false); // 가격 입력 박스 표시 여부
+const CommunityWrite = () => {
   const [uploadedImage, setUploadedImage] = useState(""); //미리보기 이미지 
-  const [name, setName] = useState(""); // 제목
-  const [description, setDescription] = useState("");// 내용
-  const [price, setPrice] = useState(""); // 판매가격
+  const [title, setTitle] = useState(""); // 제목
+  const [contents, setContents] = useState("");// 내용
   const [user, setUser] = useState(""); // 유저
   const [imageUrl, setImageUrl] = useState(null); // 사진 파일 
-  const [sharing, setSharing] = useState(""); // 나눔 . 판매 여부
   const [loading, setLoading] = useState(false);
-  
+  const [activeCategory, setActiveCategory] = useState('전체');
+  const category = [
+    { src: images.categoryAll, name: "전체" },
+    { src: images.categoryFreedom, name: "자유" },
+    { src: images.categoryDongNea, name: "동네" },
+    { src: images.categoryExport, name: "전문가" },
+    { src: images.categoryAnonymous, name: "익명" },
+    { src: images.categoryEvent, name: "이벤트" }
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
-  
- // FormData 객체 생성
+
+    // FormData 객체 생성
     const formData = new FormData();
     const createdAt = new Date().toISOString();
     formData.append('createdAt', createdAt); // 현재 시간 추가
-    formData.append('name',name)
-    formData.append('description',description)
-    formData.append('price',price)
+    formData.append('title',title)
+    formData.append('contents',contents)
     formData.append('user',user)
-    formData.append('sharing',sharing)
     if (imageUrl){
       formData.append('imageUrl', imageUrl);// 'imageUrl'는 Spring Boot에서 받을 필드 이름과 일치해야 합니다
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/petItems', formData, {
+      const response = await axios.post('http://localhost:8080/api/communities', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
       });
         console.log("등록 data : ", response.data);
         alert("등록 성공",response.data)
-        setName('');
-        setDescription('');
-        setPrice('');
+        setTitle('');
+        setContents('');
         setUser('');
-        setSharing('');
         setImageUrl(null); // 이미지 URL 초기화
         setUploadedImage(null); // 미리보기 이미지 초기화
       }
       catch(error) {
         console.error("오류 발생:",error);
         alert("오류 발생:")
-        setName('');
-        setDescription('');
-        setPrice('');
+        setTitle('');
+        setContents('');
         setUser('');
-        setSharing('');
         setImageUrl(null); // 이미지 URL 초기화
         setUploadedImage(null); // 미리보기 이미지 초기화
       }finally {
         setLoading(false);
       }
   };
+
   // 파일 선택 핸들러
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -74,13 +74,6 @@ const PetItemPage = () => {
         return;
       }
     }
-  };
-
-  const handleSaleTypeClick = (type) => {
-    setSelectedSaleType(type);
-    setSharing(type === "판매" ? 1 : 0);
-    setShowPriceBox(type === "판매"); // '판매' 선택 시만 가격 입력 박스 표시
-    setPrice(type === "판매" ? "" : "0");
   };
 
   return (
@@ -119,40 +112,33 @@ const PetItemPage = () => {
           )}
         </LableImg>
         <br />
-        <label htmlFor="name">
-          <Title>제목 </Title>
+        <label htmlFor="title">
+        <Title>제목 </Title>
           <Box
-            id="name"
-            value={name}
+            id="title"
+            value={title}
             type="text"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
             required
             placeholder="제목을 입력해주세요"
           />
         </label>
-        <Title>거래 방식</Title>
-        <ButtonRow>
-          <SelectButton
-            onClick={() => handleSaleTypeClick("판매")}
-            selected={selectedSaleType === "판매"}
-            onChange={() => handleSaleTypeClick("판매")}>판매하기</SelectButton> 
-          <SelectButton
-            onClick={() => handleSaleTypeClick("나눔")}
-            selected={selectedSaleType === "나눔"}
-          >나눔하기</SelectButton>
-        </ButtonRow>
-        {showPriceBox && (
-        <div id="Box">
-          <Box value={price} id="price" type="number" 
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="금액을 입력해주세요" />
-        </div>)}
-        <label htmlFor="description">
-          <Title> 설명 </Title>
+        <Title>카테고리 </Title>
+        <Category>
+          {category.map((item, index) => (
+            <CategoryBtn key={index} $active={activeCategory === item.name}
+              onClick={() => setActiveCategory(item.name)}>
+              <CategoryImg src={item.src} alt={item.name} />
+              {item.name}
+            </CategoryBtn>
+          ))}
+        </Category>
+        <label>
+        <Title> 설명 </Title>
           <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            id="contents"
+            value={contents}
+            onChange={(e) => setContents(e.target.value)}
             required
             placeholder="공유하고 싶은 내용을 작성해주세요"
           />
@@ -168,12 +154,12 @@ const PetItemPage = () => {
   );
 };
 
-export default PetItemPage;
+export default CommunityWrite;
 
 const ItemTitle = styled.div`
   display: column;
+  height: 100dvh;
   width: 100%;
-  height: 100vh;
   padding: 64px 25px 64px 25px;
   display: flex;
   flex-direction: column;
@@ -211,6 +197,28 @@ const Box = styled.input`
     color: #e4e4e4; /* 필요에 따라 placeholder 색상 변경 */
   }
 `;
+const Category = styled.div`
+  width: 100%;
+  height: 83px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0px;
+`;
+const CategoryBtn = styled.div`
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  opacity: ${({ $active }) => ($active ? '1' : '0.5')};
+  transition: opacity 0.3s;
+  &:hover {
+    opacity: 1;
+  }
+`;
+const CategoryImg = styled.img`
+  width: 40px;
+  height: 40px;
+`;
 const Textarea = styled.textarea`
   margin: 10px 0px 15px 0px;
   width: 100%;
@@ -240,30 +248,6 @@ const BuWrite = styled.button`
   align-items: center;
   justify-content: center;
   color: white;
-`;
-const ButtonRow = styled.div`
-  display: flex; // 플렉스 박스 레이아웃으로 설정
-  gap: 10px; // 버튼 간의 간격
-`;
-const SelectButton = styled.div`
-  color: ${({ selected }) => (selected ? "white" : "black")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #e4e4e4;
-  width: 172px;
-  height: 40px;
-  text-align: center;
-  border-radius: 5px;
-  background-color: ${({ selected }) => (selected ? "#FF6E00" : "white")};
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-
-  &:hover {
-    background-color: #ff6e00;
-    color: white;
-  }
 `;
 const Div = styled.div`
   font-size: 10px;
@@ -315,3 +299,5 @@ const SubmitBtn = styled.div`
   margin-top: auto; 
   margin-bottom: 0px;
 `;
+
+

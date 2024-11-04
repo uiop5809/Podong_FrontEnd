@@ -1,31 +1,31 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import styled from "styled-components";
-import { VscAccount } from "react-icons/vsc";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { FiHeart } from "react-icons/fi";
-import axios from "axios";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { FiHeart } from 'react-icons/fi';
+import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import { VscAccount } from 'react-icons/vsc';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 
-const PetItemDetailPage = () => {
-  const {no} = useParams();//URL에서 글 번호(no)를 가져옴 
-  const [itemDetail, setItemDetail] = useState([]);
+const CommunityDetail = () => {
+  const {no} = useParams();// %% URL에서 글 번호(no)를 가져옴 %%
+  const [postDetail, setPostDetail] = useState([]);
   const [comments, setComments] = useState([]);
 
-  useEffect(()=>{  // 상세정보 불러오기
+  useEffect(()=>{// 상세정보 불러오기
 
-    axios.get(`http://localhost:8080/api/petItems/${no}`)
+    axios.get(`http://localhost:8080/api/communities/${no}`)
     .then((response)=>{
-      setItemDetail(response.data)
+      setPostDetail(response.data)
       console.log('나눔 상세 :',response.data);
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
     });
-
   },[no])
 
   useEffect(()=>{
-    axios.get(`http://localhost:8080/api/petItemComments`)
+    
+    axios.get(`http://localhost:8080/api/communityComments`)
     .then((response) => {
       setComments(response.data)
       console.log('댓글 목록 :', response.data);
@@ -33,18 +33,17 @@ const PetItemDetailPage = () => {
     .catch((error) => {
       console.error("Error fetching data:", error);
     });
-
   },[])
 
-  // 좋아요 수 증가 함수
+   // 좋아요 수 증가 함수
   const good = () => {
-    const updatedGood = itemDetail.good + 1;
+    const updatedGood = postDetail.good + 1;
 
   // 서버의 좋아요 수 업데이트 요청
-  axios.put(`http://localhost:8080/api/petItems/${no}`, {...itemDetail, good: updatedGood })
+  axios.put(`http://localhost:8080/api/communities/${no}`, {...postDetail, good: updatedGood })
     .then(response => {
       console.log('좋아요 업데이트:', response.data);
-      setItemDetail(prevDetail => ({...prevDetail,good: updatedGood }));
+      setPostDetail(prevDetail => ({...prevDetail,good: updatedGood }));
     })
     .catch(error => {
       console.error("좋아요 업데이트 실패:", error);
@@ -58,9 +57,9 @@ const PetItemDetailPage = () => {
     const data = Object.fromEntries(formData.entries()); //객체로 변환
     const now = new Date().toISOString();
     data.createdAt = now; // 현재 시간 추가
-    data.petItem = no;
+    data.post = no;
     //글 등록     
-      axios.post('http://localhost:8080/api/petItemComments',data)
+      axios.post('http://localhost:8080/api/communityComments',data)
       .then(response => {
         console.log('등록 : ',response.data)
         setComments(prevComments => [...prevComments,response.data]);
@@ -71,59 +70,62 @@ const PetItemDetailPage = () => {
       e.target.reset(); // 입력값 초기화
   }
 
+
   return (
   <>
     <ItemTitle>
-      <ListImg src={`http://localhost:8080/uploads/${itemDetail.imageUrl}`}
-      alt={itemDetail.imageUrl}/>
+      <ListImg src={`http://localhost:8080/uploads/${postDetail.imageUrl}`}
+      alt={postDetail.imageUrl}
+      />
       <ImgBt>
       <ImgNo>1 / 5</ImgNo>
       </ImgBt>
-      <User1><VscAccount1/>작성자: {itemDetail.user}</User1>
-      <Title>제목: {itemDetail.name}</Title>
+      <User1><VscAccount1/>작성자: {postDetail.user}</User1>
+      <Title>제목: {postDetail.title}</Title>
       <Icons>
         <div>
-          <Like1 onClick={()=>{good()}}/>{itemDetail.good || 0}
-          <Comment1/>{comments.filter((item)=>item.petItem === itemDetail.petItemId).length}
+          <Like1 onClick={()=>{good()}}/>{postDetail.good || 0}
+          <Comment1/>{comments.filter((item)=>item.post === postDetail.postId).length}
         </div>
         <div>
-          <ListPrice> {(itemDetail.price ? `${itemDetail.price.toLocaleString()}원` : <나눔>나눔</나눔>)}</ListPrice>
+          <ListPrice> {(postDetail.price ? `${postDetail.price.toLocaleString()}원` : <나눔>나눔</나눔>)}</ListPrice>
         </div>
       </Icons>
-      <Contents>작성글: {itemDetail.description}</Contents>
+      <Contents>작성글: {postDetail.contents}</Contents>
       <Line />
       <CommentST>
-        {comments
-        .filter((item)=>item.petItem === itemDetail.petItemId)
-        .map((item)=>(
-          <div  key={item.commentId}>
-        <User2><VscAccount1/>작성자: {item.length > 0 && item[0].user}
-          <ListDate key={item.commentId}>
-            {new Date(item.createdAt).toLocaleDateString('ko-KR', {
-              timeZone: 'Asia/Seoul' 
-            })}
-          </ListDate>
-        </User2>
-          <Comment>{item.comment}</Comment>
-          </div>
-        ))}
+      {comments
+      .filter((item)=>item.post === postDetail.postId)
+      .map((item)=>(
+      <div  key={item.commentId}>
+      <User2><VscAccount1/>작성자: {item.length > 0 && item[0].user}
+        <ListDate key={item.commentId}>
+          {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+            timeZone: 'Asia/Seoul' 
+          })}
+        </ListDate>
+      </User2>
+        <Comment>{item.comment}</Comment>
+        </div>
+      ))}
       </CommentST>
     </ItemTitle>
       <CommentFrom onSubmit={handleSubmit}>
-        <input type="number" name="user"placeholder="유저번호" required/>
-        <CommentCC 
-          type="text"
-          name="comment"
-          placeholder="댓글을 달아주세요."
-          required
-          />
-        <CommentSubmit type="submit">등록</CommentSubmit>
-      </CommentFrom>
-      </>
+      <input type="number" name="user"placeholder="유저번호" required/>
+      <CommentCC 
+        type="text"
+        name="comment"
+        placeholder="댓글을 달아주세요."
+        required
+        />
+      <CommentSubmit type="submit">등록</CommentSubmit>
+    </CommentFrom>
+    </>
   );
 };
 
-export default PetItemDetailPage;
+export default CommunityDetail;
+
 const ItemTitle = styled.div`
   display: flex;
   flex-direction: column;
@@ -137,7 +139,7 @@ const ListImg = styled.img`
   height: 300px;
   background-color: #D9D9D9;
   border-radius: 10px;
-  flex-shrink:calc(); /* 이미지 크기를 고정 */
+  flex-shrink: calc(); /* 이미지 크기를 고정 */
   background-image: url(${(props) => props.src}); /* 이미지 URL 설정 */
   background-size: cover; /* 이미지를 채우도록 설정 */
   background-position: center; /* 이미지 중앙 정렬 */
@@ -211,13 +213,14 @@ const Contents = styled.div`
   margin-bottom: 10px;
   margin-top: 10px;
 `;
-const Line = styled.div`  
+const Line = styled.div` 
   border-top: 1px solid #FF6E00;
   margin: 10px 0px;
 `;
 const User2 = styled.div`
   display: flex;
   align-items: center;
+  
   font-size: 12px;
   margin-top:10px;
 `;
@@ -231,6 +234,7 @@ const ListDate = styled.div`
 const Comment = styled.div`
   font-size: 12px;
   display: flex;
+  
 `;
 const CommentST = styled.div`
   font-size: 12px;
@@ -255,7 +259,7 @@ const CommentFrom = styled.form`
     background-color: #f0f0f0;
     border-width: 0.5px; 
   `;
-const CommentSubmit = styled.button`
+  const CommentSubmit = styled.button`
   height: 36px;
   width: 56px;
   display: flex;
