@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { images } from '../../components/Images';
-import axios from 'axios';
+
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
