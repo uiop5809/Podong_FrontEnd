@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { RecommendRoutes } from "../../data/recommendRoutes";
+import axios from "../../apis/AxiosInstance";
 
 const { kakao } = window;
 
@@ -92,6 +93,24 @@ const RouteMap = ({ routeData }) => {
 const RecommendedRoutesPage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("환타 왕자");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        console.error("User ID not found in local storage");
+        return;
+      }
+      try {
+        const response = await axios.post(`/users/${userId}`);
+        const data = await response.json();
+        setName(data.name);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <Container>

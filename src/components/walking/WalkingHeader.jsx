@@ -1,13 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Lottie from "react-lottie-player";
 import walkAnimation from "./walkHeader.json";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "../../apis/AxiosInstance";
 
 const WalkingHeader = () => {
   const [name, setName] = useState("환타 왕자");
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        console.error("User ID not found in local storage");
+        return;
+      }
+      try {
+        const response = await axios.post(`/users/${userId}`);
+        const data = await response.json();
+        setName(data.name);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleTabClick = (path) => {
     navigate(path);
