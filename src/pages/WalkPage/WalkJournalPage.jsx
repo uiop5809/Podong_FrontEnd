@@ -177,6 +177,10 @@ const StyledCard = styled.div`
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   transform: translateY(-60px);
+
+  .react-calendar {
+    border: none;
+  }
 `;
 
 const StyledCardContent = styled.div`
