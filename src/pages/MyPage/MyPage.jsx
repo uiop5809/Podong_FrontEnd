@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { RxAvatar } from "react-icons/rx";
 import { FaCircleUser } from "react-icons/fa6";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight, MdOutlineArrowBack, MdOutlineArrowForward } from "react-icons/md";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { images } from '../../components/Images';
 
 const ScrollableContainer = styled.div`
@@ -11,7 +12,7 @@ const ScrollableContainer = styled.div`
   border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%; 
-`; 
+`;
 
 const Container = styled.div`
   display: flex;
@@ -44,6 +45,15 @@ const UserInfo = styled.span`
   text-align: left; 
 `;
 
+const UserCommunityInfo = styled.span`
+  font-size: 11px;
+  color: #8D8D8D;
+  margin-top: 10px;
+  margin-left: 5%;
+  text-align: left; 
+`;
+
+
 const EditButton = styled.button` 
   width: 67px;
   height: 22px;
@@ -64,159 +74,77 @@ const EditButton = styled.button`
   }
 `;
 
-
-//두번째 section
-
 const SubContainer = styled.div`
   display: flex;
-  width: 100%;
-  height: 100%;
   flex-direction: column;
-  background-color: #F5F5F5;
+  width: 100%;
   padding: 15px;
   box-sizing: border-box;
+  background-color: #F5F5F5;
 `;
 
 const PetProfile = styled.div`
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: column; 
-  margin-bottom: 8px;
+  min-width: 290px;
+  height: 180px;
   background-color: #FFFFFF;
   border: 1px solid #ddd;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
-`;
-
-const PetProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 5px;
-  margin-left: 5px;
-  padding: 13px;
 `;
 
 const PetInfoFirstRow = styled.div`
   display: flex;
-  flex-direction: row;
-`; 
-
-const PetInfo = styled.span`
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-  color:black;
-`
+  justify-content: space-between;
+`;
 
 const PetInfoSecondRow = styled.div`
   display: flex;
-  flex-direction: row;
-  margin-top: 5px;
+  margin-top: 10px;
 `;
 
 const PetDetailInfo = styled.div`
+  margin-top: 23px;
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
-  margin-left: 30px;
-  margin-bottom: 17px;
-  margin-top: 22px;
-`
+`;
 
-const PetProfileEditButton = styled.button` 
-  width: 67px;
-  height: 22px;
-  margin-left: 46%;
-  background-color: #FFEFEF; 
+const PetProfileEditButton = styled.button`
+  background-color: #FFEFEF;
   color: #FF6E00;
   border: none;
-  border-radius: 20px; 
+  border-radius: 20px;
   cursor: pointer;
-  padding: 5px 10px 10px 10px; 
+  padding: 5px 10px;
   font-size: 8px;
   font-weight: bold;
   transition: background-color 0.3s;
 
-  &:hover { 
+  &:hover {
     background-color: #FFD3D3;
   }
 `;
 
-const ActivePet = styled.p`
-  font-size: 10px;
-  font-weight: 500;
-  margin-bottom: 5px;
+const PetAddButton = styled.button`
+  background-color: #FFEFEF;
   color: #FF6E00;
-`
-
-const ActivePetName = styled.p`
-  font-size: 12px;
-  font-weight: bold;
-  color: black;
-  margin-bottom: 8px;
-`
-const ActivePetType = styled.p`
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
   font-size: 8px;
-  font-weight:light;
-  line-height: 11px;
-  color: #A9A9A9;
-`
+  margin-left:50px;
+  font-weight: bold;
+  transition: background-color 0.3s;
 
-const StyledFaCircleUser = styled(FaCircleUser)`
-  width: 61px;
-  height: 61px;
-  margin-top: 19px;
+  &:hover {
+    background-color: #FFD3D3;
+  }
 `;
 
-const PetButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: center;
-  margin-top: 10px;
-`;
-
-const RegisterMissing = styled.button`
-  font-size: 10px;
-  margin-left: 60px;
-  margin-right:30%;
-
-  &:hover { 
-    color: #FF6E00;
-  }
-`
-const AddPetButton = styled.button`
-    font-size: 10px;
-
-    &:hover { 
-      color: #FF6E00;
-  }
-`
-
-
-//세번째 section
-
-const OrderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: auto;
-  padding: 16px;
-  justify-content: space-between;
-  background-color: #FFFFFF;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-`
-
-const OrderIconContainer =  styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 9px;
-  margin-left: 10px;
-  color:#818181;
-`
 
 const OrderBagImage = styled.img`
   width: 20px;
@@ -234,6 +162,7 @@ const OrderReviewImage = styled.img`
   margin-top: 10px;
 `
 
+
 const OrderPointImage = styled.img`
   width: 20px;
   height: 20px;
@@ -249,6 +178,7 @@ const OrderCouponImage = styled.img`
   margin-bottom: 5px;
   margin-top: 10px;
 `
+
 const Coupon = styled.span`
   display: flex;
   flex-direction: column;
@@ -257,18 +187,93 @@ const Coupon = styled.span`
   color:#818181;
 `
 
-const UserActiveInfo = styled.div`
+const ActivePetName = styled.p`
+  font-size: 15px;
+  font-weight: bold;
+  color: #FF6E00;
+  margin-bottom: 7px;
+`;
+
+const ActivePetType = styled.p`
+  font-size: 10px;
+  color: #A9A9A9;
+`;
+
+const CardScrollableContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  width: 90%;
+  gap: 20px;
+  padding: 10px;
+  margin: 0 auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const OrderIconContainer =  styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: auto;
+  font-size: 9px;
+  margin-left: 10px;
+  color:#818181;
+`
+
+const ArrowButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  ${({ direction }) => direction === 'left' ? 'left: 10px;' : 'right: 10px;'}
+`;
+
+const OrderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 16px;
+  margin-top: 20px;
+`;
+
+const UserActiveInfo = styled.div`
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 20px;
-  font-size: 9px;
   margin-top: 18px;
-`//집사활동
+`;
+
+const PetNameComment = styled.p`
+  font-size:15px;
+  font-weight: bold;
+`
 
 const ActivityText = styled.p`
   font-size: 9px;
@@ -281,25 +286,14 @@ const ActivityText = styled.p`
 const UserActiveList = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 10px;
-  margin-top: 11px;
-`
+  margin-top: 20px;
+`;
 
 const StyledImage = styled.img`
   width: 13px;
   height: 13px;
   margin-right: 8px; 
 `;
-
-const MissingInfo = styled.div`
-  width: 100%;
-  height: 81px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 18px;
-  margin-top: 18px;
-`//실종현황 
 
 const MissingHeader = styled.div`
   display: flex;
@@ -313,7 +307,7 @@ const StyledArrowRight = styled(MdOutlineKeyboardArrowRight)`
   margin-left: 5px; 
   margin-top:1px;
   color: #8D8D8D;
-`;
+`
 
 const MissingDetail = styled.div`
   display: flex;
@@ -321,54 +315,195 @@ const MissingDetail = styled.div`
   font-size: 9px;
   margin-top: 13px;
 `
+
 const MissingIcon = styled.img`
   width: 10px;
   height: 10px;
   margin-left: 10px; 
   margin-right: 4px;
+`
+const MissingInfo = styled.div`
+  width: 100%;
+  height: 81px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 18px;
+  margin-top: 18px;
+`
+//실종현황 
+
+const CustomImage = styled.img`
+  width: 20px; 
+  height: 20px;
+  margin-right: 5px;
+  margin-left: 25px;
 `;
 
-function MyPage() {
-  const navigate = useNavigate(); 
+const MissingRegisterBtn = styled.button`
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  font-size: 8px;
+  cursor: pointer;
+  margin-right: 20px;
+  font-weight: normal;
 
+  &:hover {
+    color: black;
+    font-weight: bold;
+  }
+`;
+
+const PetEditBtn = styled.button`
+  background-color:white;
+  color:black;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 8px;
+  font-weight: normal;
+  transition: background-color 0.3s;
+
+  &:hover {
+    color: black;
+    font-weight: bold;
+  }
+`;
+
+const PetButton = styled.div`
+  display: flex;
+  flex-direction:row;
+  margin-top: 10px;
+`
+
+const LastComment = styled.span`
+  font-size: 11px;
+  color: #8D8D8D;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+
+    &:hover {
+      color: #FF6E00;
+      font-weight: bold;
+  }
+`
+
+function MyPage() {
+  const navigate = useNavigate();
+  const [pets, setPets] = useState([]);
+  const cardContainerRef = useRef();
+
+  //집사생활
+  const userActivities = [
+    { src: images.myActivity, alt: "내 활동", text: "내 활동" },
+    { src: images.bogwan, alt: "보관 게시글", text: "보관 게시글" },
+    { src: images.imseeJeojang, alt: "결제내역", text: "결제내역" },
+    { src: images.alert, alt: "알림 목록", text: "알림 목록" },
+    { src: images.hide, alt: "숨긴 게시글", text: "숨긴 게시글" },
+    { src: images.blockHand, alt: "차단 목록", text: "차단 목록" }
+  ];
+
+  useEffect(() => {
+    // 위치 정보 가져오기 함수
+    const getAddr = (lat, lng) => {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      const coord = new window.kakao.maps.LatLng(lat, lng);
+      const callback = (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          console.log(result);
+          setAddress(result[0].address.address_name); // 첫 번째 결과의 주소를 설정
+        }
+      };
+      geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+    };
+
+    // 현재 위치를 얻고 주소로 변환하는 함수
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          getAddr(position.coords.latitude, position.coords.longitude);
+        }, (error) => {
+          console.error(error);
+        });
+      } else {
+        alert('현재 브라우저에서는 geolocation을 지원하지 않습니다');
+      }
+    };
+
+    // 위치 정보 가져오기
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    const fetchPetData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/pets?userId=1`);
+        setPets(response.data);
+      } catch (error) {
+        console.error("펫 정보를 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchPetData();
+  }, []);
+
+  const scroll = (direction) => {
+    const { current } = cardContainerRef;
+    if (current) {
+      const scrollAmount = direction === 'left' ? -current.clientWidth : current.clientWidth;
+      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+  <PetProfileEditButton onClick={() => navigate(`/mypage/editPetRegister/${petId}`)}>수정</PetProfileEditButton>
   return (
     <ScrollableContainer>
       <Container>
         <MainContainer>
           <StyledAvatar />
-              <UserInfo>
-                고양이가 세상을 구한다
-                <EditButton onClick={() => navigate('/myPage/editUserRegister')}>수정</EditButton>
-              </UserInfo>
+          <UserInfo>
+            고양이가 세상을 구한다
+            <EditButton onClick={() => navigate(`/myPage/editUserRegister/${petId}`)}>수정</EditButton>
+          </UserInfo>
         </MainContainer>
 
         <SubContainer>
-          <PetProfile>
-            <PetProfileContainer>
-              <PetInfoFirstRow>
-              <PetInfo>우리응애 프로필</PetInfo>
-              <PetProfileEditButton onClick={()=> navigate(`/mypage/editPetRegister/${petId}`)}>수정</PetProfileEditButton>
-              </PetInfoFirstRow>
+          <CardScrollableContainer>
+            <ArrowButton direction="left" onClick={() => scroll('left')}>
+              <MdOutlineArrowBack />
+            </ArrowButton>
 
-              <PetInfoSecondRow>
-              <StyledFaCircleUser />
-              <PetDetailInfo>
-                <ActivePet>현재 활동하는 응애</ActivePet>
-                <ActivePetName>환타</ActivePetName>
-                <ActivePetType>세상에 하나뿐인 코숏 <br/> 6년 1개월 | 4k</ActivePetType>
-              </PetDetailInfo>
-              </PetInfoSecondRow>
+            <CardContainer ref={cardContainerRef}>
+              {pets.map((pet) => (
+                <PetProfile key={pet.id}>
+                  <PetInfoFirstRow>
+                    <PetNameComment>우리응애 프로필</PetNameComment>
+                    <PetAddButton onClick={() => navigate('/petRegister')}>추가</PetAddButton>
+                  </PetInfoFirstRow>
 
-              <PetButtonContainer>
-              <RegisterMissing onClick={() => navigate('/mypage/missingRegister')}>
-                실종등록 
-              </RegisterMissing>
-              <AddPetButton onClick={() => navigate('/petRegister')}>
-                응애추가
-              </AddPetButton>
-              </PetButtonContainer>
-            </PetProfileContainer> {/*버튼 부분만 수정하면 될 것 같은데 ,,, 한숨 가득 */}
-          </PetProfile>
+                  <PetInfoSecondRow>
+                    <FaCircleUser size={80} style={{ marginTop: '18px' }} />
+                    <PetDetailInfo>
+                      <ActivePetName>{pet.petName}응애</ActivePetName>
+                      <ActivePetType>{pet.petType} | {pet.petAge}살</ActivePetType>
+                      <ActivePetType>{pet.petWeight}kg</ActivePetType>
+                      <PetButton>
+                        <MissingRegisterBtn onClick={() => navigate('/mypage/missingRegister')}>실종등록</MissingRegisterBtn>
+                        <PetEditBtn>수정</PetEditBtn>
+                      </PetButton>
+                    </PetDetailInfo>
+                  </PetInfoSecondRow>
+                </PetProfile>
+              ))}
+            </CardContainer>
+
+            <ArrowButton direction="right" onClick={() => scroll('right')}>
+              <MdOutlineArrowForward />
+            </ArrowButton>
+          </CardScrollableContainer>
 
           <OrderContainer>
             <OrderIconContainer>
@@ -390,34 +525,13 @@ function MyPage() {
           </OrderContainer>
 
           <UserActiveInfo>
-            <MissingHeader>
-              <p>집사생활</p> 
-              <StyledArrowRight />
-            </MissingHeader>
-            <UserActiveList>
-              <StyledImage src={images.myActivity} alt="내 활동" />
-              <ActivityText>내 활동</ActivityText>
-            </UserActiveList>
-            <UserActiveList>
-              <StyledImage src={images.bogwan} alt="보관 게시글" />
-              <ActivityText>보관 게시글</ActivityText>
-            </UserActiveList>
-            <UserActiveList>
-              <StyledImage src={images.imseeJeojang} alt="결제내역" />
-              <ActivityText>결제내역</ActivityText>
-            </UserActiveList>
-            <UserActiveList>
-              <StyledImage src={images.alert} alt="알림 목록" />
-              <ActivityText>알림 목록</ActivityText>
-            </UserActiveList>
-            <UserActiveList>
-              <StyledImage src={images.hide} alt="숨긴 게시글" />
-              <ActivityText>숨긴 게시글</ActivityText>
-            </UserActiveList>
-            <UserActiveList>
-              <StyledImage src={images.blockHand} alt="차단 목록" />
-              <ActivityText>차단 목록</ActivityText>
-            </UserActiveList>
+            <MissingHeader>집사생활<StyledArrowRight /></MissingHeader>         
+            {userActivities.map((activity, index) => (
+              <UserActiveList key={index}>
+                <StyledImage src={activity.src} alt={activity.alt} />
+                <ActivityText>{activity.text}</ActivityText>
+              </UserActiveList>
+            ))}
           </UserActiveInfo>
 
           <MissingInfo>
@@ -439,11 +553,16 @@ function MyPage() {
               <MissingIcon src={images. calendar} alt="산책일지" /> 산책일지
             </MissingDetail>
           </MissingInfo>
-
+          <LastComment onClick={() => {
+            alert('성공적으로 로그아웃 되었습니다');
+            navigate('/');
+          }}>
+            로그아웃
+          </LastComment>
         </SubContainer>
       </Container>
     </ScrollableContainer>
-  )
+  );
 }
 
 export default MyPage;

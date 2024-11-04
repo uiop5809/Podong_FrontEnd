@@ -26,19 +26,25 @@ export const images = {
   home: '/images/footer/home.svg',
 
   // mypage
-  alert: '/images/myPage/alert.svg',
-  blockHand: '/images/myPage/blockHand.svg',
-  bogwan: '/images/myPage/bogwan.svg',
-  calendar: '/images/myPage/calendar.svg',
-  hide: '/images/myPage/hide.svg',
-  imseeJeojang: '/images/myPage/imseeJeojang.svg',
-  myActivity: '/images/myPage/myActivity.svg',
-  bag: '/images/myPage/bag.svg',
-  coupon: '/images/myPage/coupon.svg',
-  missing: '/images/myPage/missing.svg',
-  paw: '/images/myPage/paw.svg',
-  point: '/images/myPage/point.svg',
-  review: '/images/myPage/review.svg',
+
+  alert: "/images/myPage/alert.svg",
+  blockHand: "/images/myPage/blockHand.svg",
+  bogwan: "/images/myPage/bogwan.svg",
+  calendar: "/images/myPage/calendar.svg",
+  hide: "/images/myPage/hide.svg",
+  imseeJeojang: "/images/myPage/imseeJeojang.svg",
+  myActivity: "/images/myPage/myActivity.svg",
+  bag: "/images/myPage/bag.svg",
+  calendar: "/images/myPage/calendar.svg",
+  coupon: "/images/myPage/coupon.svg",
+  missing: "/images/myPage/missing.svg",
+  paw: "/images/myPage/paw.svg",
+  point:"/images/myPage/point.svg",
+  review:"/images/myPage/review.svg",
+  mypagecat:"/images/myPage/mypagecat.svg",
+  dogprofile:"/images/myPage/dogprofile.svg",
+  
+
 
   // walk
   walkMap: '/images/walk/walkMap.svg',
