@@ -45,6 +45,8 @@ const WalkingTimer = ({
     saveWalkRoute();
   };
 
+  const userId = localStorage.getItem("userId");
+
   const saveWalkRoute = async () => {
     try {
       const response = await axios.post("/walkRoutes", {
@@ -52,7 +54,7 @@ const WalkingTimer = ({
         longitude: originCoords.getLng(),
         distanceKm: (routeDistance / 1000).toFixed(1),
         walkTime: formatTime(time),
-        userId: 1,
+        userId: userId,
       });
       console.log("산책 경로 저장 성공:", response.data);
     } catch (error) {
