@@ -20,20 +20,16 @@ import WalkMapPage from './pages/WalkPage/WalkMapPage.jsx';
 import WalkJournalPage from './pages/WalkPage/WalkJournalPage.jsx';
 import Payment from './pages/PaymentPage/Payment.jsx';
 import PaymentEnd from './pages/PaymentPage/PaymentEnd.jsx';
-import CancelPay from './pages/PaymentPage/CancelPay.jsx';
 import PetEditPage from './pages/MyPage/PetEditPage.jsx';
-
-import PayListTest from './pages/PaymentPage/paylisttest.jsx';
-import PaymentCancelList from './pages/PaymentPage/PaymentCancelList.jsx';
 import PaymentHistory from './pages/PaymentPage/PaymentHistory.jsx';
-
 import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
 import CommunityList from './pages/CommunityPage/CommunityList.jsx';
 import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
-
 import HealthCare from './pages/HealthCare/HealthCare.jsx';
 import ShoppingCart from './pages/ShoppingCart/ShoppingCart.jsx';
 import { CartProvider } from './pages/ShoppingCart/CartContext';
+import PayCancelReq from './pages/PaymentPage/PayCancelReq.jsx';
+import PaymentCancelDone from './pages/PaymentPage/PaymentCancelDone.jsx';
 
 function Router() {
   return (
@@ -43,18 +39,18 @@ function Router() {
         <NavSelector />
         <Routes>
           <Route path="/" element={<Outlet />}>
-            <Route index element={<PaymentHistory />} />
+            <Route index element={<MainPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="shoppingDetail/:productId" element={<ShoppingDetail />} />
             <Route path="shoppingCart" element={<ShoppingCart />} />
             <Route path="healthCare" element={<HealthCare />} />
 
             <Route path="payment" element={<Payment />} />
-            <Route path="paymentCancelList" element={<PaymentCancelList />} />
+            <Route path="payCancelReq" element={<PayCancelReq />} />
             <Route path="paymentEnd" element={<PaymentEnd />} />
             <Route path="paymentHistory" element={<PaymentHistory />} />
-            <Route path="cancelpay" element={<CancelPay />} />
-            <Route path="paymentlist" element={<PayListTest />} />
+            <Route path="paymentlist" element={<PaymentHistory />} />
+            <Route path="paymentCancelDone" element={<PaymentCancelDone />} />
 
             <Route path="nanumList" element={<Outlet />}>
               <Route index element={<NanumList />} />
