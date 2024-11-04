@@ -29,7 +29,10 @@ const MainPage = () => {
   const shoppingData = async () => {
     if (useDummyData) {
       const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
-
+    } else {
+      // 실제 fetchData를 사용할 때 필요한 로직이 있다면 여기에 추가
+    }
+  };
   const carouselImages = [
     images.carouselImage1,
     images.carouselImage2,
