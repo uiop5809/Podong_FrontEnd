@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import MonthlySummary from "../../components/walking/MonthlySummary";
@@ -6,16 +6,54 @@ import noWalkingAnimation from "../../components/walking/noWalking.json";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 import { images } from "../../components/Images";
+import axios from "../../apis/AxiosInstance";
 
 const WalkingJournal = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  const [walkingLogs] = useState({
-    "2024-11-01": { duration: "30:00", distance: "2.5" },
-    "2024-11-03": { duration: "45:00", distance: "3.8" },
-    "2024-11-05": { duration: "20:00", distance: "1.5" },
-  });
+  const [walkingLogs, setWalkingLogs] = useState({});
+
+  const fetchWalkingLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/walkRoutes`
+      );
+      const logs = response.data.reduce((acc, log) => {
+        const dateStr = new Date(log.createdAt).toISOString().split("T")[0];
+
+        if (!acc[dateStr]) {
+          acc[dateStr] = { duration: "00:00", distance: 0.0 };
+        }
+        acc[dateStr].distance += parseFloat(log.distanceKm);
+
+        const [prevHours, prevMinutes] = acc[dateStr].duration
+          .split(":")
+          .map(Number);
+        const [currentHours, currentMinutes] = log.walkTime
+          .split(":")
+          .map(Number);
+        const totalMinutes = prevMinutes + currentMinutes;
+        const totalHours =
+          prevHours + currentHours + Math.floor(totalMinutes / 60);
+        acc[dateStr].duration = `${String(totalHours).padStart(
+          2,
+          "0"
+        )}:${String(totalMinutes % 60).padStart(2, "0")}`;
+
+        acc[dateStr].distance = parseFloat(acc[dateStr].distance.toFixed(2));
+
+        return acc;
+      }, {});
+      setWalkingLogs(logs);
+    } catch (error) {
+      console.error("Error fetching walking logs:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalkingLogs();
+  }, []);
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
