@@ -20,9 +20,9 @@ const MonthlySummary = ({ selectedMonth, walkingLogs }) => {
           parseInt(month) === selectedMonthIndex
         ) {
           const { duration, distance } = walkingLogs[date];
-          const [minutes, seconds] = duration.split(":").map(Number);
+          const [hours, minutes] = duration.split(":").map(Number);
 
-          totalMinutes += minutes;
+          totalMinutes += hours * 60 + minutes;
           totalDistance += parseFloat(distance);
         }
       });
