@@ -340,7 +340,7 @@ const RegisterButton = styled.button`
   height: 43px; 
   text-align: center; 
   border-radius: 8px; 
-  margin-bottom: 20px;
+  margin-bottom: 200px;
   margin-left: 20px;
 
   &:hover {
@@ -355,7 +355,8 @@ const UserEditPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [zoneCode, setZoneCode] = useState('');
-  const [nickname, setNickname] = useState(''); // 닉네임 상태
+  const [nickname, setNickname] = useState(''); // 사용자 수정 가능한 닉네임
+  const [profileNickname, setProfileNickname] = useState(''); // 카카오 프로필 닉네임
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [email, setEmail] = useState('');
@@ -371,7 +372,8 @@ const UserEditPage = () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
         const userData = response.data;
-        setNickname(userData.nickname); // 닉네임 상태 설정
+        setNickname(userData.nickname); // 사용자 수정 가능한 닉네임
+        setProfileNickname(userData.profileNickname); // 카카오 프로필 닉네임
         setPhoneNumber(userData.phoneNumber);
         setAddress(userData.address);
         setDetailedAddress(userData.detailedAddress || '');
@@ -386,15 +388,6 @@ const UserEditPage = () => {
     fetchUserData();
   }, []);
 
-  const openPostCode = () => setIsPopupOpen(true);
-  const closePostCode = () => setIsPopupOpen(false);
-
-  const toggleHandler = (index) => {
-    const newToggleStates = [...toggleStates];
-    newToggleStates[index] = !newToggleStates[index];
-    setToggleStates(newToggleStates);
-  };
-
   const handleUpdate = async () => {
     const userId = localStorage.getItem('userId');
     try {
@@ -405,16 +398,25 @@ const UserEditPage = () => {
         detailedAddress,
         zoneCode,
         accountEmail: email,
-        profileNickname: nickname || "기본 닉네임", // profileNickname 값 추가
+        profileNickname: profileNickname || '기본 프로필 닉네임', // 기본값 설정
         health: toggleStates[0],
         petCare: toggleStates[1],
         missing: toggleStates[2],
-    });
+      });
       alert('사용자 정보가 성공적으로 업데이트되었습니다.');
     } catch (error) {
       console.error('Error updating user information:', error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
+  };
+
+  const openPostCode = () => setIsPopupOpen(true);
+  const closePostCode = () => setIsPopupOpen(false);
+
+  const toggleHandler = (index) => {
+    const newToggleStates = [...toggleStates];
+    newToggleStates[index] = !newToggleStates[index];
+    setToggleStates(newToggleStates);
   };
 
   return (
@@ -423,7 +425,7 @@ const UserEditPage = () => {
         <Description>
           <WelcomeContainer>
             <WelcomeComment>안녕하세요</WelcomeComment>
-            <FirstComment>{nickname}님🥳</FirstComment> {/* userData에서 닉네임 표시 */}
+            <FirstComment>{nickname}님🥳</FirstComment> {/* 카카오 프로필 닉네임 */}
           </WelcomeContainer>
           <HightLight>발바닥 천국</HightLight>과🐾 당신과 반려동물의 발걸음이 더 행복해지도록 정보를 등록해 보세요.
         </Description>

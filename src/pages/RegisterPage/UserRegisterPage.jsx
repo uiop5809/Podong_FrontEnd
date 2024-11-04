@@ -6,6 +6,7 @@ import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -324,7 +325,7 @@ const RegisterButton = styled.button`
   height: 43px; 
   text-align: center; 
   border-radius: 8px; 
-  margin-bottom: 20px;
+  margin-bottom: 200px;
   margin-left: 20px;
 
   &:hover {
@@ -343,19 +344,42 @@ const UserRegisterPage = () => {
   const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
+  const [profileNickname, setProfileNickname] = useState('');
+  const openPostCode = () => setIsPopupOpen(true);
+  const closePostCode = () => setIsPopupOpen(false);
+  
+ 
 
 
   const queryParams = new URLSearchParams(location.search);
   const { email } = useParams()
   localStorage.setItem('email', email);
   console.log(email);
+
+  
   
   const handleRegister = async () => {
-    if (!nickname || !address) {
-      alert('닉네임과 주소를 입력해주세요.');
+    // 특수문자 검사 (한글, 영문, 숫자만 허용)
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+    if (!nicknameRegex.test(nickname)) {
+      alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
+      setNickname(''); // nickname을 빈 문자열로 설정하여 재입력 유도
       return;
     }
-
+  
+    // 휴대폰 번호 유효성 검사
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      return;
+    }
+  
+    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
+    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
+      alert('모든 정보를 입력해주세요.');
+      return;
+    }
+  
     try {
       await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
@@ -365,13 +389,10 @@ const UserRegisterPage = () => {
         zoneCode,
         createdAt: new Date().toISOString(),
         accountEmail: email,
-        profileNickname: nickname,
+        profileNickname: profileNickname,
         health: toggleStates[0],
         petCare: toggleStates[1],
-        missing:toggleStates[2]
-
-      }, {
-        headers: { Authorization: `Bearer` } // 액세스 토큰 헤더에 추가
+        missing: toggleStates[2]
       });
       alert('사용자 정보가 저장되었습니다.');
       navigate('/');
@@ -380,7 +401,6 @@ const UserRegisterPage = () => {
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
-
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index]; 
