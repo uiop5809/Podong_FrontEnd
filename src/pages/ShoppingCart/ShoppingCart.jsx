@@ -1,34 +1,26 @@
-import { UseCart } from '../ShoppingCart/CartContext';
+import { useEffect, useState } from 'react';
+import { useCart } from '../ShoppingCart/CartContext';
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart = () => {
-  const { cart, setCart, dispatch } = UseCart(); // `setCart` 추가
+  const { cart, loadCart } = useCart();
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalProductPrice, setTotalProductPrice] = useState(0);
   const navigate = useNavigate();
+  const userId = 5;
 
-  const userId = 1; // 현재 로그인한 사용자 ID, 실제로는 로그인 정보에서 가져와야 함
-
-  const loadCart = async () => {
-    try {
-      const response = await axios.get(`/api/carts/user/${userId}`);
-      setCart(response.data);
-      setSelectedItems(response.data.map(item => item.productId));
-      calculateTotalPrice(response.data);
-    } catch (error) {
-      console.error('장바구니 로드 중 오류 발생:', error);
-    }
-  };
-
+  // 장바구니 로드 시 가격 계산
   useEffect(() => {
-    loadCart();
+    loadCart(userId);
   }, []);
 
-  // 총 상품 금액 및 배송비 계산s
+  useEffect(() => {
+    calculateTotalPrice(cart);
+  }, [cart]);
+
   const calculateTotalPrice = cartItems => {
     const productTotal = cartItems.reduce((acc, item) => acc + item.productLprice * item.quantity, 0);
     setTotalProductPrice(productTotal);
@@ -37,51 +29,47 @@ const ShoppingCart = () => {
   const shippingCost = totalProductPrice >= 30000 ? 0 : 3000;
   const totalPaymentAmount = totalProductPrice + shippingCost;
 
-  // 수량 업데이트
   const updateQuantity = async (item, newQuantity) => {
     try {
-      await axios.put(`/api/carts/${item.cartId}`, {
-        ...item,
-        quantity: newQuantity,
+      // 백엔드 API에 수량 업데이트 요청
+      await axios.put(`http://localhost:8080/api/carts/${item.cartId}`, null, {
+        params: { quantity: newQuantity },
       });
-      loadCart();
+      // 업데이트된 장바구니 상태를 다시 불러옴
+      loadCart(userId);
     } catch (error) {
       console.error('수량 업데이트 중 오류 발생:', error);
     }
   };
 
-  // 장바구니 항목 삭제
-  const deleteItem = async productId => {
+  const deleteItem = async cartId => {
     try {
-      await axios.delete(`/api/carts/${productId}`);
-      loadCart();
+      // 백엔드 API에 삭제 요청
+      await axios.delete(`http://localhost:8080/api/carts/${cartId}`);
+      // 업데이트된 장바구니 상태를 다시 불러옴
+      loadCart(userId);
     } catch (error) {
       console.error('장바구니 항목 삭제 중 오류 발생:', error);
     }
   };
 
-  // 전체 선택/해제
-  const handleSelectAll = () => {
-    if (selectedItems.length === cart.length) {
+  const handleDeleteSelected = async () => {
+    try {
+      await Promise.all(selectedItems.map(cartId => deleteItem(cartId)));
       setSelectedItems([]);
-    } else {
-      setSelectedItems(cart.map(item => item.productId));
+    } catch (error) {
+      console.error('선택 삭제 중 오류 발생:', error);
     }
   };
 
-  // 항목 개별 선택/해제
+  const handleSelectAll = () => {
+    setSelectedItems(selectedItems.length === cart.length ? [] : cart.map(item => item.cartId));
+  };
+
   const handleSelectItem = productId => {
-    if (selectedItems.includes(productId)) {
-      setSelectedItems(selectedItems.filter(id => id !== productId));
-    } else {
-      setSelectedItems([...selectedItems, productId]);
-    }
-  };
-
-  // 선택된 항목 삭제
-  const handleDeleteSelected = () => {
-    selectedItems.forEach(deleteItem);
-    setSelectedItems([]);
+    setSelectedItems(
+      selectedItems.includes(productId) ? selectedItems.filter(id => id !== productId) : [...selectedItems, productId],
+    );
   };
 
   const goToPayMent = () => {
@@ -97,11 +85,14 @@ const ShoppingCart = () => {
         </ProgressContainer>
         <SelectionControls>
           <div>
-            <input type="checkbox" checked={selectedItems.length === cart.length} onChange={handleSelectAll} />
+            <input
+              type="checkbox"
+              checked={cart.length > 0 && selectedItems.length === cart.length}
+              onChange={handleSelectAll}
+            />
             <span>모두선택</span>
           </div>
           <ActionButtons>
-            <ActionButton onClick={handleDeleteSelected}>전체삭제</ActionButton>
             <ActionButton onClick={handleDeleteSelected}>선택삭제</ActionButton>
           </ActionButtons>
         </SelectionControls>
@@ -121,7 +112,7 @@ const ShoppingCart = () => {
                     checked={selectedItems.includes(item.productId)}
                     onChange={() => handleSelectItem(item.productId)}
                   />
-                  <DeleteButton onClick={() => deleteItem(item.productId)}>
+                  <DeleteButton onClick={() => deleteItem(item.cartId)}>
                     <MdClose size={18} />
                   </DeleteButton>
                 </ClickWrap>
@@ -223,7 +214,6 @@ const SelectionControls = styled.div`
 const ActionButtons = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 90px;
 `;
 
 const ActionButton = styled.button`
@@ -290,7 +280,7 @@ const ItemDetails = styled.div`
   flex-direction: column;
   justify-content: space-between;
   flex-grow: 1;
-  padding: 5px 0;
+  padding: 8px 0;
 `;
 
 const ItemTitle = styled.h3`

@@ -22,6 +22,51 @@ const HealthCare = () => {
     setShowInput({ ...showInput, [type]: !showInput[type] });
   };
 
+  const formatDate = date => {
+    return date.toISOString().split('T')[0];
+  };
+
+  // 날짜에 따른 캘린더 타일 표시
+  const tileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = formatDate(date);
+      const appointment = appointments.find(app => formatDate(app.date) === dateStr);
+
+      if (appointment) {
+        let color = '';
+        if (appointment.type === '병원 방문일') {
+          color = '#FB3737';
+        } else if (appointment.type === '다음 방문일') {
+          color = '#17A1FA';
+        } else if (appointment.type === '건강 관리') {
+          color = '#33E949';
+        }
+        return <Dot color={color} />;
+      }
+    }
+    return null;
+  };
+
+  // 날짜 강조 스타일 적용
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = formatDate(date);
+      const isToday = formatDate(new Date()) === dateStr;
+      const isSelected = selectedDate && formatDate(selectedDate) === dateStr;
+
+      let classes = 'calendar-tile';
+
+      if (isToday) {
+        classes += ' today';
+      }
+      if (isSelected) {
+        classes += ' selected';
+      }
+
+      return classes;
+    }
+  };
+
   return (
     <Container>
       <Legend>
@@ -36,7 +81,12 @@ const HealthCare = () => {
         </LegendItem>
       </Legend>
       <CalendarWrapper>
-        <Calendar onChange={handleDateChange} value={selectedDate} />
+        <StyledCalendar
+          onChange={handleDateChange}
+          value={selectedDate}
+          tileContent={tileContent}
+          tileClassName={tileClassName}
+        />
       </CalendarWrapper>
       <AppointmentSection>
         <AppointmentInput>
@@ -98,6 +148,39 @@ const CalendarWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
+const StyledCalendar = styled(Calendar)`
+  width: 100%;
+
+  .react-calendar__tile {
+    padding: 1em 0.5em;
+    height: 60px;
+  }
+
+  .react-calendar__tile--now {
+    background: #fff3e8;
+    border-radius: 8px;
+  }
+
+  .react-calendar__tile--active {
+    background-color: #fff3e8;
+    color: black;
+  }
+
+  .calendar-tile {
+    position: relative;
+    height: 60px;
+  }
+
+  .today {
+    border: 2px solid #ffa764;
+    border-radius: 8px;
+  }
+
+  .selected {
+    background-color: #fff3e8;
+  }
+`;
+
 const Legend = styled.div`
   display: flex;
   justify-content: end;
@@ -113,8 +196,8 @@ const LegendItem = styled.div`
 `;
 
 const Dot = styled.span`
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: ${props => props.color};
   margin-right: 5px;
@@ -135,17 +218,19 @@ const AppointmentInput = styled.div`
   padding: 0 16px;
   font-size: 14px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 `;
 
 const InputWrapper = styled.div`
   display: flex;
+  width: 100%;
+  padding: 0 16px;
+  margin-bottom: 15px;
+  justify-content: space-between;
   align-items: center;
-  margin-left: 10px;
 `;
 
 const DateInput = styled.input`
-  margin-right: 10px;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -159,7 +244,6 @@ const MemoInput = styled.input`
 `;
 
 const Button = styled.button`
-  font-weight: bold;
   margin-left: 10px;
   padding: 5px 10px;
   border: none;
@@ -172,7 +256,8 @@ const Button = styled.button`
 `;
 
 const RegisterButton = styled(Button)`
-  background-color: #4caf50;
+  border: 1px solid #ec7a4f;
+  color: #ec7a4f;
   margin-left: 5px;
 
   &:hover {

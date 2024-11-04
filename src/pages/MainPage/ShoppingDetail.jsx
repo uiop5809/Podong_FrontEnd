@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import { FaStar } from 'react-icons/fa';
-import { UseCart } from '../ShoppingCart/CartContext';
+import { useCart } from '../ShoppingCart/CartContext';
 
 const ShoppingDetail = () => {
   const { productId } = useParams();
@@ -13,17 +13,16 @@ const ShoppingDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCartModalOpen, setCartModalOpen] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
-  const { dispatch } = UseCart();
-  const userId = 1; // 테스트용 더미 유저 ID
+  const userId = 5; // 테스트용 더미 유저 ID
 
   useEffect(() => {
     if (!product) {
       const fetchProduct = async () => {
         try {
-          const response = await axios.get(`/api/products/${productId}`);
+          const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
           setProduct(response.data);
         } catch (error) {
-          console.error('Error fetching product details:', error);
+          console.error('상품정보를 불러오는데 오류가 발생했습니다:', error);
         }
       };
       fetchProduct();
@@ -33,31 +32,22 @@ const ShoppingDetail = () => {
   const increaseQuantity = () => setQuantity(quantity + 1);
   const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
 
-  const addToCart = async () => {
-    // 요청 전에 데이터 확인을 위한 로그 추가
-    console.log('Adding to cart with data:', {
-      product: product.productId,
-      user: userId,
+  const addToCart = () => {
+    const cartItem = {
+      userId: userId, // 테스트용으로 설정된 userId
+      productId: product.productId,
       quantity: quantity,
-    });
+    };
 
-    try {
-      const response = await axios.post('/api/carts', {
-        product: product.productId,
-        user: userId,
-        quantity: quantity,
+    axios
+      .post('http://localhost:8080/api/carts', cartItem)
+      .then(response => {
+        alert(response.data);
+        setCartModalOpen(false); // 장바구니에 담기 성공 후 팝업창 닫기
+      })
+      .catch(error => {
+        console.error('장바구니 추가 중 오류 발생:', error);
       });
-
-      if (response.status === 201) {
-        // 201 Created 응답 확인
-        alert('상품을 장바구니에 담았습니다!');
-      } else {
-        console.error('Unexpected response:', response);
-      }
-      setCartModalOpen(false);
-    } catch (error) {
-      console.error('장바구니 추가 중 오류 발생:', error.response?.data || error.message);
-    }
   };
 
   const handlePurchaseConfirm = () => {
@@ -94,7 +84,6 @@ const ShoppingDetail = () => {
         <PurchaseButton onClick={() => setPurchaseModalOpen(true)}>바로 구매</PurchaseButton>
       </PurchaseWrap>
 
-      {/* 장바구니 모달 */}
       {isCartModalOpen && (
         <Modal>
           <ModalContent>
@@ -105,7 +94,6 @@ const ShoppingDetail = () => {
         </Modal>
       )}
 
-      {/* 바로 구매 모달 */}
       {isPurchaseModalOpen && (
         <Modal>
           <ModalContent>
@@ -139,7 +127,6 @@ const ShoppingDetail = () => {
 
 export default ShoppingDetail;
 
-// 스타일 컴포넌트
 const DetailContainer = styled.div`
   display: flex;
   flex-direction: column;
