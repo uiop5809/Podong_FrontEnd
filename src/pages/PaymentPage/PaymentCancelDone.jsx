@@ -1,8 +1,7 @@
-// React Component (PaymentCancel.js)
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Lottie from 'lottie-react';
-import PayCancelAnimation from '../PaymentPage/PayCancelAnimation.json';
+import PayCancelAnimation from './PayCancelAnimation.json';
 
 const Container = styled.div`
   display: flex;
@@ -131,7 +130,7 @@ const PaymentTotal = styled.p`
   margin-top: 10px;
 `;
 
-const PaymentCancel = () => {
+const PaymentCancelDone = () => {
   const [orderNumber, setOrderNumber] = useState('');
   const [content, setContent] = useState({});
 
@@ -201,4 +200,4 @@ const PaymentCancel = () => {
   );
 };
 
-export default PaymentCancel;
+export default PaymentCancelDone;

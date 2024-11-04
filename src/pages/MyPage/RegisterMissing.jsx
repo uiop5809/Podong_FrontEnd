@@ -165,7 +165,7 @@ const RegisterMissing = () => {
   const [marker, setMarker] = useState(null); 
   const [latitude, setLatitude] = useState(37.5665); 
   const [longitude, setLongitude] = useState(126.978); 
-  const [previewImage, setPreviewImage] = useState(null); 
+  const [previewImage, setPreviewImage] = useState(null);
 
   const today = new Date().toISOString().split("T")[0]; 
 
@@ -174,11 +174,11 @@ const RegisterMissing = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result);
+        setPreviewImage(reader.result); 
       };
       reader.readAsDataURL(file); 
     } else {
-      setPreviewImage(null); // 이미지가 없으면 미리보기 초기화
+      setPreviewImage(null);
     }
   };
 
@@ -225,36 +225,67 @@ const RegisterMissing = () => {
     const container = document.getElementById('map'); 
     const options = {
       center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 1,
+      level: 3,
     };
     
     const newMap = new window.kakao.maps.Map(container, options);
     setMap(newMap);
-
+  
     const newMarker = new window.kakao.maps.Marker({
       position: new window.kakao.maps.LatLng(latitude, longitude),
     });
     newMarker.setMap(newMap);
     setMarker(newMarker);
-
+  
+    const geocoder = new window.kakao.maps.services.Geocoder();
+  
+    const searchAddrFromCoords = (coords, callback) => {
+      geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+    };
+  
     window.kakao.maps.event.addListener(newMap, 'click', (mouseEvent) => {
       const clickedPosition = mouseEvent.latLng;
       newMarker.setPosition(clickedPosition);
       setLatitude(clickedPosition.getLat());
       setLongitude(clickedPosition.getLng());
-      setLocationInput(`위도: ${clickedPosition.getLat().toFixed(6)}, 경도: ${clickedPosition.getLng().toFixed(6)}`);
+      
+      searchAddrFromCoords(clickedPosition, function(result, status) {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const addr = result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+          setLocationInput(`주소: ${addr}`);
+        }
+      });
     });
-  }, [latitude, longitude]); 
-
+  
+    // 초기 위치의 주소 가져오기
+    searchAddrFromCoords(new window.kakao.maps.LatLng(latitude, longitude), function(result, status) {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const addr = result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+        setLocationInput(`${addr}`);
+      }
+    });
+  
+  }, [latitude, longitude]);
+  
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         setLatitude(latitude);
         setLongitude(longitude);
-        setLocationInput(`위도: ${latitude}, 경도: ${longitude}`);
+        
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        const coord = new window.kakao.maps.LatLng(latitude, longitude);
+        
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            const addr = result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+            setLocationInput(`주소: ${addr}`);
+          }
+        });
       }, (error) => {
         console.error("위치 정보에 접근할 수 없습니다.", error);
+        alert("위치 정보를 가져올 수 없습니다. 브라우저 설정을 확인해 주세요.");
       });
     } else {
       alert("이 브라우저는 Geolocation을 지원하지 않습니다.");

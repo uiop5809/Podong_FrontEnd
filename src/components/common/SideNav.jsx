@@ -27,12 +27,12 @@ const SideNav = () => {
 
   const pageTitles = [
     { path: '/shoppingDetail', title: '상품상세정보' },
-    { path: '/cart', title: '장바구니' },
+    { path: '/shoppingCart', title: '장바구니' },
     { path: '/payment', title: '주문&결제' },
     { path: '/nanumList/write', title: '나눔 글 작성' },
     { path: '/nanumList', title: '나눔 목록' },
     { path: '/nanumDetail', title: '나눔상세정보' },
-    { path: '/health', title: '건강관리' },
+    { path: '/healthCare', title: '건강관리' },
     { path: '/walking', title: '산책' },
     { path: '/walkingRecord', title: '산책일지' },
     { path: '/community', title: '커뮤니티' },
@@ -64,18 +64,20 @@ const SideNav = () => {
 
   const icons = [
     { icon: <FaRegBell />, link: '/notifications' },
-    { icon: <HiOutlineShoppingCart size={17} />, link: '/cart' },
+    { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
     { icon: <FaRegUserCircle />, link: '/Login' },
   ];
 
   return (
     <>
       <Navbar $isScrolled={isScrolled}>
-        <BackBtn
-          onClick={() => {
-            navigate(-1);
-          }}>
-          <HiArrowLeft size={18} />
+        <BackBtn>
+          <StyledHiArrowLeft
+            size={18}
+            onClick={() => {
+              navigate(-1);
+            }}
+          />
         </BackBtn>
         <SideNaveTitle>{pageTitle}</SideNaveTitle>
         <NavIconWrap>
@@ -114,11 +116,16 @@ const Navbar = styled.div`
     width: 100vw;
   }
 `;
-const BackBtn = styled.button`
+const BackBtn = styled.div`
   width: 75px;
   display: flex;
   justify-content: start;
 `;
+
+const StyledHiArrowLeft = styled(HiArrowLeft)`
+  cursor: pointer;
+`;
+
 const SideNaveTitle = styled.div`
   font-size: 18px;
   font-weight: bold;

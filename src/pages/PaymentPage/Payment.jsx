@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
-// 결제1차백
+
 const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [deliveryNote, setDeliveryNote] = useState('');
@@ -126,7 +126,7 @@ const Payment = () => {
         IMP.init("imp02101050"); // 포트원 가맹점 식별코드
       
         const userId = 1;
-        const response = await axios.get(`http://localhost:8080/api/user/getInfo/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
         const userData = response.data;
         console.log("User Data:", userData);
       
@@ -137,10 +137,10 @@ const Payment = () => {
           merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
           name: "테스트 결제", // 결제명
           amount: 1000, // 결제 금액
-          buyer_email: userData.buyer_email, // 구매자 이메일
-          buyer_name: userData.buyer_name, // 구매자 이름
-          buyer_tel: userData.buyer_tel, // 구매자 전화번호
-          buyer_addr: userData.buyer_addr, // 구매자 주소
+          buyer_email: userData.accountEmail, // 구매자 이메일
+          buyer_name: userData.nickname, // 구매자 이름
+          buyer_tel: userData.phoneNumber, // 구매자 전화번호
+          buyer_addr: userData.address, // 구매자 주소
           buyer_postcode: "000-000", // 구매자 우편번호
         }, (rsp) => {
           if (rsp.success) { // 프론트에서 결제가 완료되면
