@@ -144,7 +144,7 @@ const RegisterButton = styled.button`
   text-align: center; 
   border-radius: 8px; 
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 
   &:hover {
     background-color: #FF6E00;
@@ -184,17 +184,25 @@ const RegisterMissing = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
+    formData.append('petId', 1); // petId를 1로 설정하여 추가
+    formData.append('walkroute', 1); // walkroute를 1로 설정하여 추가
+    formData.append('location', locationInput); // location 필드를 추가
+    formData.append('alarmName', '고창준');
+    formData.append('missingDate', `${date}T00:00:00+09:00`);
+    formData.append('alertradiuskm', 1);
     formData.append('petName', petName);
+    formData.append('missingstatus', 1);
+    formData.append('formDetail', latitude);
     formData.append('date', date);
     formData.append('address', address);
-    formData.append('phone', phone);
-    formData.append('description', description);
+    formData.append('contactNumber', phone); 
+    formData.append('missingDetails', description);
     formData.append('createdAt', new Date().toISOString());
-    
+
     const imageInput = document.querySelector('input[type="file"]');
     if (imageInput.files[0]) {
-      formData.append('image', imageInput.files[0]);
-    }
+      formData.append('imageUrl', imageInput.files[0]);
+    } 
 
     try {
       const response = await axios.post('http://localhost:8080/api/missings', formData, {
@@ -204,7 +212,7 @@ const RegisterMissing = () => {
       });
 
       if (response.status === 201) {
-        const petId = response.data; 
+        const petId = 1; //일단 더미로 1로 지정
         if (petId) {
           alert('반려동물 등록이 완료되었습니다.');
           navigate(`/userRegister/${petId}`);
