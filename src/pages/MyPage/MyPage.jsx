@@ -340,6 +340,7 @@ const CustomImage = styled.img`
   margin-left: 25px;
 `;
 
+
 const MissingRegisterBtn = styled.button`
   background-color: white;
   color: black;
@@ -396,6 +397,26 @@ function MyPage() {
   const navigate = useNavigate();
   const [pets, setPets] = useState([]);
   const cardContainerRef = useRef();
+  const [userData, setUserData] = useState(null); 
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId'); 
+      if (!userId) {
+        console.error('User ID not found in local storage');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   //집사생활
   const userActivities = [
@@ -464,10 +485,12 @@ function MyPage() {
       <Container>
         <MainContainer>
           <StyledAvatar />
-          <UserInfo>
-            고양이가 세상을 구한다
-            <EditButton onClick={() => navigate(`/myPage/editUserRegister/${petId}`)}>수정</EditButton>
-          </UserInfo>
+
+              <UserInfo>
+                      {userData ? userData.nickname : '불러오는 중...'}
+                <EditButton onClick={() => navigate('/myPage/editUserRegister')}>수정</EditButton>
+              </UserInfo>
+
         </MainContainer>
 
         <SubContainer>

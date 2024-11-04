@@ -34,6 +34,7 @@ import PaymentCancelDone from './pages/PaymentPage/PaymentCancelDone.jsx';
 function Router() {
   return (
     <BrowserRouter>
+
       <CartProvider>
         <ScrollTop />
         <NavSelector />
@@ -52,6 +53,7 @@ function Router() {
             <Route path="paymentlist" element={<PaymentHistory />} />
             <Route path="paymentCancelDone" element={<PaymentCancelDone />} />
 
+            <Route path="mainpage/:userId" element={<MainPage />} />  
             <Route path="nanumList" element={<Outlet />}>
               <Route index element={<NanumList />} />
               <Route path="write" element={<NanumWrite />} />
@@ -64,7 +66,7 @@ function Router() {
               <Route path="detail/:no" element={<CommunityDetail />} />
             </Route>
 
-            <Route path="userRegister/:userId" element={<UserRegisterPage />} />
+            <Route path="userRegister/:email" element={<UserRegisterPage />} />
             <Route path="petRegister" element={<PetRegisterPage />} />
 
             <Route path="walking" element={<WalkPage />}>

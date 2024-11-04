@@ -333,7 +333,7 @@ const RegisterButton = styled.button`
   }
 `; 
 
-const UserEditPage = () => {
+const UserRegisterPage = () => {
   const navigate = useNavigate();
   const [imgPath, setImgPath] = useState('');
   const [toggleStates, setToggleStates] = useState([false, false, false]);
@@ -343,55 +343,13 @@ const UserEditPage = () => {
   const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
-  const [email, setEmail] = useState('');
 
-  const jwtToken = localStorage.getItem('jwtToken');
-  const accessToken = localStorage.getItem('accessToken');
-  const storedUserId = localStorage.getItem('userId'); 
 
-  const openPostCode = () => setIsPopupOpen(true);
-  const closePostCode = () => setIsPopupOpen(false);
-
-  const toggleHandler = (index) => {
-    setToggleStates((prevToggleStates) => {
-      const newToggleStates = [...prevToggleStates];
-      newToggleStates[index] = !newToggleStates[index];
-      return newToggleStates;
-    });
-  };
-
-  useEffect(() => {
-    if (accessToken) {
-      axios.get('https://kapi.kakao.com/v2/user/me', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-      .then(response => setEmail(response.data.kakao_account.email))
-      .catch(error => {
-        console.error("Error fetching email:", error);
-        alert("이메일 정보를 불러올 수 없습니다.");
-      });
-    }
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (storedUserId) { 
-      axios.get(`http://localhost:8080/api/users/${storedUserId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
-      })
-      .then((response) => {
-        const { nickname, phoneNumber, address, zoneCode, detailedAddress } = response.data;
-        setNickname(nickname);
-        setPhoneNumber(phoneNumber);
-        setAddress(address);
-        setZoneCode(zoneCode);
-        setDetailedAddress(detailedAddress);
-      })
-      .catch((error) => console.error("Error fetching user data:", error));
-    } else {
-      console.error("No userId found in localStorage.");
-    }
-  }, [storedUserId, jwtToken]);
-
+  const queryParams = new URLSearchParams(location.search);
+  const { email } = useParams()
+  localStorage.setItem('email', email);
+  console.log(email);
+  
   const handleRegister = async () => {
     if (!nickname || !address) {
       alert('닉네임과 주소를 입력해주세요.');
@@ -408,9 +366,12 @@ const UserEditPage = () => {
         createdAt: new Date().toISOString(),
         accountEmail: email,
         profileNickname: nickname,
-        notifications: toggleStates
+        health: toggleStates[0],
+        petCare: toggleStates[1],
+        missing:toggleStates[2]
+
       }, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
+        headers: { Authorization: `Bearer` } // 액세스 토큰 헤더에 추가
       });
       alert('사용자 정보가 저장되었습니다.');
       navigate('/');
@@ -420,6 +381,12 @@ const UserEditPage = () => {
     }
   };
 
+  const toggleHandler = (index) => {
+    const newToggleStates = [...toggleStates];
+    newToggleStates[index] = !newToggleStates[index]; 
+    setToggleStates(newToggleStates);
+  };
+ 
   return (
     <ScrollableContainer>
       <Container>
@@ -531,4 +498,7 @@ const UserEditPage = () => {
   );
 };
 
-export default UserEditPage;
+
+export default UserRegisterPage;
+
+
