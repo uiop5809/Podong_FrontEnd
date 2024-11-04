@@ -184,9 +184,6 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #root {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     margin: 0 auto;
     box-shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
     min-height: 100vh;

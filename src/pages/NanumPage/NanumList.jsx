@@ -1,51 +1,78 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { HiArrowLeft, HiArrowSmDown } from 'react-icons/hi';
 import { LuSearch } from 'react-icons/lu';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { FcLike } from 'react-icons/fc';
+import axios from 'axios';
+import { HiArrowSmDown } from 'react-icons/hi';
 
 const PetItemListPage = () => {
   const navigate = useNavigate();
   const [petItemList, setPetItemList] = useState([]);
-  const [counter, setCounter] = useState(0);
-
-  function handleList() {
-    fetch('http://localhost:8080/api/petItems')
-      .then(response => response.json())
-      .then(json => {
-        console.log('게시글 목록:', json);
-        setPetItemList(json);
+  const [comments,setComments]=useState([]);
+  const [latest,setLatest]=useState(false);
+    //게시글 목록 불러오기
+  useEffect(() => {          
+      axios.get('http://localhost:8080/api/petItems')
+      .then((response) => {
+        setPetItemList(response.data); // 응답 데이터 저장
+        console.log('게시글 목록:', response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
-  }
-
-  useEffect(() => {
-    handleList();
   }, []);
 
-  function good() {
-    setCounter(counter + 1);
-    console.log('좋아요 :', counter);
-  }
+  // 좋아요 수 증가 함수
+  const good = (petItemId) => {
+    const updatedItemList = petItemList.map(item => {
+      if (item.petItemId === petItemId) {
+        const updatedGood = (item.good || 0) + 1;
+        // 서버의 좋아요 수 업데이트 요청
+        axios.put(`http://localhost:8080/api/petItems/${petItemId}`, {...item, good: updatedGood })
+        .then(response => {
+          console.log('좋아요 업데이트:', response.data);
+        })
+        .catch(error => {
+          console.error("좋아요 업데이트 실패:", error);
+        });
+        return { ...item, good: updatedGood };
+      }
+      return item;
+    });
+    setPetItemList(updatedItemList);
+  };
+
+  
+  // 댓글 목록 불러오기
+  useEffect(()=>{
+    axios.get(`http://localhost:8080/api/petItemComments`)
+    .then((response) => {
+      setComments(response.data)
+      console.log('댓글 목록 :', response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+
+  },[])
+
+// 최신순 
+const handleLatest = () => {
+  const sortList = [...petItemList].sort((a, b) => new Date(b. createdAt)-new Date(a. createdAt));
+  setPetItemList(sortList);
+  setLatest(true);//정렬 변경
+};
+
 
   return (
     <ItemTitle>
-      <RowTi>
-        <button
-          onClick={() => {
-            navigate('/');
-          }}>
-          <HiArrowLeft1 />
-        </button>
-        <H1>나눔</H1>
-      </RowTi>
-
       <Search>
         <Box type="search" placeholder="단어를 입력하세요" />
         <LuSearch1 />
         <Buuttons>
-          <ButtonCh>
+          <ButtonCh onClick={handleLatest}>
             최신순
             <HiArrowSmDown1 />
           </ButtonCh>
@@ -65,9 +92,9 @@ const PetItemListPage = () => {
             key={item.petItemId}
             onClick={e => {
               e.preventDefault();
-              navigate(`/nanumList/${item.petItemId}`);
+              navigate(`/nanumList/detail/${item.petItemId}`);
             }}>
-            <ListImg>{item.imageUrl}</ListImg>
+            <ListImg src={`http://localhost:8080/uploads/${item.imageUrl}`}/>
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
               <ListUser>작성자{item.user}</ListUser>
@@ -80,11 +107,11 @@ const PetItemListPage = () => {
                   <FcLike1
                     onClick={e => {
                       e.stopPropagation();
-                      good();
+                      good(item.petItemId);
                     }}
                   />
-                  {counter}
-                  <Comment1 />2
+                  {item.good || 0}
+                  <Comment1 />{comments.filter((comment)=>comment.petItem === item.petItemId).length}
                 </Icons>
               </ListDate>
             </ListTitlesContainer>
@@ -98,27 +125,11 @@ const PetItemListPage = () => {
 export default PetItemListPage;
 
 const ItemTitle = styled.div`
-  margin: 64px 25px 64px 25px;
-`;
-
-const RowTi = styled.div`
-  display: flex;
-  margin-bottom: 10px;
-  align-items: center;
-`;
-
-const H1 = styled.h1`
-  font-size: 18px;
-  font-weight: bold;
+  height:100% ;
   width: 100%;
+  padding: 64px 25px 64px 25px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20px;
-`;
-const HiArrowLeft1 = styled(HiArrowLeft)`
-  font-size: 20px;
-  font-weight: bold;
+  flex-direction: column;
 `;
 const Buuttons = styled.div`
   position: absolute;
@@ -201,7 +212,7 @@ const Lists = styled.div`
   flex-direction: row;
   height: 100px;
 `;
-const ListImg = styled.div`
+const ListImg = styled.img`
   width: 100px;
   height: 100px;
   background-color: #d9d9d9;

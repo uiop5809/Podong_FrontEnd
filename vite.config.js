@@ -1,15 +1,25 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080', // 백엔드 서버 주소
+      '/iamport': {
+        target: 'https://api.iamport.kr', // 아임포트 API 서버 주소
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // "/api" 제거 후 전달
+        secure: false,
+        rewrite: (path) => path.replace(/^\/iamport/, ''), // "/iamport" 제거 후 전달
+      },
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
       },
     },
+  },
+  optimizeDeps: {
+    exclude: [
+      'react-icons', // react-icons를 최적화에서 제외
+    ],
   },
 });
