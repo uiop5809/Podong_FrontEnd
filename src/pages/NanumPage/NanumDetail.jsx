@@ -72,7 +72,7 @@ const PetItemDetailPage = () => {
   }
 
   return (
-  <>
+  <Container >
     <ItemTitle>
       <ListImg src={`http://localhost:8080/uploads/${itemDetail.imageUrl}`}
       alt={itemDetail.imageUrl}/>
@@ -96,9 +96,9 @@ const PetItemDetailPage = () => {
         {comments
         .filter((item)=>item.petItem === itemDetail.petItemId)
         .map((item)=>(
-          <div  key={item.commentId}>
+          <div  key={item.petItemCommentId}>
         <User2><VscAccount1/>작성자: {item.length > 0 && item[0].user}
-          <ListDate key={item.commentId}>
+          <ListDate key={item.petItemCommentId}>
             {new Date(item.createdAt).toLocaleDateString('ko-KR', {
               timeZone: 'Asia/Seoul' 
             })}
@@ -109,6 +109,7 @@ const PetItemDetailPage = () => {
         ))}
       </CommentST>
     </ItemTitle>
+    
       <CommentFrom onSubmit={handleSubmit}>
         <input type="number" name="user"placeholder="유저번호" required/>
         <CommentCC 
@@ -119,7 +120,8 @@ const PetItemDetailPage = () => {
           />
         <CommentSubmit type="submit">등록</CommentSubmit>
       </CommentFrom>
-      </>
+          
+      </Container>
   );
 };
 
@@ -127,7 +129,6 @@ export default PetItemDetailPage;
 const ItemTitle = styled.div`
   display: flex;
   flex-direction: column;
-  height:100% ;
   width: 100%;
   padding: 64px 25px 0px 25px;
 `;
@@ -240,11 +241,14 @@ const CommentST = styled.div`
 const CommentFrom = styled.form`
   width: 100%;
   display: flex;
-  align-items: flex-end;
-  justify-content:center ;
-  margin-top: auto; 
-  margin-bottom: 70px;
   justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: 64px;
+  `;
+  const Container  = styled.div`
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
   `;
   const CommentCC = styled.input`
     height: 40px;
