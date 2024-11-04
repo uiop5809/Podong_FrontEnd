@@ -165,7 +165,7 @@ const RegisterMissing = () => {
   const [marker, setMarker] = useState(null); 
   const [latitude, setLatitude] = useState(37.5665); 
   const [longitude, setLongitude] = useState(126.978); 
-  const [previewImage, setPreviewImage] = useState(null); 
+  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 상태 추가
 
   const today = new Date().toISOString().split("T")[0]; 
 
@@ -174,9 +174,9 @@ const RegisterMissing = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result);
+        setPreviewImage(reader.result); // 미리보기 이미지 설정
       };
-      reader.readAsDataURL(file); 
+      reader.readAsDataURL(file); // 파일을 Data URL로 읽음
     } else {
       setPreviewImage(null); // 이미지가 없으면 미리보기 초기화
     }

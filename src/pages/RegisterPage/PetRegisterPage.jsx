@@ -35,16 +35,6 @@ const StyledInput = styled.input`
   font-size: 11px;
 `; // 폼 input 
 
-const Icon = styled.img`
-  position: absolute;
-  top: 40%;
-  left: 300px; 
-  transform: translateY(-8px);
-  width: 20px;
-  height: 20px;
-`; //카카오 아이콘
-
-
 const SelectButtonContainer = styled.div`
   display: flex;
   gap: 8px; 
@@ -276,7 +266,7 @@ const PetRegisterPage = () => {
     <Label>묘종</Label>
     <SelectBox
       options={CatList.map((cat, index) => ({
-        key: `cat-${index}`, // 고유한 키 설정
+        key: `cat-${index}`,
         value: cat.value,
         label: cat.label,
       }))}
@@ -293,7 +283,7 @@ const PetRegisterPage = () => {
     <Label>견종</Label>
     <SelectBox
       options={DogList.map((dog, index) => ({
-        key: `dog-${index}`, // 고유한 키 설정
+        key: `dog-${index}`,
         value: dog.value,
         label: dog.label,
       }))}

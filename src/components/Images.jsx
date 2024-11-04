@@ -45,6 +45,8 @@ export const images = {
   paw: "/images/myPage/paw.svg",
   point:"/images/myPage/point.svg",
   review:"/images/myPage/review.svg",
+  mypagecat:"/images/myPage/mypagecat.svg",
+  dogprofile:"/images/myPage/dogprofile.svg",
   
 
 
