@@ -5,6 +5,7 @@ import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-ico
 import styled from 'styled-components';
 import dummyData from '../../dummy.json';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
@@ -18,6 +19,10 @@ const MainPage = () => {
 
   const tabs = ['댕댕이', '고냥이'];
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
+
+  const { userId } = useParams();
+  localStorage.setItem('userId', userId); 
+  console.log(userId); 
 
   const shoppingData = async () => {
     if (useDummyData) {

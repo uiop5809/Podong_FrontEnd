@@ -8,7 +8,7 @@ export const images = {
   cameraIcon: '/images/common/cameraIcon.svg',
   loginDogCat: '/images/common/loginDogCat.svg',
   logo: '/images/common/logo.svg',
-  paw: '/images/common/paw.svg',
+  kakaobtn:'/images/common/kakaobtn.svg',
 
   // community
   categoryAll: "/images/community/categoryAll.svg",
@@ -39,7 +39,6 @@ export const images = {
   imseeJeojang: "/images/myPage/imseeJeojang.svg",
   myActivity: "/images/myPage/myActivity.svg",
   bag: "/images/myPage/bag.svg",
-  calendar: "/images/myPage/calendar.svg",
   coupon: "/images/myPage/coupon.svg",
   missing: "/images/myPage/missing.svg",
   paw: "/images/myPage/paw.svg",

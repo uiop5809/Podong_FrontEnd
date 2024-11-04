@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { RxAvatar } from "react-icons/rx";
 import { FaCircleUser } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { images } from '../../components/Images';
+import axios from 'axios';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -329,7 +330,27 @@ const MissingIcon = styled.img`
 `;
 
 function MyPage() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null); 
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId'); 
+      if (!userId) {
+        console.error('User ID not found in local storage');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <ScrollableContainer>
@@ -337,7 +358,7 @@ function MyPage() {
         <MainContainer>
           <StyledAvatar />
               <UserInfo>
-                고양이가 세상을 구한다
+                      {userData ? userData.nickname : '불러오는 중...'}
                 <EditButton onClick={() => navigate('/myPage/editUserRegister')}>수정</EditButton>
               </UserInfo>
         </MainContainer>

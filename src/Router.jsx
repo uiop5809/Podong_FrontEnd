@@ -37,14 +37,15 @@ function Router() {
           <Route path="login" element={<LoginPage />} />
           <Route
             path="shoppingDetail/:productId"
-            element={<ShoppingDetail />}
+            element={<ShoppingDetail />} 
           />
+          <Route path="mainpage/:userId" element={<MainPage />} />
           <Route path="nanumList" element={<Outlet />}>
             <Route index element={<NanumList />} />
             <Route path="write" element={<NanumWrite />} />
             <Route path="detail/:no" element={<NanumDetail />} />
           </Route>
-          <Route path="userRegister/:userId" element={<UserRegisterPage />} />
+          <Route path="/userRegister/:email" element={<UserRegisterPage/>} />
           <Route path="petRegister" element={<PetRegisterPage />} />
           <Route path="walking" element={<WalkPage />} />
           <Route path="myPage" element={<Outlet />}>
