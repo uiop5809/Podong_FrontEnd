@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { RecommendRoutes } from "../../data/recommendRoutes";
@@ -91,10 +91,14 @@ const RouteMap = ({ routeData }) => {
 
 const RecommendedRoutesPage = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("환타 왕자");
 
   return (
     <Container>
-      <Title>발바닥천국이 산책 경로를 추천해드려요</Title>
+      <Title>
+        <span>{name} 님!</span>
+        <p>발바닥천국이 산책 경로를 추천해드려요</p>
+      </Title>
       <RouteList>
         {RecommendRoutes.map((route) => (
           <RouteItem key={route.id}>
@@ -117,6 +121,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
+  span {
+    font-size: 20px;
+    color: #ff6e00;
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   font-size: 16px;
   text-align: center;
   padding: 10px 0;
