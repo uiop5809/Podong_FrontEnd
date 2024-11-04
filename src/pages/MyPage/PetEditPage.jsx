@@ -97,7 +97,7 @@ const LastComment = styled.span`
 `
 
 const PetEditPage = () => {
-  const petId = 7;
+  const petId = 1;
   const navigate = useNavigate(); 
 
   const [imgPath, setImgPath] = useState(''); 
@@ -138,7 +138,7 @@ const PetEditPage = () => {
         const petData = response.data;
         
         if (petData) {
-          setImgPath("http://localhost:8080/" + petData.petPicture);
+          setImgPath(`http://localhost:8080/uploads/${petData.petPicture}`);
           setPetName(petData.petName);
           setBirthdate(petData.birthdate);
           setAge(calculateAge(petData.birthdate));
@@ -228,8 +228,7 @@ const PetEditPage = () => {
   return (
     <ScrollableContainer>
       <Container>
-        <DisplayPetImage imgPath={imgPath} setImgPath={setImgPath} />
-        
+      <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
         <Label>어떤 반려동물과 함께하고 계신가요?</Label>
         <SelectButtonContainer>
           <SelectButton

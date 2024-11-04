@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -340,7 +340,7 @@ const RegisterButton = styled.button`
   height: 43px; 
   text-align: center; 
   border-radius: 8px; 
-  margin-bottom: 20px;
+  margin-bottom: 200px;
   margin-left: 20px;
 
   &:hover {
@@ -355,18 +355,67 @@ const UserEditPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [zoneCode, setZoneCode] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(''); // 사용자 수정 가능한 닉네임
+  const [profileNickname, setProfileNickname] = useState(''); // 카카오 프로필 닉네임
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [email, setEmail] = useState('');
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId'); 
+      if (!userId) {
+        console.error('User ID not found in local storage');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        const userData = response.data;
+        setNickname(userData.nickname); // 사용자 수정 가능한 닉네임
+        setProfileNickname(userData.profileNickname); // 카카오 프로필 닉네임
+        setPhoneNumber(userData.phoneNumber);
+        setAddress(userData.address);
+        setDetailedAddress(userData.detailedAddress || '');
+        setZoneCode(userData.zoneCode || '');
+        setEmail(userData.accountEmail);
+        setToggleStates([userData.health, userData.petCare, userData.missing]); // 알림 설정 상태
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleUpdate = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      await axios.put(`http://localhost:8080/api/user/${userId}`, {
+        nickname,
+        phoneNumber,
+        address,
+        detailedAddress,
+        zoneCode,
+        accountEmail: email,
+        profileNickname: profileNickname || '기본 프로필 닉네임', // 기본값 설정
+        health: toggleStates[0],
+        petCare: toggleStates[1],
+        missing: toggleStates[2],
+      });
+      alert('사용자 정보가 성공적으로 업데이트되었습니다.');
+    } catch (error) {
+      console.error('Error updating user information:', error);
+      alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
+    }
+  };
+
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
 
-
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
-    newToggleStates[index] = !newToggleStates[index]; 
+    newToggleStates[index] = !newToggleStates[index];
     setToggleStates(newToggleStates);
   };
 
@@ -374,27 +423,29 @@ const UserEditPage = () => {
     <ScrollableContainer>
       <Container>
         <Description>
-          <WelcomeContainer><WelcomeComment>안녕하세요 </WelcomeComment><FirstComment>고양이가 세상을 구한다님🥳 </FirstComment></WelcomeContainer>
+          <WelcomeContainer>
+            <WelcomeComment>안녕하세요</WelcomeComment>
+            <FirstComment>{nickname}님🥳</FirstComment> {/* 카카오 프로필 닉네임 */}
+          </WelcomeContainer>
           <HightLight>발바닥 천국</HightLight>과🐾 당신과 반려동물의 발걸음이 더 행복해지도록 정보를 등록해 보세요.
         </Description>
         <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
 
-
         <Label>이메일</Label>
         <InputContainer>
-          <KakaoEmail placeholder="ttnqls0217@gmail.com" disabled />
+          <KakaoEmail placeholder={email || "이메일을 입력해주세요"} disabled />
           <Icon src={images.kakaoIcon} alt="카카오 아이콘" />
         </InputContainer>
 
         <Label>닉네임</Label>
         <InputContainer>
-          <StyledInput placeholder="고양이가 세상을 구한다" required />
+          <StyledInput value={nickname} onChange={(e) => setNickname(e.target.value)} required />
         </InputContainer>
 
         <InputContainer>
           <Label>휴대폰 번호</Label>
           <PhoneContainer>
-            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <PhonenumberInputrequired placeholder="전화번호를 입력해주세요" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
@@ -402,29 +453,16 @@ const UserEditPage = () => {
         <InputContainer>
           <Label>주소</Label>
           <AddressContainer>
-            <PostSearchContainer 
-              placeholder="우편번호" 
-              value={zoneCode} 
-              readOnly 
-            />
+            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly />
             <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-            <div id='popupDom'>
+            <div id="popupDom">
               {isPopupOpen && (
                 <PopupDom>
-                  <PopupPostCode 
-                    onClose={closePostCode} 
-                    setAddress={setAddress} 
-                    setZoneCode={setZoneCode} 
-                  />
+                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
                 </PopupDom>
               )}
             </div>
-            <StyledInput 
-              placeholder="기본주소를 입력해주세요" 
-              value={address} 
-              onChange={(e) => setAddress(e.target.value)}
-              required 
-            />
+            <StyledInput placeholder="기본주소를 입력해주세요" value={address} onChange={(e) => setAddress(e.target.value)} required />
             <StyledInput placeholder="상세 주소를 입력해주세요" value={detailedAddress} onChange={(e) => setDetailedAddress(e.target.value)} required />
           </AddressContainer>
         </InputContainer>
@@ -433,12 +471,9 @@ const UserEditPage = () => {
 
       <Container>
         <AlarmAgreementContainer>
-          <SubTitle>
-            앱 푸시 알림
-          </SubTitle>
+          <SubTitle>앱 푸시 알림</SubTitle>
         </AlarmAgreementContainer>
 
-        
         <SubContainer>
           <TextContainer>
             <SubTitleList>우리응애 건강관리</SubTitleList>
@@ -481,7 +516,7 @@ const UserEditPage = () => {
           </ThirdToggleContainer>
         </SubContainer>
       </Container>
-      <RegisterButton>저장하기</RegisterButton>
+      <RegisterButton onClick={handleUpdate}>저장하기</RegisterButton>
     </ScrollableContainer>
   );
 };

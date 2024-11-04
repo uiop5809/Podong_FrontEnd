@@ -20,24 +20,21 @@ import WalkMapPage from './pages/WalkPage/WalkMapPage.jsx';
 import WalkJournalPage from './pages/WalkPage/WalkJournalPage.jsx';
 import Payment from './pages/PaymentPage/Payment.jsx';
 import PaymentEnd from './pages/PaymentPage/PaymentEnd.jsx';
-import CancelPay from './pages/PaymentPage/CancelPay.jsx';
 import PetEditPage from './pages/MyPage/PetEditPage.jsx';
-
-import PayListTest from './pages/PaymentPage/paylisttest.jsx';
-import PaymentCancelList from './pages/PaymentPage/PaymentCancelList.jsx';
 import PaymentHistory from './pages/PaymentPage/PaymentHistory.jsx';
-
 import ComunityWrite from './pages/CommunityPage/CommunityWrite.jsx';
 import CommunityList from './pages/CommunityPage/CommunityList.jsx';
 import CommunityDetail from './pages/CommunityPage/CommunityDetail.jsx';
-
 import HealthCare from './pages/HealthCare/HealthCare.jsx';
 import ShoppingCart from './pages/ShoppingCart/ShoppingCart.jsx';
 import { CartProvider } from './pages/ShoppingCart/CartContext';
+import PayCancelReq from './pages/PaymentPage/PayCancelReq.jsx';
+import PaymentCancelDone from './pages/PaymentPage/PaymentCancelDone.jsx';
 
 function Router() {
   return (
     <BrowserRouter>
+
       <CartProvider>
         <ScrollTop />
         <NavSelector />
@@ -50,12 +47,13 @@ function Router() {
             <Route path="healthCare" element={<HealthCare />} />
 
             <Route path="payment" element={<Payment />} />
-            <Route path="paymentCancelList" element={<PaymentCancelList />} />
+            <Route path="payCancelReq" element={<PayCancelReq />} />
             <Route path="paymentEnd" element={<PaymentEnd />} />
             <Route path="paymentHistory" element={<PaymentHistory />} />
-            <Route path="cancelpay" element={<CancelPay />} />
-            <Route path="paymentlist" element={<PayListTest />} />
+            <Route path="paymentlist" element={<PaymentHistory />} />
+            <Route path="paymentCancelDone" element={<PaymentCancelDone />} />
 
+            <Route path="mainpage/:userId" element={<MainPage />} />  
             <Route path="nanumList" element={<Outlet />}>
               <Route index element={<NanumList />} />
               <Route path="write" element={<NanumWrite />} />
@@ -68,7 +66,7 @@ function Router() {
               <Route path="detail/:no" element={<CommunityDetail />} />
             </Route>
 
-            <Route path="userRegister/:userId" element={<UserRegisterPage />} />
+            <Route path="userRegister/:email" element={<UserRegisterPage />} />
             <Route path="petRegister" element={<PetRegisterPage />} />
 
             <Route path="walking" element={<WalkPage />}>

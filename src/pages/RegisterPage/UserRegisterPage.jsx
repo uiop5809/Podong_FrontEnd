@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
-
+import { useParams } from 'react-router-dom';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%; 
-`; //스크롤 
+`; 
 
 const Container = styled.div`
   display: flex;
@@ -29,18 +29,18 @@ const Description = styled.label`
   margin-bottom: 15px;
   margin-top: 5%;
   word-break: keep-all;
-`; // 사용자 인사 
+`; 
 
 const HightLight = styled.span`
   color: #FF6E00;
-`; // 사용자 인사 중 하이라이트 
+`;
 
 const Label = styled.label`
   font-size: 10px;
   color: #B3B3B3;
   margin-bottom: 10px;
   margin-top: 5px;
-`; // 각 폼 레이블 
+`; 
 
 const KakaoEmail = styled.input`
   padding: 13px 13px;
@@ -50,7 +50,7 @@ const KakaoEmail = styled.input`
   font-size: 11px;
   background-color: #EEEEEE;
   width: 100%;
-`; //이메일 부분 disabled
+`; 
 
 const Icon = styled.img`
   position: absolute;
@@ -59,13 +59,13 @@ const Icon = styled.img`
   transform: translateY(-8px);
   width: 20px;
   height: 20px;
-`; //카카오 아이콘
+`; 
 
 const InputContainer = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 8px;
-`; // 입력하는 폼 전체 컨테이너 
+`; 
 
 const PostSearchContainer = styled.input`
   padding: 13px 13px;
@@ -84,7 +84,7 @@ const StyledInput = styled.input`
   border: 1px solid #E4E4E4;
   border-radius: 5px;
   font-size: 11px;
-`; //입력 폼
+`; 
 
 const AddressContainer = styled.div`
   display: flex;
@@ -111,39 +111,40 @@ const SearchAddressButton = styled.button`
 
   &:hover { 
     background-color: #FFD3D3;
-  }`;
+  }
+`;
 
 const Divider = styled.div`
   background-color: #F7F7F7;
   margin-top:16px;
   width:100%;
   height: 20px;
-`; //구분선
+`; 
 
 const SubTitle = styled.label`
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 20px;
   flex-grow: 1; 
-`; //앱푸시알림
+`;
 
 const SubTitleList = styled.label`
   font-size: 13px;
   font-weight: bold;
   margin-bottom: 8px;
-`; //각 알람 제목
+`;
 
 const DescriptionContainer = styled.div`
   display: flex;
   flex-direction: row;
-`; //설명 컨테이너 
+`;
 
 const SubDescription = styled.label`
   font-size: 10px;
   font-weight: light;
   color:#8D8D8D;
   margin-bottom: 10px;
-`; //각 알람 설명 
+`; 
 
 const AlertAgreementDescription = styled.div`
   margin-top: 10px;
@@ -159,17 +160,15 @@ const SubContainer = styled.div`
 
 const TextContainer = styled.div`
   display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  `;
-
+  flex-direction: column;
+  margin-bottom: 10px;
+`;
 
 const PhoneContainer = styled.div`
   display: flex;
   align-items: center;  
   margin-top: 5px;
 `;
-
 
 const PhonenumberInputrequired = styled.input`
   padding: 13px 13px;
@@ -182,7 +181,7 @@ const PhonenumberInputrequired = styled.input`
 `; 
 
 const PhoneNumberAuthorization = styled.button`
-position: absolute;
+  position: absolute;
   width: 100px;
   height: 40px;
   top: 43px;
@@ -245,7 +244,7 @@ const FirstToggleContainer = styled.div`
   > .toggle--checked {
     left: 27px; 
   }
-`; //토글 버튼
+`; 
 
 const SecondToggleContainer = styled.div`
   position: relative;
@@ -282,42 +281,40 @@ const SecondToggleContainer = styled.div`
   }
 `; 
 
-
 const ThirdToggleContainer = styled.div`  
-position: relative;
-cursor: pointer;
-margin-bottom:10px;
-margin-left: 100px;
-margin-top:20px;
+  position: relative;
+  cursor: pointer;
+  margin-bottom:10px;
+  margin-left: 100px;
+  margin-top:20px;
 
-> .toggle-container {
-  width: 50px;
-  height: 24px;
-  border-radius: 30px;
-  background-color: rgb(233,233,234);
-  transition: background-color 0.5s; 
-}
+  > .toggle-container {
+    width: 50px;
+    height: 24px;
+    border-radius: 30px;
+    background-color: rgb(233,233,234);
+    transition: background-color 0.5s; 
+  }
 
-> .toggle--checked {
-  background-color: #FF6E00;
-}
+  > .toggle--checked {
+    background-color: #FF6E00;
+  }
 
-> .toggle-circle {
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: rgb(255,254,255);
-  transition: left 0.5s; 
-}
+  > .toggle-circle {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: rgb(255,254,255);
+    transition: left 0.5s; 
+  }
 
-> .toggle--checked {
-  left: 27px; 
-}
-`; //토글 버튼
-
+  > .toggle--checked {
+    left: 27px; 
+  }
+`;
 
 const RegisterButton = styled.button`
   display: flex;
@@ -328,18 +325,17 @@ const RegisterButton = styled.button`
   height: 43px; 
   text-align: center; 
   border-radius: 8px; 
-  margin-bottom: 20px;
+  margin-bottom: 200px;
   margin-left: 20px;
 
   &:hover {
     background-color: #FF6E00;
     color: white; 
   }
-`; // 저장버튼
+`; 
 
-const UserEditPage = () => {
+const UserRegisterPage = () => {
   const navigate = useNavigate();
-  
   const [imgPath, setImgPath] = useState('');
   const [toggleStates, setToggleStates] = useState([false, false, false]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -348,53 +344,42 @@ const UserEditPage = () => {
   const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
-  const [email, setEmail] = useState('');
-
-  const jwtToken = localStorage.getItem('jwtToken');
-  const accessToken = localStorage.getItem('accessToken');
-  const storedUserId = localStorage.getItem('userId'); // 로컬 스토리지에서 userId 불러오기
-
+  const [profileNickname, setProfileNickname] = useState('');
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
+  
+ 
 
-  useEffect(() => {
-    if (accessToken) {
-      axios.get('https://kapi.kakao.com/v2/user/me', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-      .then(response => setEmail(response.data.kakao_account.email))
-      .catch(error => {
-        console.error("Error fetching email:", error);
-        alert("이메일 정보를 불러올 수 없습니다.");
-      });
-    }
-  }, [accessToken]);
 
-  useEffect(() => {
-    if (storedUserId) {  // 로컬 스토리지에서 userId가 있는지 확인
-      axios.get(`http://localhost:8080/api/users/${storedUserId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
-      })
-      .then((response) => {
-        const { nickname, phoneNumber, address, zoneCode, detailedAddress } = response.data;
-        setNickname(nickname);
-        setPhoneNumber(phoneNumber);
-        setAddress(address);
-        setZoneCode(zoneCode);
-        setDetailedAddress(detailedAddress);
-      })
-      .catch((error) => console.error("Error fetching user data:", error));
-    } else {
-      console.error("No userId found in localStorage.");
-    }
-  }, [storedUserId, jwtToken]);
+  const queryParams = new URLSearchParams(location.search);
+  const { email } = useParams()
+  localStorage.setItem('email', email);
+  console.log(email);
 
+  
+  
   const handleRegister = async () => {
-    if (!nickname || !address) {
-      alert('닉네임과 주소를 입력해주세요.');
+    // 특수문자 검사 (한글, 영문, 숫자만 허용)
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+    if (!nicknameRegex.test(nickname)) {
+      alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
+      setNickname(''); // nickname을 빈 문자열로 설정하여 재입력 유도
       return;
     }
-
+  
+    // 휴대폰 번호 유효성 검사
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      return;
+    }
+  
+    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
+    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
+      alert('모든 정보를 입력해주세요.');
+      return;
+    }
+  
     try {
       await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
@@ -404,10 +389,10 @@ const UserEditPage = () => {
         zoneCode,
         createdAt: new Date().toISOString(),
         accountEmail: email,
-        profileNickname: nickname,
-        notifications: toggleStates
-      }, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
+        profileNickname: profileNickname,
+        health: toggleStates[0],
+        petCare: toggleStates[1],
+        missing: toggleStates[2]
       });
       alert('사용자 정보가 저장되었습니다.');
       navigate('/');
@@ -416,10 +401,12 @@ const UserEditPage = () => {
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
-
-
-
-
+  const toggleHandler = (index) => {
+    const newToggleStates = [...toggleStates];
+    newToggleStates[index] = !newToggleStates[index]; 
+    setToggleStates(newToggleStates);
+  };
+ 
   return (
     <ScrollableContainer>
       <Container>
@@ -531,4 +518,7 @@ const UserEditPage = () => {
   );
 };
 
-export default UserEditPage;
+
+export default UserRegisterPage;
+
+

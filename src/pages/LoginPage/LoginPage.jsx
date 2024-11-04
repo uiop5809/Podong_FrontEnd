@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { images } from "../../components/Images";
 import { useNavigate } from "react-router-dom";
+import loginbtn from './loginbtn.png';
 
 const LoginPage = () => {
     const navigate = useNavigate(); // useNavigate 훅 사용
@@ -12,9 +13,10 @@ const LoginPage = () => {
             <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
             <Title>지금 가입하면 5천원 즉시 할인!</Title>
             <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
-            <KakaoButton ><a href="http://localhost:8080/api/oauth2/authorization/kakao">카카오 계정으로 로그인</a></KakaoButton>
+            <a href="http://localhost:8080/api/oauth2/authorization/kakao">
+             <img src={loginbtn} alt="카카오 계정으로 로그인" /></a>
             <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
-            <SkipButton onClick={() => navigate('/main')}>일단 둘러보기</SkipButton>
+            <SkipButton onClick={() => navigate('/')}>일단 둘러보기</SkipButton>
         </Container>
     );
 };
@@ -63,16 +65,6 @@ const Button = styled.button`
 
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-`;
-
-const KakaoButton = styled(Button)`
-  background-color: #fee500;
-  color: #000000;
-
-  &:hover {
-    background-color: #ffd600;
-    transform: scale(1.05); 
-  }
 `;
 
 const OtherMethodButton = styled(Button)`

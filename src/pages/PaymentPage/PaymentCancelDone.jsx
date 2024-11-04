@@ -130,7 +130,7 @@ const PaymentTotal = styled.p`
   margin-top: 10px;
 `;
 
-const PaymentCancelList = () => {
+const PaymentCancelDone = () => {
   const [orderNumber, setOrderNumber] = useState('');
   const [content, setContent] = useState({});
 
@@ -200,4 +200,4 @@ const PaymentCancelList = () => {
   );
 };
 
-export default PaymentCancelList;
+export default PaymentCancelDone;
