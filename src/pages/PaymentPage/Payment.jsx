@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
@@ -19,6 +20,7 @@ const Payment = () => {
     const [address, setAddress] = useState('');
     const [zoneCode, setZoneCode] = useState('');
     const [detailedAddress, setDetailedAddress] = useState('');
+    const navigate = useNavigate();
 
 
 
@@ -146,13 +148,13 @@ const Payment = () => {
           if (rsp.success) { // 프론트에서 결제가 완료되면
             axios.post(`http://localhost:8080/api/payment/list/${rsp.imp_uid}/${userId}`)
             .then((res) => {
-                  // 결제완료 
+                navigate('/PaymentEnd')
             })
             .catch((error) => {
-              // 에러발생시
+              console.log("error");
             });
     } else {
-          // 에러발생시
+        console.log("error");
     }
     });
     }
@@ -652,6 +654,7 @@ const PaymentButton = styled.button`
     border-radius: 4px;
     font-size: 18px;
     cursor: pointer;
+    margin-bottom:64px;
 
     &:hover {
         background-color: #FFD3D3;
