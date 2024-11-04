@@ -300,6 +300,7 @@ const WalkMapPage = () => {
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
+
       <WalkingTimer
         time={time}
         setTime={setTime}
@@ -328,7 +329,6 @@ const WalkMapPage = () => {
 
 export default WalkMapPage;
 
-// styled-components 설정 코드 그대로 유지
 const Container = styled.div`
   display: flex;
   flex-direction: column;
