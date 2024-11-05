@@ -18,7 +18,7 @@ const WalkingHeader = () => {
         return;
       }
       try {
-        const response = await axios.post(`/users/${userId}`);
+        const response = await axios.post(`/user/${userId}`);
         const data = await response.json();
         setName(data.name);
       } catch (error) {
@@ -40,8 +40,8 @@ const WalkingHeader = () => {
       <Header>
         <HeaderBox>
           <Title>
-            <span>{name}</span>님이 <br />
-            산책을 기다리고 있어요!
+            <span>강아지 집사님!</span> <br />
+            산책을 기록해보세요
           </Title>
           <OutlineButton onClick={handleRecommendRoutes}>
             산책 경로 추천
@@ -92,7 +92,7 @@ const HeaderBox = styled.div`
 const Title = styled.h1`
   font-size: 17px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.5;
 
   span {
     color: #ff6e00;
