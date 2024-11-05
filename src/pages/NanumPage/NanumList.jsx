@@ -194,6 +194,7 @@ const BuWrite = styled.button`
   align-items: center;
   justify-content: center;
   color: white;
+  cursor: pointer;
 `;
 const All = styled.div`
   font-size: 12px;
@@ -219,9 +220,10 @@ const ListImg = styled.img`
   background-color: #d9d9d9;
   border-radius: 8px;
   flex-shrink: 0; /* 이미지 크기를 고정 */
-  background-image: url(${props => props.src}); /* 이미지 URL 설정 */
-  background-size: cover; /* 이미지를 채우도록 설정 */
-  background-position: center; /* 이미지 중앙 정렬 */
+  background-image: url(${props => props.src});
+  background-size: cover; 
+  background-position: center; 
+  cursor: pointer;
 `;
 const ListTitlesContainer = styled.div`
   display: flex;
@@ -275,6 +277,7 @@ const Icons = styled.div`
 `;
 const FcLike1 = styled(FcLike)`
   font-size: 16px;
+  cursor: pointer;
 `;
 const Comment1 = styled(IoChatbubbleEllipsesOutline)`
   font-size: 16px;

@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { MdPhotoCamera } from 'react-icons/md';
 import axios from '../../apis/AxiosInstance';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 
 const PetItemPage = () => {
   const [selectedSaleType, setSelectedSaleType] = useState(''); // 버튼 판매 or 나눔
@@ -15,6 +16,19 @@ const PetItemPage = () => {
   const [sharing, setSharing] = useState(''); // 나눔 . 판매 여부
   const [loading, setLoading] = useState(false);
 
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId'); 
+      
+      if (!userId) {
+
+        console.error('User ID not found in local storage');
+        return;
+      }
+    }
+  });
   const handleSubmit = async e => {
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
@@ -85,10 +99,10 @@ const PetItemPage = () => {
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="user">
+          {/* <label htmlFor="user">
             유저 : <br />
             <input id="user" value={user} type="number" onChange={e => setUser(e.target.value)} required />
-          </label>
+          </label> */}
           <br />
           <LableImg htmlFor="imageUrl">
             <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
@@ -303,9 +317,12 @@ const LableImg = styled.label`
 const Form = styled.form`
   height: 100%;
   display: flex;
+  position: relative;
   flex-direction: column;
 `;
 const SubmitBtn = styled.div`
-  margin-top: auto;
-  margin-bottom: 0px;
+  position: absolute;
+  bottom:0px;
+  width: 100%;
+  justify-content: flex-end;
 `;

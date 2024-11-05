@@ -69,7 +69,7 @@ const CommunityList = () => {
   return (
     <ItemTitle>
       <Col>
-        <CommunityText>community</CommunityText>
+        <CommunityText>고양이가 세상을 지배한다</CommunityText>
         <WriteBtn
           onClick={() => {
             navigate('/community/write');
@@ -180,11 +180,14 @@ const Category = styled.div`
   display: flex;
   justify-content: space-around;
   margin: 10px 0px;
+  align-items: center;
 `;
 const CategoryBtn = styled.div`
   display: flex;
+  font-size:13px ;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
   opacity: ${({ $active }) => ($active ? '1' : '0.5')};
   transition: opacity 0.3s;
   &:hover {
@@ -192,8 +195,8 @@ const CategoryBtn = styled.div`
   }
 `;
 const CategoryImg = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 30px;
 `;
 
 const RowLi = styled.div`
