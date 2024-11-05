@@ -15,10 +15,11 @@ const CommunityList = () => {
     { src: images.categoryAll, name: "전체" },
     { src: images.categoryFreedom, name: "자유" },
     { src: images.categoryDongNea, name: "동네" },
-    { src: images.categoryExport, name: "전문가" },
-    { src: images.categoryAnonymous, name: "익명" },
+    { src: images.categoryExpert, name: "전문가" },
+    { src: images.categoryAnonymity, name: "익명" },
     { src: images.categoryEvent, name: "이벤트" }
   ];
+  
     useEffect(() => {
       axios.get('http://localhost:8080/api/communities')
       .then((response) => {
