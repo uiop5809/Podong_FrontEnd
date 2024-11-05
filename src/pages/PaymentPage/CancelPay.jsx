@@ -39,9 +39,9 @@ const CancelPay = ({ userId }) => {
           headers: { "Content-Type": "application/json" },
           data: {
             // eslint-disable-next-line no-undef
-            imp_key: process.env.VITE_IMP_KEY,
+            imp_key: import.meta.env.VITE_IMP_KEY,
             // eslint-disable-next-line no-undef
-            imp_secret: process.env.VITE_IMP_SECRET,
+            imp_secret: import.meta.env.VITE_IMP_SECRET,
           },
         });
 
