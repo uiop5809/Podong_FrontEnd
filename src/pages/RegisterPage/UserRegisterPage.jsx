@@ -7,6 +7,7 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -344,44 +345,49 @@ const UserRegisterPage = () => {
   const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
+  const [email, setEmail] = useState('');
   const [profileNickname, setProfileNickname] = useState('');
+
+  useEffect(() => {
+    const emailFromCookie = Cookies.get('email');
+    const profileNicknameFromCookie = Cookies.get('profile_nickname');
+
+    if (emailFromCookie) {
+      setEmail(emailFromCookie);
+    }
+
+    if (profileNicknameFromCookie) {
+      setProfileNickname(profileNicknameFromCookie);
+    }
+  }, []);
+
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
-  
- 
 
-
-  const queryParams = new URLSearchParams(location.search);
-  const { email } = useParams()
-  localStorage.setItem('email', email);
-  console.log(email);
-
-  
-  
   const handleRegister = async () => {
-    // 특수문자 검사 (한글, 영문, 숫자만 허용)
+    // 닉네임 검증
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
-      setNickname(''); // nickname을 빈 문자열로 설정하여 재입력 유도
+      setNickname('');
       return;
     }
-  
-    // 휴대폰 번호 유효성 검사
+
+    // 휴대폰 번호 형식 검증
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
       return;
     }
-  
-    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
+
+    // 필수 정보 검증
     if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-  
+
     try {
-      await axios.post(`http://localhost:8080/api/user/Register`, {
+      const response = await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
         phoneNumber,
         address,
@@ -389,24 +395,33 @@ const UserRegisterPage = () => {
         zoneCode,
         createdAt: new Date().toISOString(),
         accountEmail: email,
-        profileNickname: profileNickname,
+        profileNickname,
         health: toggleStates[0],
         petCare: toggleStates[1],
         missing: toggleStates[2]
       });
-      alert('사용자 정보가 저장되었습니다.');
-      navigate('/');
+      
+      const { userId } = response.data;
+
+      console.log(userId);
+
+      // userId를 localStorage에 저장
+      localStorage.setItem('userId', userId);
+      alert('userId가 localStorage에 저장되었습니다: ' + userId);
+      navigate(`/mainpage/${userId}`);
+     
     } catch (error) {
       console.error("Error updating user information:", error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
+
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index]; 
     setToggleStates(newToggleStates);
   };
- 
+
   return (
     <ScrollableContainer>
       <Container>
@@ -429,7 +444,7 @@ const UserRegisterPage = () => {
         <InputContainer>
           <Label>휴대폰 번호</Label>
           <PhoneContainer>
-            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <PhonenumberInputrequired required placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
@@ -518,7 +533,4 @@ const UserRegisterPage = () => {
   );
 };
 
-
 export default UserRegisterPage;
-
-
