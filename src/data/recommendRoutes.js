@@ -3,7 +3,7 @@ export const RecommendRoutes = [
     id: 1,
     name: "한강공원 코스",
     distance: "3.5km",
-    time: "45분",
+    time: "45분", 
     routeData: {
       center: { lat: 37.5665, lng: 126.978 },
       start: { lat: 37.566, lng: 126.977 },
