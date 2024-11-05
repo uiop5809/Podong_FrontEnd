@@ -180,7 +180,7 @@ const WalkMapPage = () => {
 
   /* 경로 관련 */
   const getCarDirection = async () => {
-    const REST_API_KEY = "da0dd0fc23a035bb681daba549304728";
+    const REST_API_KEY = import.meta.env.VITE_MOBILITY_REST_API_KEY;
     const url = "https://apis-navi.kakaomobility.com/v1/directions";
     const origin = `${originCoords.getLng()},${originCoords.getLat()}`;
     const destination = `${destinationCoords.getLng()},${destinationCoords.getLat()}`;
@@ -300,6 +300,7 @@ const WalkMapPage = () => {
           {routeDistance ? (routeDistance / 1000).toFixed(1) + "km" : `0.0`}
         </div>
       </DetailContainer>
+
       <WalkingTimer
         time={time}
         setTime={setTime}
@@ -308,6 +309,9 @@ const WalkMapPage = () => {
         setIsStarted={setIsStarted}
         isRunning={isRunning}
         setIsRunning={setIsRunning}
+        originCoords={originCoords}
+        destinationCoords={destinationCoords}
+        routeDistance={routeDistance}
       />
 
       {/* 지도 표시 부분 */}

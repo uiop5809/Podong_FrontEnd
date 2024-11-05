@@ -4,9 +4,8 @@ import { FaSearch } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import { images } from '../../components/Images';
-
 
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
