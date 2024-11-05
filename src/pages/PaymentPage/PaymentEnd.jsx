@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLocation } from 'react';
 import styled from 'styled-components';
 import Lottie from 'lottie-react';
 import PaymentAnimation from '../PaymentPage/PaymentAnimation.json';
@@ -201,13 +201,15 @@ DeliveryInfoRow.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-const userId = 1;
+
 
 const PaymentEnd = () => {
   const [buyer, setBuyer] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-
+  // const location = useLocation();
+  // const userId = location.state?.userId || localStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
   useEffect(() => {
     const getInfo = async () => {
       try {
@@ -230,7 +232,7 @@ const PaymentEnd = () => {
       <PaymentEndHeader>주문 완료</PaymentEndHeader>
 
       <ImageContainer>
-        <Lottie animationData={PaymentAnimation} style={{ width: '230px', height: '230px' }} />
+        <Lottie animationData={PaymentAnimation} style={{ width: '250px', height: '250px' }} />
       </ImageContainer>
       <Header>
         우리응애가 좋아할 선물 <br />
@@ -262,10 +264,7 @@ const PaymentEnd = () => {
         <DeliveryInfoRow label="수령인" value={buyer} />
         <DeliveryInfoRow label="휴대폰" value={phone} />
         <DeliveryInfoRow label="배송지" value={address} />
-        <AddressInputWrapper>
-          <AddressInput type="text" placeholder="배송지 출입 방법" />
-          <EditButton>수정</EditButton>
-        </AddressInputWrapper>
+
       </Section>
 
       <OrderDetailButton primary>주문상세보기</OrderDetailButton>
