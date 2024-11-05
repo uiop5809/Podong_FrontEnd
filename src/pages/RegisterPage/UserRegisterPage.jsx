@@ -7,10 +7,7 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-<<<<<<< HEAD
-=======
 import Cookies from 'js-cookie';
->>>>>>> 67083782eb1c4f888e9ef9f6c7272594c11d82d4
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -368,21 +365,12 @@ const UserRegisterPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
   
- 
-
   const handleRegister = async () => {
     // 닉네임 검증
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
       setNickname('');
-      return;
-    }
-
-    // 휴대폰 번호 형식 검증
-    const phoneRegex = /^010-\d{4}-\d{4}$/;
-    if (!phoneRegex.test(phoneNumber)) {
-      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
       return;
     }
 
@@ -510,7 +498,7 @@ const UserRegisterPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
-https://github.com/URECA-PODONG/FrontEnd/pull/62/conflict?name=src%252Fpages%252FMainPage%252FMainPage.jsx&ancestor_oid=148d447e33be2ebbafcc2b1fa080637f030d4d1f&base_oid=d1e355f0fdafc61028b6c94f491e08fcc91f6e53&head_oid=a0aa53adb1fecfad64f9dbb376132a8564ac1584            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
             <div className={`toggle-circle ${toggleStates[0] ? "toggle--checked" : ""}`} />
           </FirstToggleContainer>
         </SubContainer>
