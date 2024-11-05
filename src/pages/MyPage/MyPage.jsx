@@ -451,6 +451,7 @@ function MyPage() {
       <Container>
         <MainContainer>
           <StyledAvatar />
+
               <UserInfo>
                 {userData ? userData.nickname : '불러오는 중...'}
                 <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>

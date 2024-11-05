@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { images } from '../../components/Images';
 
+
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
   const [activeCategory, setActiveCategory] = useState('전체');
@@ -34,6 +35,32 @@ const MainPage = () => {
     }
   };
 
+  const { userId } = useParams();
+  if (typeof userId === 'string' && !isNaN(userId)){
+    localStorage.setItem('userId', userId); 
+  }
+  console.log(userId); 
+
+  const shoppingData = async () => {
+    if (useDummyData) {
+      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
+    } else {
+      // 실제 fetchData를 사용할 때 필요한 로직이 있다면 여기에 추가
+    }
+  };
+
+
+  const { userId } = useParams();
+  localStorage.setItem('userId', userId); 
+  console.log(userId); 
+
+  const shoppingData = async () => {
+    if (useDummyData) {
+      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
+    } else {
+      // 실제 fetchData를 사용할 때 필요한 로직이 있다면 여기에 추가
+    }
+  };
   const carouselImages = [
     images.carouselImage1,
     images.carouselImage2,

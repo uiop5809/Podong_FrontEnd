@@ -108,7 +108,6 @@ const Payment = () => {
             return;
         }
         IMP.init("imp02101050"); // 포트원 가맹점 식별코드
-
         const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
         const userData = response.data;
         console.log("User Data:", userData);

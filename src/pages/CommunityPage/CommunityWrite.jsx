@@ -27,8 +27,8 @@ const CommunityWrite = () => {
 
     // FormData 객체 생성
     const formData = new FormData();
-    const createdAt = new Date().toISOString();
-    formData.append('createdAt', createdAt); // 현재 시간 추가
+    // const createdAt = new Date().toISOString();
+    // formData.append('createdAt', createdAt); // 현재 시간 추가
     formData.append('title',title)
     formData.append('contents',contents)
     formData.append('user',user)

@@ -7,7 +7,10 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+<<<<<<< HEAD
+=======
 import Cookies from 'js-cookie';
+>>>>>>> 67083782eb1c4f888e9ef9f6c7272594c11d82d4
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -364,6 +367,8 @@ const UserRegisterPage = () => {
 
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
+  
+ 
 
   const handleRegister = async () => {
     // 닉네임 검증
@@ -386,7 +391,20 @@ const UserRegisterPage = () => {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-
+  
+    // 휴대폰 번호 유효성 검사
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      return;
+    }
+  
+    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
+    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
+      alert('모든 정보를 입력해주세요.');
+      return;
+    }
+  
     try {
       const response = await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
@@ -415,13 +433,11 @@ const UserRegisterPage = () => {
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
-
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index]; 
     setToggleStates(newToggleStates);
   };
-
   return (
     <ScrollableContainer>
       <Container>

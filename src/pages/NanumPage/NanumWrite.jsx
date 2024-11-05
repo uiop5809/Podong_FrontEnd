@@ -22,15 +22,15 @@ const PetItemPage = () => {
   
  // FormData 객체 생성
     const formData = new FormData();
-    const createdAt = new Date().toISOString();
-    formData.append('createdAt', createdAt); // 현재 시간 추가
+    // const createdAt = new Date().toISOString();
+    // formData.append('createdAt', createdAt); // 현재 시간 추가
     formData.append('name',name)
     formData.append('description',description)
     formData.append('price',price)
     formData.append('user',user)
     formData.append('sharing',sharing)
     if (imageUrl){
-      formData.append('imageUrl', imageUrl);// 'imageUrl'는 Spring Boot에서 받을 필드 이름과 일치해야 합니다
+      formData.append('imageUrl', imageUrl);
     }
 
     try {

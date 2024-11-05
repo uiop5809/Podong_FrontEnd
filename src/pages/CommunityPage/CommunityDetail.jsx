@@ -55,8 +55,8 @@ const CommunityDetail = () => {
     e.preventDefault(); // 새로고침 방지
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries()); //객체로 변환
-    const now = new Date().toISOString();
-    data.createdAt = now; // 현재 시간 추가
+    // const now = new Date().toISOString();
+    // data.createdAt = now; // 현재 시간 추가
     data.post = no;
     //글 등록     
       axios.post('http://localhost:8080/api/communityComments',data)
@@ -72,7 +72,7 @@ const CommunityDetail = () => {
 
 
   return (
-  <>
+  <Container>
     <ItemTitle>
       <ListImg src={`http://localhost:8080/uploads/${postDetail.imageUrl}`}
       alt={postDetail.imageUrl}
@@ -97,9 +97,9 @@ const CommunityDetail = () => {
       {comments
       .filter((item)=>item.post === postDetail.postId)
       .map((item)=>(
-      <div  key={item.commentId}>
+      <div  key={item.communityCommentId}>
       <User2><VscAccount1/>작성자: {item.length > 0 && item[0].user}
-        <ListDate key={item.commentId}>
+        <ListDate key={item.communityCommentId}>
           {new Date(item.createdAt).toLocaleDateString('ko-KR', {
             timeZone: 'Asia/Seoul' 
           })}
@@ -120,7 +120,7 @@ const CommunityDetail = () => {
         />
       <CommentSubmit type="submit">등록</CommentSubmit>
     </CommentFrom>
-    </>
+    </Container>
   );
 };
 
@@ -244,11 +244,14 @@ const CommentST = styled.div`
 const CommentFrom = styled.form`
   width: 100%;
   display: flex;
-  align-items: flex-end;
-  justify-content:center ;
-  margin-top: auto; 
-  margin-bottom: 70px;
   justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: 64px;
+  `;
+  const Container = styled.div`
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
   `;
   const CommentCC = styled.input`
     height: 40px;

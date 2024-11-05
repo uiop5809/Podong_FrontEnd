@@ -44,6 +44,7 @@ import OrderCancel from './pages/OrderPage/OrderCancel.jsx';
 function Router() {
   return (
     <BrowserRouter>
+
       <CartProvider>
         <ScrollTop />
         <NavSelector />
