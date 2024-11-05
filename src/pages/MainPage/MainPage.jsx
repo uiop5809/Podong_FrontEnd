@@ -23,7 +23,9 @@ const MainPage = () => {
 
 
   const { userId } = useParams();
-  localStorage.setItem('userId', userId); 
+  if (typeof userId === 'string' && !isNaN(userId)){
+    localStorage.setItem('userId', userId); 
+  }
   console.log(userId); 
 
   const shoppingData = async () => {

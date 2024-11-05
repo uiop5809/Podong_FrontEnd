@@ -15,14 +15,6 @@ const Container = styled.div`
   flex-direction: column;
 `; 
 
-const SubContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 5%;
-  margin-left: 5%;
-  margin-right: 5%;
-`; 
-
 const MapContainer = styled.div`
   width: 100%;
   height: 250px;
@@ -154,6 +146,7 @@ const RegisterButton = styled.button`
 
 const RegisterMissing = () => {
   const navigate = useNavigate(); 
+  const userId = localStorage.getItem('userId'); 
 
   const [petName, setPetName] = useState(''); 
   const [date, setDate] = useState(''); 
@@ -184,9 +177,9 @@ const RegisterMissing = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formData.append('petId', 1); // petId를 1로 설정하여 추가
-    formData.append('walkroute', 1); // walkroute를 1로 설정하여 추가
-    formData.append('location', locationInput); // location 필드를 추가
+    formData.append('petId', 1); 
+    formData.append('walkroute', 1); 
+    formData.append('location', locationInput); 
     formData.append('alarmName', '고창준');
     formData.append('missingDate', `${date}T00:00:00+09:00`);
     formData.append('alertradiuskm', 1);
@@ -213,9 +206,9 @@ const RegisterMissing = () => {
 
       if (response.status === 201) {
         const petId = 1; //일단 더미로 1로 지정
-        if (petId) {
-          alert('반려동물 등록이 완료되었습니다.');
-          navigate(`/userRegister/${petId}`);
+        if (petId) {  
+          alert('실종등록이 완료되었습니다.');
+          navigate(`/myPage/${userId}/missingSave`);
         } else {
           console.error('PetId not found in response');
           alert('반려동물 ID를 받아오는데 실패했습니다.');

@@ -335,6 +335,7 @@ const RegisterButton = styled.button`
 `; 
 
 const UserRegisterPage = () => {
+  
   const navigate = useNavigate();
   const [imgPath, setImgPath] = useState('');
   const [toggleStates, setToggleStates] = useState([false, false, false]);
@@ -348,9 +349,6 @@ const UserRegisterPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
   
- 
-
-
   const queryParams = new URLSearchParams(location.search);
   const { email } = useParams()
   localStorage.setItem('email', email);
@@ -359,22 +357,19 @@ const UserRegisterPage = () => {
   
   
   const handleRegister = async () => {
-    // 특수문자 검사 (한글, 영문, 숫자만 허용)
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
-      setNickname(''); // nickname을 빈 문자열로 설정하여 재입력 유도
+      setNickname(''); 
       return;
     }
   
-    // 휴대폰 번호 유효성 검사
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
       return;
     }
-  
-    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
+
     if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
       alert('모든 정보를 입력해주세요.');
       return;
@@ -395,7 +390,7 @@ const UserRegisterPage = () => {
         missing: toggleStates[2]
       });
       alert('사용자 정보가 저장되었습니다.');
-      navigate('/');
+      navigate('/petRegister/:userId');
     } catch (error) {
       console.error("Error updating user information:", error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
@@ -406,7 +401,7 @@ const UserRegisterPage = () => {
     newToggleStates[index] = !newToggleStates[index]; 
     setToggleStates(newToggleStates);
   };
- 
+
   return (
     <ScrollableContainer>
       <Container>
