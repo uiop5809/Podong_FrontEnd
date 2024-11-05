@@ -37,6 +37,9 @@ import { CartProvider } from "./pages/ShoppingCart/CartContext";
 import PayCancelReq from "./pages/PaymentPage/PayCancelReq.jsx";
 import PaymentCancelDone from "./pages/PaymentPage/PaymentCancelDone.jsx";
 import RecommendedRoutesPage from "./pages/WalkPage/RecommendedRoutesPage.jsx";
+import OrderList from './pages/OrderPage/OrderList.jsx';
+import OrderDetail from './pages/OrderPage/OrderDetail.jsx';
+import OrderCancel from './pages/OrderPage/OrderCancel.jsx';
 
 function Router() {
   return (
@@ -94,6 +97,12 @@ function Router() {
               <Route path="editUserRegister/:userId" element={<UserEditPage />} />
               <Route path="missingSave" element={<RegisterMissingSavePage />} />
               <Route path="missingRegister/:petId" element={<RegisterMissing />} />
+            </Route>
+
+            <Route path="orderList" element={<Outlet />}>
+              <Route index element={<OrderList />} />
+              <Route path="orderDetail" element={<OrderDetail />} />
+              <Route path="orderCancel" element={<OrderCancel />} />
             </Route>
           </Route>
         </Routes>

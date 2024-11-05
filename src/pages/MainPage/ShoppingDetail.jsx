@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { FaStar } from 'react-icons/fa';
 import { useCart } from '../ShoppingCart/CartContext';
 
+
 const ShoppingDetail = () => {
   const { productId } = useParams();
   const location = useLocation();
@@ -13,7 +14,9 @@ const ShoppingDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCartModalOpen, setCartModalOpen] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
-  const userId = 5; // 테스트용 더미 유저 ID
+  // const userId = 5; // 테스트용 더미 유저 ID
+  // const { userId } = location.state || {};
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     if (!product) {
@@ -52,7 +55,7 @@ const ShoppingDetail = () => {
 
   const handlePurchaseConfirm = () => {
     setPurchaseModalOpen(false);
-    navigate('/payment');
+    navigate('/payment', { state: { userId } });
   };
 
   return (

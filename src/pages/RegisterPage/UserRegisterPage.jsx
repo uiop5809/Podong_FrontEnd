@@ -7,6 +7,7 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -345,38 +346,49 @@ const UserRegisterPage = () => {
   const [nickname, setNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
+  const [email, setEmail] = useState('');
   const [profileNickname, setProfileNickname] = useState('');
+  
+  useEffect(() => {
+    const emailFromCookie = Cookies.get('email');
+    const profileNicknameFromCookie = Cookies.get('profile_nickname');
+
+    if (emailFromCookie) {
+      setEmail(emailFromCookie);
+    }
+
+    if (profileNicknameFromCookie) {
+      setProfileNickname(profileNicknameFromCookie);
+    }
+  }, []);
+
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
-  
-  const queryParams = new URLSearchParams(location.search);
-  const { email } = useParams()
-  localStorage.setItem('email', email);
-  console.log(email);
 
-  
-  
   const handleRegister = async () => {
+    // 닉네임 검증
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
-      setNickname(''); 
+      setNickname('');
       return;
     }
-  
+
+    // 휴대폰 번호 형식 검증
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
       return;
     }
 
+    // 필수 정보 검증
     if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-  
+
     try {
-      await axios.post(`http://localhost:8080/api/user/Register`, {
+      const response = await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
         phoneNumber,
         address,
@@ -384,18 +396,26 @@ const UserRegisterPage = () => {
         zoneCode,
         createdAt: new Date().toISOString(),
         accountEmail: email,
-        profileNickname: profileNickname,
+        profileNickname,
         health: toggleStates[0],
         petCare: toggleStates[1],
         missing: toggleStates[2]
       });
-      alert('사용자 정보가 저장되었습니다.');
-      navigate('/petRegister/:userId');
+      const { userId } = response.data;
+
+      console.log(userId);
+
+      // userId를 localStorage에 저장
+      localStorage.setItem('userId', userId);
+      alert('userId가 localStorage에 저장되었습니다: ' + userId);
+         navigate('/petRegister/:userId');
+     
     } catch (error) {
       console.error("Error updating user information:", error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
+
   const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index]; 
@@ -424,7 +444,7 @@ const UserRegisterPage = () => {
         <InputContainer>
           <Label>휴대폰 번호</Label>
           <PhoneContainer>
-            <PhonenumberInputrequired placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <PhonenumberInputrequired required placeholder='전화번호를 입력해주세요' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
@@ -474,7 +494,7 @@ const UserRegisterPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
-            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
+https://github.com/URECA-PODONG/FrontEnd/pull/62/conflict?name=src%252Fpages%252FMainPage%252FMainPage.jsx&ancestor_oid=148d447e33be2ebbafcc2b1fa080637f030d4d1f&base_oid=d1e355f0fdafc61028b6c94f491e08fcc91f6e53&head_oid=a0aa53adb1fecfad64f9dbb376132a8564ac1584            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
             <div className={`toggle-circle ${toggleStates[0] ? "toggle--checked" : ""}`} />
           </FirstToggleContainer>
         </SubContainer>
@@ -513,7 +533,4 @@ const UserRegisterPage = () => {
   );
 };
 
-
 export default UserRegisterPage;
-
-
