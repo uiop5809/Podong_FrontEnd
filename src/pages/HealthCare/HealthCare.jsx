@@ -14,18 +14,6 @@ const HealthCare = () => {
   });
   const [memo, setMemo] = useState("");
 
-  // useEffect(()=>{
-
-  //   axios.get(`/healths`)
-  //   .then((response) => {
-  //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
-  //     console.log('댓글 목록 :', response.data);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error fetching data:", error);
-  //   });
-  // },[]);
-
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -113,6 +101,16 @@ const HealthCare = () => {
     }
   };
 
+  //   useEffect(()=>{
+  //   axios.get(`/healths`)
+  //   .then((response) => {
+  //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
+  //     console.log('댓글 목록 :', response.data);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching data:", error);
+  //   });
+  // },[]);
   return (
     <Container>
       <Legend>

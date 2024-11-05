@@ -16,27 +16,12 @@ const PetItemPage = () => {
   const [sharing, setSharing] = useState(''); // 나눔 . 판매 여부
   const [loading, setLoading] = useState(false);
 
-
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId'); 
-      
-      if (!userId) {
-
-        console.error('User ID not found in local storage');
-        return;
-      }
-    }
-  });
   const handleSubmit = async e => {
+    const user = localStorage.getItem('userId');
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
 
-    // FormData 객체 생성
     const formData = new FormData();
-    // const createdAt = new Date().toISOString();
-    // formData.append('createdAt', createdAt); // 현재 시간 추가
     formData.append('name', name);
     formData.append('description', description);
     formData.append('price', price);
@@ -45,7 +30,6 @@ const PetItemPage = () => {
     if (imageUrl) {
       formData.append('imageUrl', imageUrl);
     }
-
     try {
       const response = await axios.post('/petItems', formData, {
         headers: {
@@ -74,7 +58,8 @@ const PetItemPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+// }, []);
   // 파일 선택 핸들러
   const handleFileChange = e => {
     if (e.target.files && e.target.files[0]) {

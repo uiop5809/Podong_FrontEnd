@@ -27,8 +27,7 @@ const CommunityWrite = () => {
 
     // FormData 객체 생성
     const formData = new FormData();
-    // const createdAt = new Date().toISOString();
-    // formData.append('createdAt', createdAt); // 현재 시간 추가
+    const user = localStorage.getItem('userId');
     formData.append('title', title);
     formData.append('contents', contents);
     formData.append('user', user);
@@ -79,11 +78,6 @@ const CommunityWrite = () => {
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="user">
-            유저 : <br />
-            <input id="user" value={user} type="number" onChange={e => setUser(e.target.value)} required />
-          </label>
-          <br />
           <LableImg htmlFor="imageUrl">
             <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
             {uploadedImage ? (
@@ -204,6 +198,7 @@ const CategoryBtn = styled.div`
   align-items: center;
   opacity: ${({ $active }) => ($active ? '1' : '0.5')};
   transition: opacity 0.3s;
+  cursor: pointer;
   &:hover {
     opacity: 1;
   }
@@ -282,6 +277,7 @@ const LableImg = styled.label`
   position: relative;
   display: flex;
   width: 65px;
+  cursor: pointer;
 `;
 const Form = styled.form`
   height: 100vh;

@@ -221,6 +221,7 @@ const ListImg = styled.img`
   background-image: url(${props => props.src}); /* 이미지 URL 설정 */
   background-size: cover; /* 이미지를 채우도록 설정 */
   background-position: center; /* 이미지 중앙 정렬 */
+  cursor: pointer;
 `;
 const ListTitlesContainer = styled.div`
   display: flex;
@@ -266,6 +267,7 @@ const Icons = styled.div`
 `;
 const FcLike1 = styled(FcLike)`
   font-size: 16px;
+  cursor: pointer;
 `;
 const Hr = styled.div`
   width: 100%;

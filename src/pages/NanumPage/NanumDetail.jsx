@@ -11,18 +11,7 @@ const PetItemDetailPage = () => {
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     if (!userId) {
-  //       console.error('User ID not found in local storage');
-  //       return;
-  //     }
-  //   );
-
   useEffect(() => {
-    // 상세정보 불러오기
-
     axios
       .get(`/petItems/${no}`)
       .then(response => {
@@ -35,22 +24,22 @@ const PetItemDetailPage = () => {
   }, [no]);
 
   useEffect(() => {
-    axios
-      .get(`/petItemComments`)
-      .then(response => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`/petItemComments`);
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+      } catch (error) {
+        console.error('Error :', error);
+      }
+    };
+
+    fetchComments();
   }, []);
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = itemDetail.good + 1;
-
-    // 서버의 좋아요 수 업데이트 요청
     axios
       .put(`/petItems/${no}`, { ...itemDetail, good: updatedGood })
       .then(response => {
@@ -63,13 +52,12 @@ const PetItemDetailPage = () => {
   };
   //댓글 등록
   const handleSubmit = e => {
-    e.preventDefault(); // 새로고침 방지
+    e.preventDefault(); 
     const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries()); //객체로 변환
-    // const now = new Date().toISOString();
-    // data.createdAt = now; // 현재 시간 추가
+    const user = localStorage.getItem('userId');
+    const data = Object.fromEntries(formData.entries());
     data.petItem = no;
-    //글 등록
+    data.user = user;
     axios
       .post('/petItemComments', data)
       .then(response => {
@@ -79,7 +67,7 @@ const PetItemDetailPage = () => {
       })
       .catch(error => console.error('오류 발생:', error));
 
-    e.target.reset(); // 입력값 초기화
+    e.target.reset(); 
   };
 
   return (
@@ -118,7 +106,7 @@ const PetItemDetailPage = () => {
               <div key={item.petItemCommentId}>
                 <User2>
                   <VscAccount1 />
-                  작성자: {item.length > 0 && item[0].user}
+                  작성자: {item.user}
                   <ListDate key={item.petItemCommentId}>
                     {new Date(item.createdAt).toLocaleDateString('ko-KR', {
                       timeZone: 'Asia/Seoul',
@@ -130,9 +118,7 @@ const PetItemDetailPage = () => {
             ))}
         </CommentST>
       </ItemTitle>
-
       <CommentFrom onSubmit={handleSubmit}>
-        <input type="number" name="user" placeholder="유저번호" required />
         <CommentCC type="text" name="comment" placeholder="댓글을 달아주세요." required />
         <CommentSubmit type="submit">등록</CommentSubmit>
       </CommentFrom>
