@@ -55,8 +55,8 @@ const CommunityDetail = () => {
     e.preventDefault(); // 새로고침 방지
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries()); //객체로 변환
-    const now = new Date().toISOString();
-    data.createdAt = now; // 현재 시간 추가
+    // const now = new Date().toISOString();
+    // data.createdAt = now; // 현재 시간 추가
     data.post = no;
     //글 등록     
       axios.post('http://localhost:8080/api/communityComments',data)
@@ -97,7 +97,7 @@ const CommunityDetail = () => {
       {comments
       .filter((item)=>item.post === postDetail.postId)
       .map((item)=>(
-      <div  key={item.commentId}>
+      <div  key={item.communityCommentId}>
       <User2><VscAccount1/>작성자: {item.length > 0 && item[0].user}
         <ListDate key={item.communityCommentId}>
           {new Date(item.createdAt).toLocaleDateString('ko-KR', {

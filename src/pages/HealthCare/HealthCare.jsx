@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import styled from 'styled-components';
@@ -7,8 +7,21 @@ import styled from 'styled-components';
 const HealthCare = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
-  const [showInput, setShowInput] = useState({ hospital: false, nextVisit: false, healthCare: false });
+  const [showInput, setShowInput] = useState({ hospital: true, nextVisit: false, healthCare: false });
   const [memo, setMemo] = useState('');
+
+
+  // useEffect(()=>{
+    
+  //   axios.get(`http://localhost:8080/api/healths`)
+  //   .then((response) => {
+  //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
+  //     console.log('댓글 목록 :', response.data);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching data:", error);
+  //   });
+  // },[]);
 
   const handleDateChange = date => {
     setSelectedDate(date);
@@ -28,13 +41,13 @@ const HealthCare = () => {
   } else if (type === '건강 관리') {
     formData.append('healthDate', formattedDate);
     formData.append('notes',memo); // 메모 추가
-  }
+  }console.log("건강 :" ,formData)
 
   try {
     const response = await axios.post('http://localhost:8080/api/healths', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // },
     });
       console.log("등록 data : ", response.data);
       alert("등록 성공")
@@ -97,14 +110,6 @@ const HealthCare = () => {
 
   return (
     <Container>
-      <form >
-<select name="pet">
-<option value="C">C언어</option>
-<option value="JAVA">JAVA</option>
-<option value="HTML">HTML</option>
-<option value="CSS">CSS</option>
-</select>
-</form>
       <Legend>
         <LegendItem>
           <Dot color="#FB3737" /> 병원 방문일

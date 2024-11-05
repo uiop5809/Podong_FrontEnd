@@ -11,6 +11,15 @@ const PetItemDetailPage = () => {
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const userId = localStorage.getItem('userId'); 
+  //     if (!userId) {
+  //       console.error('User ID not found in local storage');
+  //       return;
+  //     }
+  //   );
+
   useEffect(()=>{  // 상세정보 불러오기
 
     axios.get(`http://localhost:8080/api/petItems/${no}`)
@@ -56,8 +65,8 @@ const PetItemDetailPage = () => {
     e.preventDefault(); // 새로고침 방지
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries()); //객체로 변환
-    const now = new Date().toISOString();
-    data.createdAt = now; // 현재 시간 추가
+    // const now = new Date().toISOString();
+    // data.createdAt = now; // 현재 시간 추가
     data.petItem = no;
     //글 등록     
       axios.post('http://localhost:8080/api/petItemComments',data)
