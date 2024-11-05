@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
+import axios from "../../apis/AxiosInstance";
 
 const CancelPay = ({ userId }) => {
   const [impUid, setImpUid] = useState(null);
-  
+
   // userId에 따른 imp_uid 가져오기
   const fetchImpUid = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/payment/list/${userId}`);
+      const response = await axios.get(`/payment/list/${userId}`);
       const paymentData = response.data;
-  
+
       console.log("Fetched Payment Data:", paymentData); // 전체 데이터를 확인
-  
+
       // 배열의 첫 번째 객체의 impUid만 가져옵니다
       if (paymentData.length > 0 && paymentData[0].impUid) {
         setImpUid(paymentData[0].impUid);
@@ -39,7 +38,9 @@ const CancelPay = ({ userId }) => {
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
+            // eslint-disable-next-line no-undef
             imp_key: import.meta.env.VITE_IMP_KEY,
+            // eslint-disable-next-line no-undef
             imp_secret: import.meta.env.VITE_IMP_SECRET,
           },
         });

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
@@ -21,7 +21,7 @@ const MainPage = () => {
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
 
   const { userId } = useParams();
-  if (typeof userId === 'string' && !isNaN(userId)){
+  if (typeof userId === 'string' && !isNaN(userId)) {
     localStorage.setItem('userId', userId);
   }
   console.log(userId);
@@ -54,7 +54,7 @@ const MainPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/products');
+      const response = await axios.get('/products');
       const products = response.data || [];
       const filteredData = products.filter(
         item =>
@@ -148,7 +148,7 @@ const MainPage = () => {
       <ProductGrid>
         {paginatedData.map(product => (
           <ProductWrap key={product.productId}>
-            <Link to={`/shoppingDetail/${product.productId}`} state={{ product,userId }}>
+            <Link to={`/shoppingDetail/${product.productId}`} state={{ product, userId }}>
               <ProductImage src={product.productImage} alt={product.productTitle} />
               <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
               <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>

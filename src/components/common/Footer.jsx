@@ -43,7 +43,7 @@ const Footer = () => {
   ];
 
   const handleTabClick = (tab, link) => {
-    setActiveTab(link); // 탭 클릭 시 activeTab 상태 업데이트
+    setActiveTab(link); 
   };
 
   return (

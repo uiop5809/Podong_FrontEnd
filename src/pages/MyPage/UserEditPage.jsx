@@ -1,25 +1,24 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
 import { useNavigate, useParams } from 'react-router-dom';
 import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
-import axios from 'axios';
-
+import axios from '../../apis/AxiosInstance';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
   margin: 64px 0;
-`; //스크롤 
+`; //스크롤
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 90%; 
+  width: 90%;
   margin-left: 5%;
-`; // 전체 컨테이너 
+`; // 전체 컨테이너
 
 const Description = styled.label`
   font-size: 13px;
@@ -28,7 +27,7 @@ const Description = styled.label`
   margin-bottom: 15px;
   margin-top: 5%;
   word-break: keep-all;
-`; // 사용자 인사 
+`; // 사용자 인사
 
 const WelcomeContainer = styled.div`
   margin-bottom: 20px;
@@ -37,38 +36,37 @@ const WelcomeContainer = styled.div`
 
 const WelcomeComment = styled.span`
   color: black;
-`
+`;
 
 const FirstComment = styled.span`
-    color: #FF6E00;
-`
+  color: #ff6e00;
+`;
 
 const HightLight = styled.span`
-  color: #FF6E00;
-`; // 사용자 인사 중 하이라이트 
-
+  color: #ff6e00;
+`; // 사용자 인사 중 하이라이트
 
 const Label = styled.label`
   font-size: 10px;
-  color: #B3B3B3;
+  color: #b3b3b3;
   margin-bottom: 10px;
   margin-top: 5px;
-`; // 각 폼 레이블 
+`; // 각 폼 레이블
 
 const KakaoEmail = styled.input`
   padding: 13px 13px;
   margin-bottom: 8px;
   border: 1px solid #818181;
-  border-radius: 5px; 
+  border-radius: 5px;
   font-size: 11px;
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
   width: 100%;
 `; //이메일 부분 disabled
 
 const Icon = styled.img`
   position: absolute;
   top: 40%;
-  left: 90%; 
+  left: 90%;
   transform: translateY(-8px);
   width: 20px;
   height: 20px;
@@ -78,27 +76,26 @@ const InputContainer = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 8px;
-`; // 입력하는 폼 전체 컨테이너 
+`; // 입력하는 폼 전체 컨테이너
 
 const StyledInput = styled.input`
   padding: 13px 50px 13px 13px;
   width: 100%;
   margin-top: 4px;
-  border: 1px solid #E4E4E4;
+  border: 1px solid #e4e4e4;
   border-radius: 5px;
   font-size: 11px;
 `; //입력 폼
 
-
 const PostSearchContainer = styled.input`
   padding: 13px 13px;
   margin-bottom: 8px;
-  border: 1px solid #E4E4E4;
-  border-radius: 5px; 
+  border: 1px solid #e4e4e4;
+  border-radius: 5px;
   font-size: 11px;
   background-color: white;
   width: 65%;
-`; 
+`;
 
 const AddressContainer = styled.div`
   display: flex;
@@ -106,31 +103,32 @@ const AddressContainer = styled.div`
   margin-top: 5px;
 `;
 
-const SearchAddressButton = styled.button` 
+const SearchAddressButton = styled.button`
   position: absolute;
   width: 100px;
   height: 40px;
   top: 43px;
   right: 5px;
   transform: translateY(-50%);
-  background-color: #FFEFEF; 
-  color: #FF6E00;
+  background-color: #ffefef;
+  color: #ff6e00;
   border: none;
-  border-radius: 5px; 
+  border-radius: 5px;
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
   padding: 5px 10px;
   transition: background-color 0.3s;
 
-  &:hover { 
-    background-color: #FFD3D3;
-  }`;
+  &:hover {
+    background-color: #ffd3d3;
+  }
+`;
 
 const Divider = styled.div`
-  background-color: #F7F7F7;
-  margin-top:16px;
-  width:100%;
+  background-color: #f7f7f7;
+  margin-top: 16px;
+  width: 100%;
   height: 20px;
 `; //구분선
 
@@ -138,7 +136,7 @@ const SubTitle = styled.label`
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 20px;
-  flex-grow: 1; 
+  flex-grow: 1;
 `; //앱푸시알림
 
 const SubTitleList = styled.label`
@@ -147,23 +145,22 @@ const SubTitleList = styled.label`
   margin-bottom: 8px;
 `; //각 알람 제목
 
-
 const DescriptionContainer = styled.div`
   display: flex;
   flex-direction: row;
-`; //설명 컨테이너 
+`; //설명 컨테이너
 
 const SubDescription = styled.label`
   font-size: 10px;
   font-weight: light;
-  color:#8D8D8D;
+  color: #8d8d8d;
   margin-bottom: 10px;
-`; //각 알람 설명 
+`; //각 알람 설명
 
 const AlertAgreementDescription = styled.div`
   margin-top: 10px;
   font-size: 8px;
-  color: #FF6E00;
+  color: #ff6e00;
 `;
 
 const SubContainer = styled.div`
@@ -173,51 +170,51 @@ const SubContainer = styled.div`
 `;
 const TextContainer = styled.div`
   display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  `;
+  flex-direction: column;
+  margin-bottom: 10px;
+`;
 
 const PhoneContainer = styled.div`
-display: flex;
-align-items: center;  
-margin-top: 5px;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
 `;
 
 const PhonenumberInputrequired = styled.input`
   padding: 13px 13px;
   margin-bottom: 8px;
-  border: 1px solid #E4E4E4;
-  border-radius: 5px; 
+  border: 1px solid #e4e4e4;
+  border-radius: 5px;
   font-size: 11px;
   background-color: white;
   width: 65%;
-`; 
+`;
 
 const PhoneNumberAuthorization = styled.button`
-position: absolute;
+  position: absolute;
   width: 100px;
   height: 40px;
   top: 43px;
   right: 5px;
   transform: translateY(-50%);
-  background-color: #FFEFEF; 
-  color: #FF6E00;
+  background-color: #ffefef;
+  color: #ff6e00;
   border: none;
-  border-radius: 5px; 
+  border-radius: 5px;
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
   padding: 5px 10px;
   transition: background-color 0.3s;
 
-  &:hover { 
-    background-color: #FFD3D3;
+  &:hover {
+    background-color: #ffd3d3;
   }
 `;
 
 const AlarmAgreementContainer = styled.div`
   display: flex;
-  align-items: center;  
+  align-items: center;
   position: relative;
   width: 100%;
   margin-top: 7%;
@@ -227,20 +224,20 @@ const AlarmAgreementContainer = styled.div`
 const FirstToggleContainer = styled.div`
   position: relative;
   cursor: pointer;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   margin-left: 40%;
-  margin-top:10px;
+  margin-top: 10px;
 
   > .toggle-container {
     width: 50px;
     height: 24px;
     border-radius: 30px;
-    background-color: rgb(233,233,234);
-    transition: background-color 0.5s; 
+    background-color: rgb(233, 233, 234);
+    transition: background-color 0.5s;
   }
 
   > .toggle--checked {
-    background-color: #FF6E00;
+    background-color: #ff6e00;
   }
 
   > .toggle-circle {
@@ -250,19 +247,19 @@ const FirstToggleContainer = styled.div`
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: rgb(255,254,255);
-    transition: left 0.5s; 
+    background-color: rgb(255, 254, 255);
+    transition: left 0.5s;
   }
 
   > .toggle--checked {
-    left: 27px; 
+    left: 27px;
   }
 `; //토글 버튼
 
 const SecondToggleContainer = styled.div`
   position: relative;
   cursor: pointer;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   margin-left: 41%;
   margin-top: 15px;
 
@@ -270,12 +267,12 @@ const SecondToggleContainer = styled.div`
     width: 50px;
     height: 24px;
     border-radius: 30px;
-    background-color: rgb(233,233,234);
-    transition: background-color 0.5s; 
+    background-color: rgb(233, 233, 234);
+    transition: background-color 0.5s;
   }
 
   > .toggle--checked {
-    background-color: #FF6E00;
+    background-color: #ff6e00;
   }
 
   > .toggle-circle {
@@ -285,69 +282,67 @@ const SecondToggleContainer = styled.div`
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: rgb(255,254,255);
-    transition: left 0.5s; 
+    background-color: rgb(255, 254, 255);
+    transition: left 0.5s;
   }
 
   > .toggle--checked {
-    left: 27px; 
+    left: 27px;
   }
-`; 
+`;
 
+const ThirdToggleContainer = styled.div`
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 10px;
+  margin-left: 100px;
+  margin-top: 20px;
 
-const ThirdToggleContainer = styled.div`  
-position: relative;
-cursor: pointer;
-margin-bottom:10px;
-margin-left: 100px;
-margin-top:20px;
+  > .toggle-container {
+    width: 50px;
+    height: 24px;
+    border-radius: 30px;
+    background-color: rgb(233, 233, 234);
+    transition: background-color 0.5s;
+  }
 
-> .toggle-container {
-  width: 50px;
-  height: 24px;
-  border-radius: 30px;
-  background-color: rgb(233,233,234);
-  transition: background-color 0.5s; 
-}
+  > .toggle--checked {
+    background-color: #ff6e00;
+  }
 
-> .toggle--checked {
-  background-color: #FF6E00;
-}
+  > .toggle-circle {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: rgb(255, 254, 255);
+    transition: left 0.5s;
+  }
 
-> .toggle-circle {
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: rgb(255,254,255);
-  transition: left 0.5s; 
-}
-
-> .toggle--checked {
-  left: 27px; 
-}
+  > .toggle--checked {
+    left: 27px;
+  }
 `; //토글 버튼
-
 
 const RegisterButton = styled.button`
   display: flex;
-  justify-content: center; 
-  align-items: center; 
-  border: 1px solid #E4E4E4;
-  width: 330px;
-  height: 43px; 
-  text-align: center; 
-  border-radius: 8px; 
-  margin-bottom: 200px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e4e4e4;
+  width: 90%;
+  height: 43px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 80px;
   margin-left: 20px;
 
   &:hover {
-    background-color: #FF6E00;
-    color: white; 
+    background-color: #ff6e00;
+    color: white;
   }
-`; // 저장버튼
+`;
 
 const UserEditPage = () => {
   const [imgPath, setImgPath] = useState('');
@@ -355,31 +350,31 @@ const UserEditPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [zoneCode, setZoneCode] = useState('');
-  const [nickname, setNickname] = useState(''); // 사용자 수정 가능한 닉네임
-  const [profileNickname, setProfileNickname] = useState(''); // 카카오 프로필 닉네임
+  const [nickname, setNickname] = useState('');
+  const [profileNickname, setProfileNickname] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId'); 
+      const userId = localStorage.getItem('userId');
       if (!userId) {
         console.error('User ID not found in local storage');
         return;
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        const response = await axios.get(`/user/${userId}`);
         const userData = response.data;
-        setNickname(userData.nickname); // 사용자 수정 가능한 닉네임
-        setProfileNickname(userData.profileNickname); // 카카오 프로필 닉네임
+        setNickname(userData.nickname);
+        setProfileNickname(userData.profileNickname);
         setPhoneNumber(userData.phoneNumber);
         setAddress(userData.address);
         setDetailedAddress(userData.detailedAddress || '');
         setZoneCode(userData.zoneCode || '');
         setEmail(userData.accountEmail);
-        setToggleStates([userData.health, userData.petCare, userData.missing]); // 알림 설정 상태
+        setToggleStates([userData.health, userData.petCare, userData.missing]);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -390,8 +385,22 @@ const UserEditPage = () => {
 
   const handleUpdate = async () => {
     const userId = localStorage.getItem('userId');
+
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+    if (!nicknameRegex.test(nickname)) {
+      alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
+      setNickname('');
+      return;
+    }
+
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      return;
+    }
+
     try {
-      await axios.put(`http://localhost:8080/api/user/${userId}`, {
+      await axios.put(`/user/${userId}`, {
         nickname,
         phoneNumber,
         address,
@@ -413,7 +422,7 @@ const UserEditPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
 
-  const toggleHandler = (index) => {
+  const toggleHandler = index => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index];
     setToggleStates(newToggleStates);
@@ -433,23 +442,27 @@ const UserEditPage = () => {
 
         <Label>이메일</Label>
         <InputContainer>
-          <KakaoEmail placeholder={email || "이메일을 입력해주세요"} disabled />
+          <KakaoEmail placeholder={email || '이메일을 입력해주세요'} disabled />
           <Icon src={images.kakaoIcon} alt="카카오 아이콘" />
         </InputContainer>
 
         <Label>닉네임</Label>
         <InputContainer>
-          <StyledInput value={nickname} onChange={(e) => setNickname(e.target.value)} required />
+          <StyledInput value={nickname} onChange={e => setNickname(e.target.value)} required />
         </InputContainer>
 
         <InputContainer>
           <Label>휴대폰 번호</Label>
           <PhoneContainer>
-            <PhonenumberInputrequired placeholder="전화번호를 입력해주세요" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <PhonenumberInputrequired
+              placeholder="전화번호를 입력해주세요"
+              value={phoneNumber}
+              onChange={e => setPhoneNumber(e.target.value)}
+            />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
-        
+
         <InputContainer>
           <Label>주소</Label>
           <AddressContainer>
@@ -462,8 +475,18 @@ const UserEditPage = () => {
                 </PopupDom>
               )}
             </div>
-            <StyledInput placeholder="기본주소를 입력해주세요" value={address} onChange={(e) => setAddress(e.target.value)} required />
-            <StyledInput placeholder="상세 주소를 입력해주세요" value={detailedAddress} onChange={(e) => setDetailedAddress(e.target.value)} required />
+            <StyledInput
+              placeholder="기본주소를 입력해주세요"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              required
+            />
+            <StyledInput
+              placeholder="상세 주소를 입력해주세요"
+              value={detailedAddress}
+              onChange={e => setDetailedAddress(e.target.value)}
+              required
+            />
           </AddressContainer>
         </InputContainer>
       </Container>
@@ -482,8 +505,8 @@ const UserEditPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
-            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
-            <div className={`toggle-circle ${toggleStates[0] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-container ${toggleStates[0] ? 'toggle--checked' : ''}`} />
+            <div className={`toggle-circle ${toggleStates[0] ? 'toggle--checked' : ''}`} />
           </FirstToggleContainer>
         </SubContainer>
 
@@ -495,8 +518,8 @@ const UserEditPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <SecondToggleContainer onClick={() => toggleHandler(1)}>
-            <div className={`toggle-container ${toggleStates[1] ? "toggle--checked" : ""}`} />
-            <div className={`toggle-circle ${toggleStates[1] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-container ${toggleStates[1] ? 'toggle--checked' : ''}`} />
+            <div className={`toggle-circle ${toggleStates[1] ? 'toggle--checked' : ''}`} />
           </SecondToggleContainer>
         </SubContainer>
 
@@ -511,8 +534,8 @@ const UserEditPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <ThirdToggleContainer onClick={() => toggleHandler(2)}>
-            <div className={`toggle-container ${toggleStates[2] ? "toggle--checked" : ""}`} />
-            <div className={`toggle-circle ${toggleStates[2] ? "toggle--checked" : ""}`} />
+            <div className={`toggle-container ${toggleStates[2] ? 'toggle--checked' : ''}`} />
+            <div className={`toggle-circle ${toggleStates[2] ? 'toggle--checked' : ''}`} />
           </ThirdToggleContainer>
         </SubContainer>
       </Container>

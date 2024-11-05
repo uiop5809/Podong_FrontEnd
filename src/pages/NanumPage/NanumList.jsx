@@ -4,39 +4,41 @@ import styled from 'styled-components';
 import { LuSearch } from 'react-icons/lu';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { FcLike } from 'react-icons/fc';
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 import { HiArrowSmDown } from 'react-icons/hi';
 
 const PetItemListPage = () => {
   const navigate = useNavigate();
   const [petItemList, setPetItemList] = useState([]);
-  const [comments,setComments]=useState([]);
-  const [latest,setLatest]=useState(false);
-    //게시글 목록 불러오기
-  useEffect(() => {          
-      axios.get('http://localhost:8080/api/petItems')
-      .then((response) => {
+  const [comments, setComments] = useState([]);
+  const [latest, setLatest] = useState(false);
+  //게시글 목록 불러오기
+  useEffect(() => {
+    axios
+      .get('/petItems')
+      .then(response => {
         setPetItemList(response.data); // 응답 데이터 저장
         console.log('게시글 목록:', response.data);
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      .catch(error => {
+        console.error('Error fetching data:', error);
       });
   }, []);
 
   // 좋아요 수 증가 함수
-  const good = (petItemId) => {
+  const good = petItemId => {
     const updatedItemList = petItemList.map(item => {
       if (item.petItemId === petItemId) {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
-        axios.put(`http://localhost:8080/api/petItems/${petItemId}`, {...item, good: updatedGood })
-        .then(response => {
-          console.log('좋아요 업데이트:', response.data);
-        })
-        .catch(error => {
-          console.error("좋아요 업데이트 실패:", error);
-        });
+        axios
+          .put(`/petItems/${petItemId}`, { ...item, good: updatedGood })
+          .then(response => {
+            console.log('좋아요 업데이트:', response.data);
+          })
+          .catch(error => {
+            console.error('좋아요 업데이트 실패:', error);
+          });
         return { ...item, good: updatedGood };
       }
       return item;
@@ -44,27 +46,25 @@ const PetItemListPage = () => {
     setPetItemList(updatedItemList);
   };
 
-  
   // 댓글 목록 불러오기
-  useEffect(()=>{
-    axios.get(`http://localhost:8080/api/petItemComments`)
-    .then((response) => {
-      setComments(response.data)
-      console.log('댓글 목록 :', response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
+  useEffect(() => {
+    axios
+      .get(`/petItemComments`)
+      .then(response => {
+        setComments(response.data);
+        console.log('댓글 목록 :', response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
 
-  },[])
-
-// 최신순 
-const handleLatest = () => {
-  const sortList = [...petItemList].sort((a, b) => new Date(b. createdAt)-new Date(a. createdAt));
-  setPetItemList(sortList);
-  setLatest(true);//정렬 변경
-};
-
+  // 최신순
+  const handleLatest = () => {
+    const sortList = [...petItemList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    setPetItemList(sortList);
+    setLatest(true); //정렬 변경
+  };
 
   return (
     <ItemTitle>
@@ -94,7 +94,7 @@ const handleLatest = () => {
               e.preventDefault();
               navigate(`/nanumList/detail/${item.petItemId}`);
             }}>
-            <ListImg src={`http://localhost:8080/uploads/${item.imageUrl}`}/>
+            <ListImg src={`http://localhost:8080/uploads/${item.imageUrl}`} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
               <ListUser>작성자{item.user}</ListUser>
@@ -111,7 +111,8 @@ const handleLatest = () => {
                     }}
                   />
                   {item.good || 0}
-                  <Comment1 />{comments.filter((comment)=>comment.petItem === item.petItemId).length}
+                  <Comment1 />
+                  {comments.filter(comment => comment.petItem === item.petItemId).length}
                 </Icons>
               </ListDate>
             </ListTitlesContainer>
@@ -125,7 +126,7 @@ const handleLatest = () => {
 export default PetItemListPage;
 
 const ItemTitle = styled.div`
-  height:100% ;
+  height: 100%;
   width: 100%;
   padding: 64px 25px 64px 25px;
   display: flex;

@@ -9,10 +9,10 @@ export const images = {
 
   // community
   categoryAll: '/images/community/categoryAll.svg',
-  categoryAnonymous: '/images/community/categoryAnonymous.svg',
+  categoryAnonymity: '/images/community/categoryAnonymity.svg',
   categoryDongNea: '/images/community/categoryDongNea.svg',
   categoryEvent: '/images/community/categoryEvent.svg',
-  categoryExport: '/images/community/categoryExport.svg',
+  categoryExpert: '/images/community/categoryExpert.svg',
   categoryFreedom: '/images/community/categoryFreedom.svg',
 
   // credit

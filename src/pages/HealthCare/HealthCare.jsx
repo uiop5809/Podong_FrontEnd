@@ -1,45 +1,91 @@
-import React, { useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import styled from 'styled-components';
+import axios from "../../apis/AxiosInstance";
+import React, { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import styled from "styled-components";
 
 const HealthCare = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
-  const [showInput, setShowInput] = useState({ hospital: false, nextVisit: false, healthCare: false });
-  const [memo, setMemo] = useState('');
+  const [showInput, setShowInput] = useState({
+    hospital: true,
+    nextVisit: false,
+    healthCare: false,
+  });
+  const [memo, setMemo] = useState("");
 
-  const handleDateChange = date => {
+  // useEffect(()=>{
+
+  //   axios.get(`/healths`)
+  //   .then((response) => {
+  //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
+  //     console.log('댓글 목록 :', response.data);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching data:", error);
+  //   });
+  // },[]);
+
+  const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
-  const addAppointment = type => {
+  const addAppointment = async (type, e) => {
     setAppointments([...appointments, { date: selectedDate, type, memo }]);
-    setMemo('');
+    // e.preventDefault(); // 새로고침 방지
+    const formData = new FormData();
+    const formattedDate = formatDate(selectedDate);
+    formData.append("pet", 1);
+
+    if (type === "병원 방문일") {
+      formData.append("visitedDate", formattedDate);
+    } else if (type === "다음 방문일") {
+      formData.append("nextCheckupDate", formattedDate);
+    } else if (type === "건강 관리") {
+      formData.append("healthDate", formattedDate);
+      formData.append("notes", memo); // 메모 추가
+    }
+    console.log("건강 :", formData);
+
+    try {
+      const response = await axios.post("/healths", formData, {
+        // headers: {
+        //   'Content-Type': 'application/json'
+        // },
+      });
+      console.log("등록 data : ", response.data);
+      alert("등록 성공");
+      setMemo("");
+    } catch (error) {
+      console.error("오류 발생:", error);
+      alert("오류 발생:");
+    }
   };
 
-  const toggleInput = type => {
+  const toggleInput = (type) => {
     setShowInput({ ...showInput, [type]: !showInput[type] });
   };
 
-  const formatDate = date => {
-    return date.toISOString().split('T')[0];
+  const formatDate = (date) => {
+    return date.toISOString().split("T")[0];
   };
 
   // 날짜에 따른 캘린더 타일 표시
   const tileContent = ({ date, view }) => {
-    if (view === 'month') {
+    if (view === "month") {
       const dateStr = formatDate(date);
-      const appointment = appointments.find(app => formatDate(app.date) === dateStr);
+      const appointment = appointments.find(
+        (app) => formatDate(app.date) === dateStr
+      );
 
       if (appointment) {
-        let color = '';
-        if (appointment.type === '병원 방문일') {
-          color = '#FB3737';
-        } else if (appointment.type === '다음 방문일') {
-          color = '#17A1FA';
-        } else if (appointment.type === '건강 관리') {
-          color = '#33E949';
+        let color = "";
+        if (appointment.type === "병원 방문일") {
+          color = "#FB3737";
+        } else if (appointment.type === "다음 방문일") {
+          color = "#17A1FA";
+        } else if (appointment.type === "건강 관리") {
+          color = "#33E949";
         }
         return <Dot color={color} />;
       }
@@ -49,18 +95,18 @@ const HealthCare = () => {
 
   // 날짜 강조 스타일 적용
   const tileClassName = ({ date, view }) => {
-    if (view === 'month') {
+    if (view === "month") {
       const dateStr = formatDate(date);
       const isToday = formatDate(new Date()) === dateStr;
       const isSelected = selectedDate && formatDate(selectedDate) === dateStr;
 
-      let classes = 'calendar-tile';
+      let classes = "calendar-tile";
 
       if (isToday) {
-        classes += ' today';
+        classes += " today";
       }
       if (isSelected) {
-        classes += ' selected';
+        classes += " selected";
       }
 
       return classes;
@@ -91,38 +137,59 @@ const HealthCare = () => {
       <AppointmentSection>
         <AppointmentInput>
           <label>병원 방문일</label>
-          <Button onClick={() => toggleInput('hospital')}>{showInput.hospital ? '-' : '+'}</Button>
+          <Button onClick={() => toggleInput("hospital")}>
+            {showInput.hospital ? "-" : "+"}
+          </Button>
         </AppointmentInput>
         {showInput.hospital && (
           <InputWrapper>
-            <DateInput type="date" onChange={e => handleDateChange(new Date(e.target.value))} />
-            <RegisterButton onClick={() => addAppointment('병원 방문일')}>등록</RegisterButton>
+            <DateInput
+              type="date"
+              onChange={(e) => handleDateChange(new Date(e.target.value))}
+            />
+            <RegisterButton onClick={(e) => addAppointment("병원 방문일", e)}>
+              등록
+            </RegisterButton>
           </InputWrapper>
         )}
         <AppointmentInput>
           <label>다음 방문일</label>
-          <Button onClick={() => toggleInput('nextVisit')}>{showInput.nextVisit ? '-' : '+'}</Button>
+          <Button onClick={() => toggleInput("nextVisit")}>
+            {showInput.nextVisit ? "-" : "+"}
+          </Button>
         </AppointmentInput>
         {showInput.nextVisit && (
           <InputWrapper>
-            <DateInput type="date" onChange={e => handleDateChange(new Date(e.target.value))} />
-            <RegisterButton onClick={() => addAppointment('다음 방문일')}>등록</RegisterButton>
+            <DateInput
+              type="date"
+              onChange={(e) => handleDateChange(new Date(e.target.value))}
+            />
+            <RegisterButton onClick={(e) => addAppointment("다음 방문일", e)}>
+              등록
+            </RegisterButton>
           </InputWrapper>
         )}
         <AppointmentInput>
           <label>건강 관리</label>
-          <Button onClick={() => toggleInput('healthCare')}>{showInput.healthCare ? '-' : '+'}</Button>
+          <Button onClick={() => toggleInput("healthCare")}>
+            {showInput.healthCare ? "-" : "+"}
+          </Button>
         </AppointmentInput>
         {showInput.healthCare && (
           <InputWrapper>
-            <DateInput type="date" onChange={e => handleDateChange(new Date(e.target.value))} />
+            <DateInput
+              type="date"
+              onChange={(e) => handleDateChange(new Date(e.target.value))}
+            />
             <MemoInput
               type="text"
               placeholder="메모를 입력하세요"
               value={memo}
-              onChange={e => setMemo(e.target.value)}
+              onChange={(e) => setMemo(e.target.value)}
             />
-            <RegisterButton onClick={() => addAppointment('건강 관리')}>등록</RegisterButton>
+            <RegisterButton onClick={(e) => addAppointment("건강 관리", e)}>
+              등록
+            </RegisterButton>
           </InputWrapper>
         )}
       </AppointmentSection>
@@ -130,7 +197,9 @@ const HealthCare = () => {
         {appointments.map((appointment, index) => (
           <AppointmentItem key={index}>
             {appointment.type} - {appointment.date.toLocaleDateString()}
-            {appointment.memo && <MemoText> - 메모: {appointment.memo}</MemoText>}
+            {appointment.memo && (
+              <MemoText> - 메모: {appointment.memo}</MemoText>
+            )}
           </AppointmentItem>
         ))}
       </AppointmentList>
@@ -146,6 +215,10 @@ const Container = styled.div`
 
 const CalendarWrapper = styled.div`
   margin-bottom: 20px;
+
+  .react-calendar {
+    border: none;
+  }
 `;
 
 const StyledCalendar = styled(Calendar)`
@@ -199,7 +272,7 @@ const Dot = styled.span`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: ${props => props.color};
+  background-color: ${(props) => props.color};
   margin-right: 5px;
 `;
 
@@ -241,6 +314,8 @@ const MemoInput = styled.input`
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  height: auto;
+  width: 100%;
 `;
 
 const Button = styled.button`
