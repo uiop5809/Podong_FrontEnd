@@ -8,7 +8,6 @@ import axios from '../../apis/AxiosInstance';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
-  border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%;
 `; // 스크롤
@@ -25,7 +24,7 @@ const Label = styled.label`
   color: #b3b3b3;
   margin-bottom: 5px;
   margin-top: 8px;
-`; // 각 폼 위에 설명 label
+`; 
 
 const StyledInput = styled.input`
   padding: 13px;
@@ -82,11 +81,10 @@ const RegisterButton = styled.button`
 
 const LastComment = styled.span`
   font-size: 11px;
-  color: #8d8d8d;
+  color: black;
   text-align: center;
-  margin-bottom: 20px;
   cursor: pointer;
-
+  margin-bottom: 80px;
   &:hover {
     color: #ff6e00;
     font-weight: bold;
