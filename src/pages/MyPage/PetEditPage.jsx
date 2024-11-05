@@ -3,12 +3,9 @@ import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
-import DisplayPetImage from '../../components/Register/DisplayImg'; 
-import { useParams } from 'react-router-dom';
 import UploadImg from '../../components/Register/UploadImg';
 import axios from "axios";
 
-// 스타일 컴포넌트 설정
 const ScrollableContainer = styled.div`
   max-height: 100%;
   border: 1px solid #ddd;
