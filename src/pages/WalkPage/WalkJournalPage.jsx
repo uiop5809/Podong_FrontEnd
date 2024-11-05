@@ -17,6 +17,7 @@ const WalkingJournal = () => {
   const fetchWalkingLogs = async () => {
     try {
       const response = await axios.get(
+        // eslint-disable-next-line no-undef
         `${import.meta.env.VITE_BASE_URL}/walkRoutes`
       );
       const logs = response.data.reduce((acc, log) => {
