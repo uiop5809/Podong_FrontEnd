@@ -408,8 +408,8 @@ const UserRegisterPage = () => {
       // userId를 localStorage에 저장
       localStorage.setItem('userId', userId);
       alert('userId가 localStorage에 저장되었습니다: ' + userId);
-         navigate('/petRegister/:userId');
-     
+        navigate('/petRegister/:userId');
+
     } catch (error) {
       console.error("Error updating user information:", error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
