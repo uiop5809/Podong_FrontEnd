@@ -79,7 +79,7 @@ function Router() {
             </Route>
 
             <Route path="userRegister/:email" element={<UserRegisterPage />} />
-            <Route path="petRegister" element={<PetRegisterPage />} />
+            <Route path="petRegister/:userId" element={<PetRegisterPage />} />
 
             <Route path="walking" element={<WalkPage />}>
               <Route path="map" element={<WalkMapPage />} />
@@ -90,12 +90,13 @@ function Router() {
               element={<RecommendedRoutesPage />}
             />
 
-            <Route path="myPage" element={<Outlet />}>
+            <Route path="myPage/:userId" element={<Outlet />}>
               <Route index element={<MyPage />} />
-              <Route path="editPetRegister" element={<PetEditPage />} />
-              <Route path="editUserRegister" element={<UserEditPage />} />
+              <Route path="editPetRegister/:petId" element={<PetEditPage />} />
+              <Route path="petRegister" element={<PetRegisterPage />} />
+              <Route path="editUserRegister/:userId" element={<UserEditPage />} />
               <Route path="missingSave" element={<RegisterMissingSavePage />} />
-              <Route path="missingRegister" element={<RegisterMissing />} />
+              <Route path="missingRegister/:petId" element={<RegisterMissing />} />
             </Route>
 
             <Route path="orderList" element={<Outlet />}>

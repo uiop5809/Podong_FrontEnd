@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
@@ -11,7 +11,7 @@ const ScrollableContainer = styled.div`
   border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%; 
-`; //스크롤 
+`; // 스크롤 
 
 const Container = styled.div`
   display: flex;
@@ -87,9 +87,9 @@ const LastComment = styled.span`
   margin-bottom: 20px;
   cursor: pointer;
 
-    &:hover {
-      color: #FF6E00;
-      font-weight: bold;
+  &:hover {
+    color: #FF6E00;
+    font-weight: bold;
   }
 `
 
@@ -103,17 +103,24 @@ const getCurrentDate = () => {
 
 const PetRegisterPage = () => {
   const navigate = useNavigate(); 
-  const [imgPath, setImgPath] = useState(''); //이미지
-  const [selectedPetType, setSelectedPetType] = useState(''); //강아지 or 고양이
-  const [petName, setPetName] = useState(''); // 이름 
-  const [birthdate, setBirthdate] = useState(''); // 생일
-  const [selectedGender, setSelectedGender] = useState(null); //성별
-  const [isNeutered, setIsNeutered] = useState(null); //중성화
-  const [isAllergic, setIsAllergic] = useState(null); // 알러지
-  const [weight, setWeight] = useState(''); //몸무게
-  const [userId, setUserId] = useState('1'); // 유저 ID
-  const [selectCatList, setSelectCatList] = useState(null); //cat list
-  const [selectDogList, setSelectDogList] = useState(null); //dog list
+  const [imgPath, setImgPath] = useState(''); 
+  const [selectedPetType, setSelectedPetType] = useState('');
+  const [petName, setPetName] = useState(''); 
+  const [birthdate, setBirthdate] = useState(''); 
+  const [selectedGender, setSelectedGender] = useState(null); 
+  const [isNeutered, setIsNeutered] = useState(null); 
+  const [isAllergic, setIsAllergic] = useState(null);
+  const [weight, setWeight] = useState(''); 
+  const [userId, setUserId] = useState(null); 
+  const [selectCatList, setSelectCatList] = useState(null); 
+  const [selectDogList, setSelectDogList] = useState(null); 
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId); 
+    }
+  }, []);
 
   const handlePetTypeClick = (value) => setSelectedPetType(value);
   const handleGenderClick = (gender) => setSelectedGender(gender);
@@ -121,7 +128,6 @@ const PetRegisterPage = () => {
   const handleAllergicClick = (value) => setIsAllergic(value);
   const handlePetNameChange = (e) => setPetName(e.target.value);
   const handleBirthdateChange = (e) => setBirthdate(e.target.value);
-  const handleUserIdChange = (e) => setUserId(e.target.value);
   const handleCatChange = (e) => setSelectCatList(e.target.value);
   const handleDogChange = (e) => setSelectDogList(e.target.value);
   const handleWeightChange = (e) => {
@@ -134,12 +140,12 @@ const PetRegisterPage = () => {
     if (!validateForm()) return; 
   
     const formData = new FormData();
-
     if (imgPath) {
       formData.append('image', imgPath);
     }
   
     const petData = {
+      user: userId, 
       petName: petName,
       dogOrCat: selectedPetType,
       petType: selectedPetType === '고양이' ? selectCatList : selectDogList,
@@ -148,7 +154,6 @@ const PetRegisterPage = () => {
       petAllergy: isAllergic === '네', 
       gender: selectedGender === '남아', 
       createdAt: new Date().toISOString(), 
-      user: parseInt(userId),  // 일단 userId 고정값 사용함 > 변경 해야함
       petAge: calculateAge(birthdate), 
     };
   
@@ -165,14 +170,11 @@ const PetRegisterPage = () => {
         },
       });
       if (response.status === 201) {
-        alert('반려동물 등록이 완료되었습니다.');
         navigate('/'); 
-        console.log('Pet data:', petData);
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
-      console.error('Error registering pet:', error);
       alert('서버와 통신 중 오류가 발생했습니다.');
     }
   };
@@ -187,13 +189,14 @@ const PetRegisterPage = () => {
     }
     return age;
   };
+
   const validateForm = () => {
     if (!selectedPetType) {
       alert('반려동물 종류를 선택해주세요.');
       return false;
     }
     if (!petName) {
-      alert('이름을 입력해주세요.');
+      alert('응애 이름을 입력해주세요.');
       return false;
     }
     if (!birthdate) {
@@ -253,47 +256,39 @@ const PetRegisterPage = () => {
           required
       />
 
-        <Label>유저이름</Label>
-          <StyledInput
-            placeholder="유저이름을 입력해주세요."
-            value={userId}
-            onChange={handleUserIdChange}
+      {selectedPetType === '고양이' && (
+        <>
+          <Label>묘종</Label>
+          <SelectBox
+            options={CatList.map((cat, index) => ({
+              key: `cat-${index}`,
+              value: cat.value,
+              label: cat.label,
+            }))}
+            value={selectCatList}
+            onChange={handleCatChange}
+            placeholder="묘종을 선택해주세요"
             required
           />
+        </>
+      )}
 
-{selectedPetType === '고양이' && (
-  <>
-    <Label>묘종</Label>
-    <SelectBox
-      options={CatList.map((cat, index) => ({
-        key: `cat-${index}`,
-        value: cat.value,
-        label: cat.label,
-      }))}
-      value={selectCatList}
-      onChange={handleCatChange}
-      placeholder="묘종을 선택해주세요"
-      required
-    />
-  </>
-)}
-
-{selectedPetType === '강아지' && (
-  <>
-    <Label>견종</Label>
-    <SelectBox
-      options={DogList.map((dog, index) => ({
-        key: `dog-${index}`,
-        value: dog.value,
-        label: dog.label,
-      }))}
-      value={selectDogList}
-      onChange={handleDogChange}
-      placeholder="견종을 선택해주세요"
-      required
-    />
-  </>
-)}
+      {selectedPetType === '강아지' && (
+        <>
+          <Label>견종</Label>
+          <SelectBox
+            options={DogList.map((dog, index) => ({
+              key: `dog-${index}`,
+              value: dog.value,
+              label: dog.label,
+            }))}
+            value={selectDogList}
+            onChange={handleDogChange}
+            placeholder="견종을 선택해주세요"
+            required
+          />
+        </>
+      )}
         <Label>생일</Label>
         <StyledInput 
           type="date"

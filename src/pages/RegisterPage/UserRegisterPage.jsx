@@ -336,6 +336,7 @@ const RegisterButton = styled.button`
 `; 
 
 const UserRegisterPage = () => {
+  
   const navigate = useNavigate();
   const [imgPath, setImgPath] = useState('');
   const [toggleStates, setToggleStates] = useState([false, false, false]);
@@ -347,7 +348,7 @@ const UserRegisterPage = () => {
   const [detailedAddress, setDetailedAddress] = useState('');
   const [email, setEmail] = useState('');
   const [profileNickname, setProfileNickname] = useState('');
-
+  
   useEffect(() => {
     const emailFromCookie = Cookies.get('email');
     const profileNicknameFromCookie = Cookies.get('profile_nickname');
@@ -400,7 +401,6 @@ const UserRegisterPage = () => {
         petCare: toggleStates[1],
         missing: toggleStates[2]
       });
-      
       const { userId } = response.data;
 
       console.log(userId);
@@ -408,7 +408,7 @@ const UserRegisterPage = () => {
       // userId를 localStorage에 저장
       localStorage.setItem('userId', userId);
       alert('userId가 localStorage에 저장되었습니다: ' + userId);
-      navigate(`/mainpage/${userId}`);
+         navigate('/petRegister/:userId');
      
     } catch (error) {
       console.error("Error updating user information:", error);
@@ -494,7 +494,7 @@ const UserRegisterPage = () => {
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
-            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
+https://github.com/URECA-PODONG/FrontEnd/pull/62/conflict?name=src%252Fpages%252FMainPage%252FMainPage.jsx&ancestor_oid=148d447e33be2ebbafcc2b1fa080637f030d4d1f&base_oid=d1e355f0fdafc61028b6c94f491e08fcc91f6e53&head_oid=a0aa53adb1fecfad64f9dbb376132a8564ac1584            <div className={`toggle-container ${toggleStates[0] ? "toggle--checked" : ""}`} />
             <div className={`toggle-circle ${toggleStates[0] ? "toggle--checked" : ""}`} />
           </FirstToggleContainer>
         </SubContainer>

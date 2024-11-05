@@ -4,9 +4,8 @@ import { useNavigate } from "react-router-dom";
 import loginbtn from './loginbtn.png';
 
 const LoginPage = () => {
-    const navigate = useNavigate(); // useNavigate 훅 사용
+    const navigate = useNavigate(); 
 
-   
 
     return (
         <Container>
@@ -14,7 +13,7 @@ const LoginPage = () => {
             <Title>지금 가입하면 5천원 즉시 할인!</Title>
             <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
             <a href="http://localhost:8080/api/oauth2/authorization/kakao">
-             <img src={loginbtn} alt="카카오 계정으로 로그인" /></a>
+            <img src={loginbtn} alt="카카오 계정으로 로그인" /></a>
             <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
             <SkipButton onClick={() => navigate('/')}>일단 둘러보기</SkipButton>
         </Container>
