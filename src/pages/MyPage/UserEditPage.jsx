@@ -355,8 +355,8 @@ const UserEditPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [zoneCode, setZoneCode] = useState('');
-  const [nickname, setNickname] = useState(''); // 사용자 수정 가능한 닉네임
-  const [profileNickname, setProfileNickname] = useState(''); // 카카오 프로필 닉네임
+  const [nickname, setNickname] = useState(''); 
+  const [profileNickname, setProfileNickname] = useState(''); 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detailedAddress, setDetailedAddress] = useState('');
   const [email, setEmail] = useState('');
@@ -372,14 +372,14 @@ const UserEditPage = () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
         const userData = response.data;
-        setNickname(userData.nickname); // 사용자 수정 가능한 닉네임
-        setProfileNickname(userData.profileNickname); // 카카오 프로필 닉네임
+        setNickname(userData.nickname); 
+        setProfileNickname(userData.profileNickname); 
         setPhoneNumber(userData.phoneNumber);
         setAddress(userData.address);
         setDetailedAddress(userData.detailedAddress || '');
         setZoneCode(userData.zoneCode || '');
         setEmail(userData.accountEmail);
-        setToggleStates([userData.health, userData.petCare, userData.missing]); // 알림 설정 상태
+        setToggleStates([userData.health, userData.petCare, userData.missing]);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -390,6 +390,22 @@ const UserEditPage = () => {
 
   const handleUpdate = async () => {
     const userId = localStorage.getItem('userId');
+
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+    if (!nicknameRegex.test(nickname)) {
+      alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
+      setNickname('');
+      return;
+    }
+
+
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      return;
+    }
+
+    
     try {
       await axios.put(`http://localhost:8080/api/user/${userId}`, {
         nickname,
