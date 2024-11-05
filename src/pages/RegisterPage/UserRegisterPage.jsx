@@ -326,7 +326,7 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-bottom: 200px;
+  margin-bottom: 80px;
   margin-left: 20px;
 
   &:hover {
@@ -386,7 +386,6 @@ const UserRegisterPage = () => {
       return;
     }
 
-    // 필수 입력 필드 모두 입력 확인 (profileNickname은 제외)
     if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
       alert('모든 정보를 입력해주세요.');
       return;

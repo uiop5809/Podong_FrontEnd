@@ -331,18 +331,18 @@ const RegisterButton = styled.button`
   justify-content: center;
   align-items: center;
   border: 1px solid #e4e4e4;
-  width: 330px;
+  width: 90%;
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-bottom: 200px;
+  margin-bottom: 80px;
   margin-left: 20px;
 
   &:hover {
     background-color: #ff6e00;
     color: white;
   }
-`; // 저장버튼
+`;
 
 const UserEditPage = () => {
   const [imgPath, setImgPath] = useState('');

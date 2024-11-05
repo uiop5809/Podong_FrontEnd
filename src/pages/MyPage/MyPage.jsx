@@ -135,7 +135,7 @@ const PetAddButton = styled.button`
   cursor: pointer;
   padding: 5px 10px;
   font-size: 8px;
-  margin-left: 50px;
+  margin-top:10px;
   font-weight: bold;
   transition: background-color 0.3s;
 
@@ -379,11 +379,17 @@ const LastComment = styled.span`
     font-weight: bold;
   }
 `;
-const NoPetsMessage = styled.p`
+
+const NoPetsMessage = styled.div`
   font-size: 12;
   font-weight: bold;
-  margin-top: 70px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-left:75px;
 `;
+
 
 function MyPage() {
   const navigate = useNavigate();
@@ -491,10 +497,10 @@ function MyPage() {
                   </PetProfile>
                 ))
               ) : (
-                <NoPetsMessage>
-                  <p>등록된 펫이 없습니다.</p>
-                  <PetAddButton onClick={() => navigate('/petRegister')}>펫 등록하기</PetAddButton>
-                </NoPetsMessage>
+                  <NoPetsMessage>
+                    <p>등록된 펫이 없습니다</p>
+                    <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
+                  </NoPetsMessage>
               )}
             </CardContainer>
             <ArrowButton direction="right" onClick={() => scroll('right')}>
