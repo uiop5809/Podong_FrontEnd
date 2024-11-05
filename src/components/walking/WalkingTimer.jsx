@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "../../apis/AxiosInstance";
 
 const WalkingTimer = ({
   time,
@@ -9,6 +10,9 @@ const WalkingTimer = ({
   setIsStarted,
   isRunning,
   setIsRunning,
+  originCoords,
+  destinationCoords,
+  routeDistance,
 }) => {
   useEffect(() => {
     let interval;
@@ -38,14 +42,40 @@ const WalkingTimer = ({
     setIsRunning(false);
     setTime(0);
     setIsStarted(false);
+    saveWalkRoute();
+  };
+
+  const userId = localStorage.getItem("userId");
+
+  const saveWalkRoute = async () => {
+    try {
+      const response = await axios.post("/walkRoutes", {
+        latitude: originCoords.getLat(),
+        longitude: originCoords.getLng(),
+        distanceKm: (routeDistance / 1000).toFixed(1),
+        walkTime: formatTime(time),
+        userId: userId,
+      });
+      console.log("산책 경로 저장 성공:", response.data);
+    } catch (error) {
+      console.error("산책 경로 저장 실패:", error);
+    }
+  };
+
+  // 초기 시간 형식 변환 함수
+  const formatTime = (seconds) => {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${mins}:${secs}`;
   };
 
   return (
     <InputContainer>
-      {!isStarted && (
-        <TimerButton onClick={startTimer}>
-          {time === 0 ? "Start!" : "다시 시작"}
-        </TimerButton>
+      {!isStarted && (!originCoords || !destinationCoords) && (
+        <TimerButton disabled>Start!</TimerButton>
+      )}
+      {!isStarted && originCoords && destinationCoords && (
+        <TimerButton onClick={startTimer}>Start!</TimerButton>
       )}
       {isStarted && (
         <ButtonContainer>
