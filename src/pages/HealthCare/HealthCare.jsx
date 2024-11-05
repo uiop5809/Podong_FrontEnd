@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -10,10 +10,9 @@ const HealthCare = () => {
   const [showInput, setShowInput] = useState({ hospital: true, nextVisit: false, healthCare: false });
   const [memo, setMemo] = useState('');
 
-
   // useEffect(()=>{
-    
-  //   axios.get(`http://localhost:8080/api/healths`)
+
+  //   axios.get(`/healths`)
   //   .then((response) => {
   //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
   //     console.log('댓글 목록 :', response.data);
@@ -34,28 +33,28 @@ const HealthCare = () => {
     const formattedDate = formatDate(selectedDate);
     formData.append('pet', 1);
 
-  if (type === '병원 방문일') {
-    formData.append('visitedDate', formattedDate);
-  } else if (type === '다음 방문일') {
-    formData.append('nextCheckupDate', formattedDate);
-  } else if (type === '건강 관리') {
-    formData.append('healthDate', formattedDate);
-    formData.append('notes',memo); // 메모 추가
-  }console.log("건강 :" ,formData)
-
-  try {
-    const response = await axios.post('http://localhost:8080/api/healths', formData, {
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // },
-    });
-      console.log("등록 data : ", response.data);
-      alert("등록 성공")
-      setMemo('');
+    if (type === '병원 방문일') {
+      formData.append('visitedDate', formattedDate);
+    } else if (type === '다음 방문일') {
+      formData.append('nextCheckupDate', formattedDate);
+    } else if (type === '건강 관리') {
+      formData.append('healthDate', formattedDate);
+      formData.append('notes', memo); // 메모 추가
     }
-    catch(error) {
-      console.error("오류 발생:",error);
-      alert("오류 발생:")
+    console.log('건강 :', formData);
+
+    try {
+      const response = await axios.post('/healths', formData, {
+        // headers: {
+        //   'Content-Type': 'application/json'
+        // },
+      });
+      console.log('등록 data : ', response.data);
+      alert('등록 성공');
+      setMemo('');
+    } catch (error) {
+      console.error('오류 발생:', error);
+      alert('오류 발생:');
     }
   };
 
@@ -137,7 +136,7 @@ const HealthCare = () => {
         {showInput.hospital && (
           <InputWrapper>
             <DateInput type="date" onChange={e => handleDateChange(new Date(e.target.value))} />
-            <RegisterButton onClick={(e) => addAppointment('병원 방문일',e)}>등록</RegisterButton>
+            <RegisterButton onClick={e => addAppointment('병원 방문일', e)}>등록</RegisterButton>
           </InputWrapper>
         )}
         <AppointmentInput>
@@ -147,7 +146,7 @@ const HealthCare = () => {
         {showInput.nextVisit && (
           <InputWrapper>
             <DateInput type="date" onChange={e => handleDateChange(new Date(e.target.value))} />
-            <RegisterButton onClick={(e) => addAppointment('다음 방문일',e)}>등록</RegisterButton>
+            <RegisterButton onClick={e => addAppointment('다음 방문일', e)}>등록</RegisterButton>
           </InputWrapper>
         )}
         <AppointmentInput>
@@ -163,7 +162,7 @@ const HealthCare = () => {
               value={memo}
               onChange={e => setMemo(e.target.value)}
             />
-            <RegisterButton onClick={(e) => addAppointment('건강 관리',e)}>등록</RegisterButton>
+            <RegisterButton onClick={e => addAppointment('건강 관리', e)}>등록</RegisterButton>
           </InputWrapper>
         )}
       </AppointmentSection>

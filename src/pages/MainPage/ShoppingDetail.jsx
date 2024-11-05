@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 import styled from 'styled-components';
 import { FaStar } from 'react-icons/fa';
 import { useCart } from '../ShoppingCart/CartContext';
-
 
 const ShoppingDetail = () => {
   const { productId } = useParams();
@@ -22,7 +21,7 @@ const ShoppingDetail = () => {
     if (!product) {
       const fetchProduct = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
+          const response = await axios.get(`/products/${productId}`);
           setProduct(response.data);
         } catch (error) {
           console.error('상품정보를 불러오는데 오류가 발생했습니다:', error);
@@ -43,7 +42,7 @@ const ShoppingDetail = () => {
     };
 
     axios
-      .post('http://localhost:8080/api/carts', cartItem)
+      .post('/api/carts', cartItem)
       .then(response => {
         alert(response.data);
         setCartModalOpen(false); // 장바구니에 담기 성공 후 팝업창 닫기
