@@ -175,7 +175,7 @@ function PayCancelReq() {
       </RefundInfo>
       <CancelButton onClick={handleCancel}>결제 취소</CancelButton>
 
-      {isCancelRequested && <CancelPay userId={1} />}
+      {isCancelRequested && <CancelPay userId />}
     </OrderCancellationWrapper>
   );
 }

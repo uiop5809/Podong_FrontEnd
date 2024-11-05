@@ -63,7 +63,6 @@ function Router() {
             <Route path="payCancelReq" element={<PayCancelReq />} />
             <Route path="paymentEnd" element={<PaymentEnd />} />
             <Route path="paymentHistory" element={<PaymentHistory />} />
-            <Route path="paymentlist" element={<PaymentHistory />} />
             <Route path="paymentCancelDone" element={<PaymentCancelDone />} />
 
             <Route path="mainpage/:userId" element={<MainPage />} />
