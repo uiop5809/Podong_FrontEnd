@@ -120,7 +120,7 @@ const Payment = () => {
           pg : "html5_inicis", // PG사명
           pay_method: "card", // 결제수단
           merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
-          name: cartData.productTitle, // 결제명
+          name: cartData[0]?.productTitle || '상품 이름', // 결제명
           amount: orderItems.reduce((total, item) => total + (item.productLprice * item.quantity), 0).toLocaleString(), // 결제 금액
           buyer_email: userData.accountEmail, // 구매자 이메일
           buyer_name: userData.nickname, // 구매자 이름
@@ -129,9 +129,11 @@ const Payment = () => {
           buyer_postcode: "000-000", // 구매자 우편번호
         }, (rsp) => {
           if (rsp.success) { // 프론트에서 결제가 완료되면
-            axios.post(`http://localhost:8080/api/payment/list/${rsp.imp_uid}/${userId}`)
+            axios.post(`http://localhost:8080/api/payment/list/${rsp.imp_uid}/${userId}`, {
+                cartId : cartData[0]?.cartId
+            })
             .then((res) => {
-                navigate('/PaymentEnd')
+                navigate('/PaymentEnd');
             })
             .catch((error) => {
                 console.log("error");
