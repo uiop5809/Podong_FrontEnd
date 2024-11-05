@@ -114,7 +114,7 @@ const Payment = () => {
         pg: 'html5_inicis', // PG사명
         pay_method: 'card', // 결제수단
         merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
-        name: cartData.productTitle, // 결제명
+        name: cartData[0].productTitle, // 결제명
         amount: orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString(), // 결제 금액
         buyer_email: userData.accountEmail, // 구매자 이메일
         buyer_name: userData.nickname, // 구매자 이름
