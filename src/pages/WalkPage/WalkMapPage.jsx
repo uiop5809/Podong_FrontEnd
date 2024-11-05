@@ -180,7 +180,8 @@ const WalkMapPage = () => {
 
   /* 경로 관련 */
   const getCarDirection = async () => {
-    const REST_API_KEY = import.meta.env.VITE_MOBILITY_REST_API_KEY;
+    // eslint-disable-next-line no-undef
+    const REST_API_KEY = process.env.VITE_MOBILITY_REST_API_KEY;
     const url = "https://apis-navi.kakaomobility.com/v1/directions";
     const origin = `${originCoords.getLng()},${originCoords.getLat()}`;
     const destination = `${destinationCoords.getLng()},${destinationCoords.getLat()}`;
