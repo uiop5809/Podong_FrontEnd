@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../ShoppingCart/CartContext';
 import styled from 'styled-components';
 import { MdClose } from 'react-icons/md';
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart = () => {
@@ -32,7 +32,7 @@ const ShoppingCart = () => {
   const updateQuantity = async (item, newQuantity) => {
     try {
       // 백엔드 API에 수량 업데이트 요청
-      await axios.put(`http://localhost:8080/api/carts/${item.cartId}`, null, {
+      await axios.put(`/carts/${item.cartId}`, null, {
         params: { quantity: newQuantity },
       });
       // 업데이트된 장바구니 상태를 다시 불러옴
@@ -45,7 +45,7 @@ const ShoppingCart = () => {
   const deleteItem = async cartId => {
     try {
       // 백엔드 API에 삭제 요청
-      await axios.delete(`http://localhost:8080/api/carts/${cartId}`);
+      await axios.delete(`/carts/${cartId}`);
       // 업데이트된 장바구니 상태를 다시 불러옴
       loadCart(userId);
     } catch (error) {

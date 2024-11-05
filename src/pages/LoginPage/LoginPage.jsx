@@ -1,23 +1,23 @@
-import styled from "styled-components";
-import { images } from "../../components/Images";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { images } from '../../components/Images';
+import { useNavigate } from 'react-router-dom';
 import loginbtn from './loginbtn.png';
 
 const LoginPage = () => {
-    const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-
-    return (
-        <Container>
-            <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
-            <Title>지금 가입하면 5천원 즉시 할인!</Title>
-            <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
-            <a href="http://localhost:8080/api/oauth2/authorization/kakao">
-            <img src={loginbtn} alt="카카오 계정으로 로그인" /></a>
-            <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
-            <SkipButton onClick={() => navigate('/')}>일단 둘러보기</SkipButton>
-        </Container>
-    );
+  return (
+    <Container>
+      <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
+      <Title>지금 가입하면 5천원 즉시 할인!</Title>
+      <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
+      <a href="http://localhost:8080/api/oauth2/authorization/kakao">
+        <img src={loginbtn} alt="카카오 계정으로 로그인" />
+      </a>
+      <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
+      <SkipButton onClick={() => navigate('/')}>일단 둘러보기</SkipButton>
+    </Container>
+  );
 };
 
 export default LoginPage;
@@ -29,20 +29,20 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   background-color: #ffffff;
-  padding: 20px; 
+  padding: 20px;
 `;
 
 const Image = styled.img`
   width: 150px;
   height: auto;
   margin-top: 30px;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
 `;
 
 const Title = styled.h2`
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 8px; 
+  margin-bottom: 8px;
   color: #000000;
   text-align: center;
 `;
@@ -50,7 +50,7 @@ const Title = styled.h2`
 const Subtitle = styled.p`
   font-size: 14px;
   color: #666666;
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
   text-align: center;
 `;
 
@@ -72,7 +72,7 @@ const OtherMethodButton = styled(Button)`
 
   &:hover {
     background-color: #e0e0e0;
-    transform: scale(1.05); 
+    transform: scale(1.05);
   }
 `;
 
@@ -81,8 +81,6 @@ const SkipButton = styled.p`
   color: #888888;
   cursor: pointer;
   text-decoration: underline;
-  margin-top: 70px; 
-  margin-bottom: 80px; 
+  margin-top: 70px;
+  margin-bottom: 80px;
 `;
-
-

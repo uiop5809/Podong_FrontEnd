@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import axios from '../../apis/AxiosInstance';
 
 const Container = styled.div`
   padding: 20px;
@@ -78,7 +78,7 @@ const CardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  width:320%
+  width: 320%;
 `;
 
 const Card = styled.div`
@@ -108,7 +108,7 @@ const PaymentHistory = () => {
   useEffect(() => {
     const fetchPaymentLogs = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/payment/list/${userId}`);
+        const response = await axios.get(`/payment/list/${userId}`);
         setPayments(response.data);
 
         // 탭 카운트 계산
@@ -119,7 +119,7 @@ const PaymentHistory = () => {
 
         setTabCounts({ total, completed, cancelled, failed });
       } catch (error) {
-        console.error("Error fetching payment logs:", error);
+        console.error('Error fetching payment logs:', error);
       }
     };
 
