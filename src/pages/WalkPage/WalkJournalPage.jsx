@@ -17,7 +17,8 @@ const WalkingJournal = () => {
   const fetchWalkingLogs = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/walkRoutes`
+        // eslint-disable-next-line no-undef
+        `${process.env.VITE_BASE_URL}/walkRoutes`
       );
       const logs = response.data.reduce((acc, log) => {
         const dateStr = new Date(log.createdAt).toISOString().split("T")[0];
