@@ -101,7 +101,7 @@ const CardItem = styled.div`
 `;
 
 const PaymentHistory = () => {
-  const userId = 1;
+  const userId = localStorage.getItem('userId');
   const [payments, setPayments] = useState([]);
   const [tabCounts, setTabCounts] = useState({ total: 0, completed: 0, cancelled: 0, failed: 0 });
 

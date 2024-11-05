@@ -42,7 +42,7 @@ const ShoppingDetail = () => {
     };
 
     axios
-      .post('/api/carts', cartItem)
+      .post('/carts', cartItem)
       .then(response => {
         alert(response.data);
         setCartModalOpen(false); // 장바구니에 담기 성공 후 팝업창 닫기
