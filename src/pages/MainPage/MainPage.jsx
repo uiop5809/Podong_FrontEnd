@@ -21,7 +21,10 @@ const MainPage = () => {
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
 
   const { userId } = useParams();
-  localStorage.setItem('userId', userId);
+  if (typeof userId === 'string' && !isNaN(userId)){
+    localStorage.setItem('userId', userId);
+  }
+  console.log(userId);
 
   const carouselImages = [
     images.carouselImage1,
@@ -145,7 +148,7 @@ const MainPage = () => {
       <ProductGrid>
         {paginatedData.map(product => (
           <ProductWrap key={product.productId}>
-            <Link to={`/shoppingDetail/${product.productId}`} state={{ product }}>
+            <Link to={`/shoppingDetail/${product.productId}`} state={{ product,userId }}>
               <ProductImage src={product.productImage} alt={product.productTitle} />
               <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
               <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>

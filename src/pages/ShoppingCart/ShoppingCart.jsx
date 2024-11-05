@@ -10,7 +10,7 @@ const ShoppingCart = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalProductPrice, setTotalProductPrice] = useState(0);
   const navigate = useNavigate();
-  const userId = 5;
+  const userId = 2;
 
   // 장바구니 로드 시 가격 계산
   useEffect(() => {
