@@ -273,7 +273,7 @@ const UserActiveInfo = styled.div`
 const PetNameComment = styled.p`
   font-size:15px;
   font-weight: bold;
-`
+`;
 
 const ActivityText = styled.p`
   font-size: 9px;
@@ -331,16 +331,6 @@ const MissingInfo = styled.div`
   padding: 18px;
   margin-top: 18px;
 `
-//실종현황 
-
-const CustomImage = styled.img`
-  width: 20px; 
-  height: 20px;
-  margin-right: 5px;
-  margin-left: 25px;
-`;
-
-
 const MissingRegisterBtn = styled.button`
   background-color: white;
   color: black;
@@ -384,7 +374,7 @@ const LastComment = styled.span`
   color: #8D8D8D;
   text-align: center;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 70px;
   cursor: pointer;
 
     &:hover {
@@ -392,33 +382,52 @@ const LastComment = styled.span`
       font-weight: bold;
   }
 `
+const NoPetsMessage = styled.p`
+  font-size: 12;
+  font-weight: bold;
+  margin-top: 70px;
+`
 
 function MyPage() {
   const navigate = useNavigate();
-  const [pets, setPets] = useState([]);
+
+  const [filteredPets, setFilteredPets] = useState([]);
+  const [allPets, setAllPets] = useState([]);
   const cardContainerRef = useRef();
-  const [userData, setUserData] = useState(null); 
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId'); 
+    const fetchUserDataAndPets = async () => {
+      const userId = localStorage.getItem('userId');
       if (!userId) {
-        console.error('User ID not found in local storage');
+        console.error('유저데이터 없음');
         return;
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
-        setUserData(response.data);
+        const userResponse = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        setUserData(userResponse.data);
+
+        const petsResponse = await axios.get('http://localhost:8080/api/pets');
+        setAllPets(petsResponse.data);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('데이터를 가져오는 중 오류 발생:', error);
       }
     };
 
-    fetchUserData();
+    fetchUserDataAndPets();
   }, []);
 
-  //집사생활
+  useEffect(() => {
+    const userId = parseInt(localStorage.getItem('userId'), 10);
+    if (allPets.length > 0 && userId) {
+      const userPets = allPets.filter(pet => pet.user === userId);
+      setFilteredPets(userPets);
+    }
+  }, [allPets]);
+
+  const userId = localStorage.getItem('userId'); 
+
   const userActivities = [
     { src: images.myActivity, alt: "내 활동", text: "내 활동" },
     { src: images.bogwan, alt: "보관 게시글", text: "보관 게시글" },
@@ -428,49 +437,6 @@ function MyPage() {
     { src: images.blockHand, alt: "차단 목록", text: "차단 목록" }
   ];
 
-  useEffect(() => {
-    // 위치 정보 가져오기 함수
-    const getAddr = (lat, lng) => {
-      const geocoder = new window.kakao.maps.services.Geocoder();
-      const coord = new window.kakao.maps.LatLng(lat, lng);
-      const callback = (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          console.log(result);
-          setAddress(result[0].address.address_name); // 첫 번째 결과의 주소를 설정
-        }
-      };
-      geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
-    };
-
-    // 현재 위치를 얻고 주소로 변환하는 함수
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          getAddr(position.coords.latitude, position.coords.longitude);
-        }, (error) => {
-          console.error(error);
-        });
-      } else {
-        alert('현재 브라우저에서는 geolocation을 지원하지 않습니다');
-      }
-    };
-
-    // 위치 정보 가져오기
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    const fetchPetData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/pets?userId=1`);
-        setPets(response.data);
-      } catch (error) {
-        console.error("펫 정보를 가져오는 중 오류 발생:", error);
-      }
-    };
-
-    fetchPetData();
-  }, []);
 
   const scroll = (direction) => {
     const { current } = cardContainerRef;
@@ -479,7 +445,7 @@ function MyPage() {
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
-  <PetProfileEditButton onClick={() => navigate(`/mypage/editPetRegister/${petId}`)}>수정</PetProfileEditButton>
+  
   return (
     <ScrollableContainer>
       <Container>
@@ -487,8 +453,10 @@ function MyPage() {
           <StyledAvatar />
 
               <UserInfo>
-                      {userData ? userData.nickname : '불러오는 중...'}
-                <EditButton onClick={() => navigate('/myPage/editUserRegister')}>수정</EditButton>
+                {userData ? userData.nickname : '불러오는 중...'}
+                <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>
+                  수정
+                </EditButton>
               </UserInfo>
 
         </MainContainer>
@@ -500,29 +468,39 @@ function MyPage() {
             </ArrowButton>
 
             <CardContainer ref={cardContainerRef}>
-              {pets.map((pet) => (
-                <PetProfile key={pet.id}>
-                  <PetInfoFirstRow>
-                    <PetNameComment>우리응애 프로필</PetNameComment>
-                    <PetAddButton onClick={() => navigate('/petRegister')}>추가</PetAddButton>
-                  </PetInfoFirstRow>
+              {filteredPets.length > 0 ? (
+                filteredPets.map((pet) => (
+                  <PetProfile key={pet.id}>
+                    <PetInfoFirstRow>
+                      <PetNameComment>우리응애 프로필</PetNameComment>
+                      <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>추가</PetAddButton>
+                    </PetInfoFirstRow>
 
-                  <PetInfoSecondRow>
-                    <FaCircleUser size={80} style={{ marginTop: '18px' }} />
-                    <PetDetailInfo>
-                      <ActivePetName>{pet.petName}응애</ActivePetName>
-                      <ActivePetType>{pet.petType} | {pet.petAge}살</ActivePetType>
-                      <ActivePetType>{pet.petWeight}kg</ActivePetType>
-                      <PetButton>
-                        <MissingRegisterBtn onClick={() => navigate('/mypage/missingRegister')}>실종등록</MissingRegisterBtn>
-                        <PetEditBtn>수정</PetEditBtn>
-                      </PetButton>
-                    </PetDetailInfo>
-                  </PetInfoSecondRow>
-                </PetProfile>
-              ))}
+                    <PetInfoSecondRow>
+                      <FaCircleUser size={80} style={{ marginTop: '18px' }} />
+                      <PetDetailInfo>
+                        <ActivePetName>{pet.petName}응애</ActivePetName>
+                        <ActivePetType>{pet.petType} | {pet.petAge}살</ActivePetType>
+                        <ActivePetType>{pet.petWeight}kg</ActivePetType>
+                        <PetButton>
+                        <MissingRegisterBtn onClick={() => navigate(`/myPage/${userId}/missingRegister/${pet.petId}`)}>
+                          실종등록
+                        </MissingRegisterBtn>
+                          <PetEditBtn onClick={() => navigate(`/myPage/${userId}/editPetRegister/${pet.petId}`)}>
+                            수정
+                          </PetEditBtn>
+                        </PetButton>
+                      </PetDetailInfo>
+                    </PetInfoSecondRow>
+                  </PetProfile>
+                ))
+              ) : (
+                <NoPetsMessage>
+                  <p>등록된 펫이 없습니다.</p>
+                  <PetAddButton onClick={() => navigate('/petRegister')}>펫 등록하기</PetAddButton>
+                </NoPetsMessage>
+              )}
             </CardContainer>
-
             <ArrowButton direction="right" onClick={() => scroll('right')}>
               <MdOutlineArrowForward />
             </ArrowButton>

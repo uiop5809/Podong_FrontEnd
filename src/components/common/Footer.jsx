@@ -38,12 +38,12 @@ const Footer = () => {
       key: 'community',
       image: activeTab === '/community' ? images.communityIconOn : images.communityIconOff,
       text: '집사생활',
-      link: '/userRegister/:userId',
+      link: '/community',
     },
   ];
 
   const handleTabClick = (tab, link) => {
-    setActiveTab(link); // 탭 클릭 시 activeTab 상태 업데이트
+    setActiveTab(link); 
   };
 
   return (

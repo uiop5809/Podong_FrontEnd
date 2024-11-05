@@ -4,7 +4,7 @@ import { FaSearch } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import { images } from '../../components/Images';
 
 
@@ -20,6 +20,34 @@ const MainPage = () => {
 
   const tabs = ['댕댕이', '고냥이'];
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
+
+  const { userId } = useParams();
+  if (typeof userId === 'string' && !isNaN(userId)){
+    localStorage.setItem('userId', userId); 
+  }
+  console.log(userId); 
+
+  const shoppingData = async () => {
+    if (useDummyData) {
+      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
+    } else {
+      // 실제 fetchData를 사용할 때 필요한 로직이 있다면 여기에 추가
+    }
+  };
+
+  const { userId } = useParams();
+  if (typeof userId === 'string' && !isNaN(userId)){
+    localStorage.setItem('userId', userId); 
+  }
+  console.log(userId); 
+
+  const shoppingData = async () => {
+    if (useDummyData) {
+      const filteredData = dummyData.items.filter(item => item.title.includes(searchQuery));
+    } else {
+      // 실제 fetchData를 사용할 때 필요한 로직이 있다면 여기에 추가
+    }
+  };
 
 
   const { userId } = useParams();
@@ -155,7 +183,7 @@ const MainPage = () => {
       <ProductGrid>
         {paginatedData.map(product => (
           <ProductWrap key={product.productId}>
-            <Link to={`/shoppingDetail/${product.productId}`} state={{ product }}>
+            <Link to={`/shoppingDetail/${product.productId}`} state={{ product,userId }}>
               <ProductImage src={product.productImage} alt={product.productTitle} />
               <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
               <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>

@@ -75,26 +75,13 @@ const RegisterButton = styled.button`
   text-align: center; 
   border-radius: 8px; 
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
 
   &:hover {
     background-color: #FF6E00;
     color: white; 
   }
 `; // 등록 버튼
-
-const LastComment = styled.span`
-  font-size: 11px;
-  color: #8D8D8D;
-  text-align: center;
-  margin-bottom: 20px;
-  cursor: pointer;
-
-    &:hover {
-      color: #FF6E00;
-      font-weight: bold;
-  }
-`
 
 const PetEditPage = () => {
   const petId = 1;

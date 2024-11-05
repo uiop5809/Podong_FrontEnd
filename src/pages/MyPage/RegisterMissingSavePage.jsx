@@ -1,5 +1,6 @@
-import React from 'react'
-import styled from "styled-components";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -70,7 +71,28 @@ const AlertRecommendation = styled.span`
   color: #FF0000;
 `
 
+const RegisterButton = styled.button`
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  border: 1px solid #E4E4E4;
+  width: 100%;
+  height: 43px; 
+  text-align: center; 
+  border-radius: 8px; 
+  margin-top: 10px;
+  margin-bottom: 50px;
+
+  &:hover {
+    background-color: #FF6E00;
+    color: white; 
+  }
+`;
+
+
 const RegisterMissingSavePage = () => {
+  const navigate = useNavigate();
+  const userId = localStorage.getItem('userId'); 
   return (
     <ScrollableContainer>
       <Container>
@@ -88,16 +110,19 @@ const RegisterMissingSavePage = () => {
             추천
           </Recommendation>
           <RecommendationDescription>
-          다른 견주가 내가 강아지를 잃어버린 위치 주변에 있을 때, 알림을 보내드려요. 알림을 받은 견주는 해당 위치를 주의 깊게 살펴보게 됩니다.<br /><br />
-          아이를 발견하면, 즉시 강아지가 세상을 지배한다님에게 발견 알림이 갑니다.
-        </RecommendationDescription>
-        <AlertRecommendation>
-          알림을 켜두는 것을 추천드려요
-        </AlertRecommendation>
-      </MentionBox>
-    </Container>  
+            다른 견주가 내가 강아지를 잃어버린 위치 주변에 있을 때, 알림을 보내드려요. 알림을 받은 견주는 해당 위치를 주의 깊게 살펴보게 됩니다.<br /><br />
+            아이를 발견하면, 즉시 강아지가 세상을 지배한다님에게 발견 알림이 갑니다.
+          </RecommendationDescription>
+          <AlertRecommendation>
+            알림을 켜두는 것을 추천드려요
+          </AlertRecommendation>
+        </MentionBox>
+        <RegisterButton onClick={() => navigate(`/myPage/${userId}`)}>
+          마이페이지로
+        </RegisterButton>
+      </Container>  
     </ScrollableContainer>
-  )
+  );
 }
 
-export default RegisterMissingSavePage
+export default RegisterMissingSavePage;

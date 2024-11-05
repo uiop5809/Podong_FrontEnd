@@ -3,65 +3,47 @@ import styled from 'styled-components';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from 'axios';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const Payment = () => {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [deliveryNote, setDeliveryNote] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
-    const [points, setPoints] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const [textInputForEntrance, setTextInputForEntrance] = useState('');
     const [textInputForOther, setTextInputForOther] = useState('');
-    const [orderDetails, setOrderDetails] = useState(null); 
-    const [addressDetails, setAddressDetails] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [address, setAddress] = useState('');
     const [zoneCode, setZoneCode] = useState('');
     const [detailedAddress, setDetailedAddress] = useState('');
-
+    const [profileNickname, setProfileNickname] = useState('');
+    const navigate = useNavigate();
+    const [orderItems, setOrderItems] = useState([]);
+    const location = useLocation();
+    const userId = location.state?.userId || localStorage.getItem('userId');
 
 
     useEffect(() => {
-        
         const fetchOrderDetails = async () => {
             try {
-                // 예시
-                const data = {
-                    totalAmount: 12345,
-                    shippingFee: 0,
-                    couponDiscount: 0,
-                    pointsUsed: 0,
-                    finalAmount: 12345,
-                    pointsEarned: 0,
-                };
+                const cartResponse = await axios.get(`http://localhost:8080/api/carts/user/${userId}`);
+                setOrderItems(cartResponse.data); // 주문 상품 데이터를 설정
+
+                const userResponse = await axios.get(`http://localhost:8080/api/user/${userId}`);
+                const userData = userResponse.data;
+                setAddress(userData.address || ''); // 주소 설정
+                setProfileNickname(userData.profileNickname || ''); // profileNickname 설정
+
                 
-                setOrderDetails(data);
+                
             } catch (error) {
                 console.error('Error fetching order details:', error);
             }
         };
         
         fetchOrderDetails();
-    }, []); // 컴포넌트가 처음 마운트될 때 한 번 실행
-    
-    // useEffect(() => {
-    //     const fetchAddressDetails = async () => {
-    //         try {
-    //             const response = await axios.get("http://localhost:8080/api/userInfo");
-    //             const userData = response.data;
-    //             // const data = await response.json();
-    //             // setAddressDetails(data);
-    //             // setAddress(data.address);
-    //             // setZoneCode(data.postalCode);
-    //             // setDetailedAddress(data.detailedAddress || '');
-    //         } catch (error) {
-    //             console.error('Error fetching address details:', error);
-    //         }
-    //     };
-    
-    //     fetchAddressDetails();
-    // }, []); // 컴포넌트가 처음 마운트될 때 한 번 실행
+    }, [userId]);
 
     // 결제 방법 선택 시 실행되는 함수
     const handlePaymentChange = (method) => {
@@ -116,27 +98,29 @@ const Payment = () => {
         }
     };
 
+
+
     const requestPayment = async () => {
         console.log("결제 요청 함수 호출"); // 결제 함수 호출 여부 확인
         const { IMP } = window; // 포트원 SDK 로드 확인
         if (!IMP) {
-          console.error("포트원 SDK 로드 실패");
-          return;
+            console.error("포트원 SDK 로드 실패");
+            return;
         }
         IMP.init("imp02101050"); // 포트원 가맹점 식별코드
-      
-        const userId = 1;
         const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
         const userData = response.data;
         console.log("User Data:", userData);
-      
+        const cartResponse = await axios.get(`http://localhost:8080/api/carts/user/${userId}`);
+        const cartData = cartResponse.data;
+
         // 결제 요청
         IMP.request_pay({
           pg : "html5_inicis", // PG사명
           pay_method: "card", // 결제수단
           merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
-          name: "테스트 결제", // 결제명
-          amount: 1000, // 결제 금액
+          name: cartData.productTitle, // 결제명
+          amount: orderItems.reduce((total, item) => total + (item.productLprice * item.quantity), 0).toLocaleString(), // 결제 금액
           buyer_email: userData.accountEmail, // 구매자 이메일
           buyer_name: userData.nickname, // 구매자 이름
           buyer_tel: userData.phoneNumber, // 구매자 전화번호
@@ -146,13 +130,13 @@ const Payment = () => {
           if (rsp.success) { // 프론트에서 결제가 완료되면
             axios.post(`http://localhost:8080/api/payment/list/${rsp.imp_uid}/${userId}`)
             .then((res) => {
-                  // 결제완료 
+                navigate('/PaymentEnd')
             })
             .catch((error) => {
-              // 에러발생시
+                console.log("error");
             });
     } else {
-          // 에러발생시
+        console.log("error");
     }
     });
     }
@@ -166,16 +150,7 @@ const Payment = () => {
  {/* 주문자 | 배송지 섹션 */}
  <Section>
                 <SectionTitle>주문자 | 배송지</SectionTitle>
-                <p>이름</p>
-                {/* {addressDetails ? (
-                    <AddressDetails>
-                        <p><strong>{addressDetails.userName}</strong> <DefaultBadge>기본배송지</DefaultBadge> <AddressEditButton onClick={openPostCode}>변경</AddressEditButton></p>
-                        <p>{addressDetails.address}, {addressDetails.postalCode}</p>
-                        <p>{addressDetails.userName} {addressDetails.phoneNumber}</p>
-                    </AddressDetails>
-                ) : (
-                    <p>로딩 중...</p>
-                )} */}
+                <p>{profileNickname || '이름'}</p> 
 
                 <div id='popupDom'>
                     {isPopupOpen && (
@@ -203,7 +178,7 @@ const Payment = () => {
                     </AddressInputWrapper>
                     <AddressInputWrapper>
                         <StyledInput 
-                            placeholder="기본주소 불러오기" 
+                            placeholder="" 
                             value={address} 
                             onChange={(e) => setAddress(e.target.value)}
                             required 
@@ -211,7 +186,7 @@ const Payment = () => {
                     </AddressInputWrapper>
                     <AddressInputWrapper>
                         <StyledInput 
-                            placeholder="상세 주소불러오기" 
+                            placeholder="" 
                             value={detailedAddress} 
                             onChange={(e) => setDetailedAddress(e.target.value)}
                             required 
@@ -323,13 +298,24 @@ const Payment = () => {
             </ModalOverlay>
         )}
 
-            {/* 포인트 섹션 */}
+            {/* 주문 상품 목록 섹션 */}
             <Section>
-                <SectionTitle>포인트</SectionTitle>
-                <PointsBox>
-                    <Input readOnly value={`사용 가능한 포인트 ${points.toLocaleString()} P`} />
-                    <Button>전액사용</Button>
-                </PointsBox>
+                <SectionTitle>주문상품</SectionTitle>
+                {orderItems.length > 0 ? (
+                    orderItems.map((item) => (
+                        <OrderItem key={item.cartId}>
+                            <ItemImage src={item.productImage} alt={item.productTitle} />
+                            <ItemDetails>
+                                {/* HTML 태그가 포함된 제목을 안전하게 렌더링 */}
+                                <ItemTitle dangerouslySetInnerHTML={{ __html: item.productTitle }} />
+                                <ItemInfo>수량: {item.quantity}개 | 옵션: 노란색 XL</ItemInfo>
+                                <ItemPrice>{item.productLprice.toLocaleString()}원</ItemPrice>
+                            </ItemDetails>
+                        </OrderItem>
+                    ))
+                ) : (
+                    <p>로딩 중...</p>
+                )}
             </Section>
 
             {/* 결제수단 섹션 */}
@@ -369,17 +355,16 @@ const Payment = () => {
             {/* 결제금액 섹션 */}
             <Section>
                 <SectionTitle>결제금액</SectionTitle>
-                {orderDetails ? (
+                {orderItems.length > 0 ? (
                     <>
                         <OrderSummary>
-                            <p>총 상품 금액: <span>{orderDetails.totalAmount}원</span></p>
-                            <p>배송비: <span>{orderDetails.shippingFee}원</span></p>
-                            <p>쿠폰 사용: <span>{orderDetails.couponDiscount}원</span></p>
-                            <p>포인트 사용: <span>{orderDetails.pointsUsed}원</span></p>
+                            <p>총 상품 금액: <span>{orderItems.reduce((total, item) => total + (item.productLprice * item.quantity), 0).toLocaleString()}원</span></p>
+                            <p>배송비: <span>0원</span></p>
+                            <p>쿠폰 사용: <span>0원</span></p>
+                            <p>포인트 사용: <span>0원</span></p>
                         </OrderSummary>
                         <FinalAmount>
-                            <p>최종 결제 금액: <span>{orderDetails.finalAmount}원</span></p>
-                            <p>{orderDetails.pointsEarned} P 적립 예정</p>
+                            <p>최종 결제 금액: <span>{orderItems.reduce((total, item) => total + (item.productLprice * item.quantity), 0).toLocaleString()}원</span></p>
                         </FinalAmount>
                     </>
                 ) : (
@@ -401,7 +386,7 @@ const Payment = () => {
 
             {/* 결제 버튼 */}
             <PaymentButton onClick={handlePaymentButtonClick}>
-                {orderDetails ? `${orderDetails.finalAmount}원 결제하기` : '결제하기'}
+                {orderItems.reduce((total, item) => total + (item.productLprice * item.quantity), 0).toLocaleString()}원 결제하기
             </PaymentButton>
         </PaymentPage>
     );
@@ -415,18 +400,6 @@ const PaymentPage = styled.div`
     margin: 64px auto;
     font-family: Arial, sans-serif;
     padding: 20px;
-`;
-
-const AddressEditButton = styled.button`
-    background-color: #ffefef;
-    color: #ff6e00;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 4px;
-    margin-left: 4px;
-    font-size: 10px;
-    cursor: pointer;
-    font-weight: bold;
 `;
 
 const PostSearchContainer = styled.input`
@@ -546,37 +519,6 @@ const SectionTitle = styled.h2`
     font-weight : bold;
 `;
 
-const AddressDetails = styled.div`
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 14px;
-`;
-
-const DefaultBadge = styled.span`
-    color: #ff7f50;
-    background-color: #fff0e1;
-    border-radius: 4px;
-    margin-left : 5px;
-    padding: 2px 5px;
-    font-size: 11px;
-`;
-
-
-const InputGroup = styled.div`
-    margin-top: 20px;
-`;
-
-const LabelWrapper = styled.div`
-    margin-bottom: 5px;
-    font-weight: bold;
-`;
-
-const InputWrapper = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
 const Input = styled.input`
     width: calc(100% - 70px);
     padding: 10px;
@@ -584,25 +526,6 @@ const Input = styled.input`
     border-radius: 4px;
     font-size: 14px;
     margin-right: 10px;
-`;
-
-const PointsBox = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
-const Button = styled.button`
-    background-color: #ff6e00;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 10px;
-
-    &:hover {
-        background-color: #FFD3D3;
-    }
 `;
 
 const PaymentMethods = styled.div`
@@ -652,6 +575,7 @@ const PaymentButton = styled.button`
     border-radius: 4px;
     font-size: 18px;
     cursor: pointer;
+    margin-bottom:64px;
 
     &:hover {
         background-color: #FFD3D3;
@@ -812,4 +736,39 @@ const SaveButton = styled.button`
     &:hover {
         background-color: #ff6347;
     }
+`;
+
+const OrderItem = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+`;
+
+const ItemImage = styled.img`
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin-right: 10px;
+`;
+
+const ItemDetails = styled.div`
+    flex: 1;
+`;
+
+const ItemTitle = styled.p`
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+`;
+
+const ItemInfo = styled.p`
+    font-size: 12px;
+    color: #666;
+    margin: 5px 0;
+`;
+
+const ItemPrice = styled.p`
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff6e00;
 `;
