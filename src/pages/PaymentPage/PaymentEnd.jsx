@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Lottie from 'lottie-react';
 import PaymentAnimation from '../PaymentPage/PaymentAnimation.json';
-import PropTypes from 'prop-types'; 
-import axios from 'axios';
+import PropTypes from 'prop-types';
+import axios from '../../apis/AxiosInstance';
 
 const Container = styled.div`
   display: flex;
@@ -44,9 +44,9 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${(props) => (props.primary ? '#ff6e00' : 'white')};
-  color: ${(props) => (props.primary ? 'white' : '#ff6e00')};
-  border: ${(props) => (props.primary ? 'none' : '2px solid #ff6e00')};
+  background-color: ${props => (props.primary ? '#ff6e00' : 'white')};
+  color: ${props => (props.primary ? 'white' : '#ff6e00')};
+  border: ${props => (props.primary ? 'none' : '2px solid #ff6e00')};
   padding: 8px 45px;
   font-size: 12px;
   font-weight: bold;
@@ -61,7 +61,7 @@ const Button = styled.button`
   justify-content: center;
 
   &:hover {
-    background-color: ${(props) => (props.primary ? '#e66e00' : '#e66e00')};
+    background-color: ${props => (props.primary ? '#e66e00' : '#e66e00')};
     color: white;
   }
 `;
@@ -108,7 +108,7 @@ const OrderLabel = styled.span`
 
 const OrderValue = styled.span`
   color: #333;
-  text-align: right; 
+  text-align: right;
   flex-grow: 1;
   font-size: 14px;
 `;
@@ -128,7 +128,7 @@ const DeliveryLabel = styled.span`
 
 const DeliveryValue = styled.span`
   color: #333;
-  text-align: left; 
+  text-align: left;
   flex-grow: 1;
   font-size: 14px;
 `;
@@ -150,8 +150,8 @@ const AddressInput = styled.input`
 `;
 
 const EditButton = styled.button`
-  background-color: #FFEFEF;
-  color: #FF6E00;
+  background-color: #ffefef;
+  color: #ff6e00;
   border: none;
   padding: 5px 10px;
   border-radius: 20px;
@@ -165,9 +165,9 @@ const EditButton = styled.button`
 
 const OrderDetailButton = styled(Button)`
   width: 100%;
-  padding : 10px;
+  padding: 10px;
   margin-top: 10px;
-  margin-bottom : 64px;
+  margin-bottom: 64px;
   max-width: 600px;
 `;
 
@@ -197,8 +197,8 @@ const DeliveryInfoRow = ({ label, value }) => {
 };
 
 DeliveryInfoRow.propTypes = {
-  label: PropTypes.string.isRequired, 
-  value: PropTypes.string.isRequired, 
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
 };
 
 const userId = 1;
@@ -211,14 +211,14 @@ const PaymentEnd = () => {
   useEffect(() => {
     const getInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
+        const response = await axios.get(`/user/${userId}`);
         const userData = response.data;
-        console.log("User Data:", userData);
+        console.log('User Data:', userData);
         setBuyer(userData.nickname);
         setPhone(userData.phoneNumber);
         setAddress(userData.address);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
       }
     };
 
@@ -232,7 +232,10 @@ const PaymentEnd = () => {
       <ImageContainer>
         <Lottie animationData={PaymentAnimation} style={{ width: '230px', height: '230px' }} />
       </ImageContainer>
-      <Header>우리응애가 좋아할 선물 <br />금방 도착할게요!</Header>
+      <Header>
+        우리응애가 좋아할 선물 <br />
+        금방 도착할게요!
+      </Header>
 
       {/* 버튼들 */}
       <ButtonContainer>
