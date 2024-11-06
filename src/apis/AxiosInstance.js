@@ -7,7 +7,6 @@ const Axios = axios.create({
   
   // eslint-disable-next-line no-undef
   baseURL: import.meta.env.VITE_BASE_URL,
-
   headers: {
     Authorization: `Bearer ${token?.loginState?.data?.accessToken}`,
     "Content-Type": "application/json",
