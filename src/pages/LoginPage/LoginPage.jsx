@@ -11,7 +11,7 @@ const LoginPage = () => {
       <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
       <Title>지금 가입하면 5천원 즉시 할인!</Title>
       <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
-      <a href="http://localhost:8080/api/oauth2/authorization/kakao">
+      <a href="http://localhost:8080/api/login/oauth2/code/kakao">
         <img src={loginbtn} alt="카카오 계정으로 로그인" />
       </a>
       <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>

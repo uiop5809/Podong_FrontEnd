@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { images } from '../../components/Images';
-import { useNavigate, useParams } from 'react-router-dom';
 import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
@@ -9,9 +8,9 @@ import axios from '../../apis/AxiosInstance';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
-  border: 1px solid #ddd;
   margin: 64px 0;
-`; //스크롤
+  width: 100%;
+`; 
 
 const Container = styled.div`
   display: flex;
@@ -25,7 +24,6 @@ const Description = styled.label`
   font-weight: 570;
   line-height: 1.7;
   margin-bottom: 15px;
-  margin-top: 5%;
   word-break: keep-all;
 `; // 사용자 인사
 
@@ -39,17 +37,18 @@ const WelcomeComment = styled.span`
 `;
 
 const FirstComment = styled.span`
+  font-size: 20px;
   color: #ff6e00;
 `;
 
 const HightLight = styled.span`
   color: #ff6e00;
-`; // 사용자 인사 중 하이라이트
+`; 
 
 const Label = styled.label`
   font-size: 10px;
   color: #b3b3b3;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   margin-top: 5px;
 `; // 각 폼 레이블
 
@@ -105,9 +104,9 @@ const AddressContainer = styled.div`
 
 const SearchAddressButton = styled.button`
   position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
+  width: 60px;
+  height: 24px;
+  top: 10px;
   right: 5px;
   transform: translateY(-50%);
   background-color: #ffefef;
@@ -187,29 +186,7 @@ const PhonenumberInputrequired = styled.input`
   border-radius: 5px;
   font-size: 11px;
   background-color: white;
-  width: 65%;
-`;
-
-const PhoneNumberAuthorization = styled.button`
-  position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
-  right: 5px;
-  transform: translateY(-50%);
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
+  width: 100%;
 `;
 
 const AlarmAgreementContainer = styled.div`
@@ -335,7 +312,6 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-bottom: 80px;
   margin-left: 20px;
 
   &:hover {
@@ -362,7 +338,7 @@ const UserEditPage = () => {
       if (!userId) {
         console.error('User ID not found in local storage');
         return;
-      }
+      } //이 부분 수정 alert
 
       try {
         const response = await axios.get(`/user/${userId}`);
@@ -407,14 +383,13 @@ const UserEditPage = () => {
         detailedAddress,
         zoneCode,
         accountEmail: email,
-        profileNickname: profileNickname || '기본 프로필 닉네임', // 기본값 설정
+        profileNickname: profileNickname || '기본 프로필 닉네임', 
         health: toggleStates[0],
         petCare: toggleStates[1],
         missing: toggleStates[2],
       });
       alert('사용자 정보가 성공적으로 업데이트되었습니다.');
     } catch (error) {
-      console.error('Error updating user information:', error);
       alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
     }
   };
@@ -434,7 +409,7 @@ const UserEditPage = () => {
         <Description>
           <WelcomeContainer>
             <WelcomeComment>안녕하세요</WelcomeComment>
-            <FirstComment>{nickname}님🥳</FirstComment> {/* 카카오 프로필 닉네임 */}
+            <FirstComment>{nickname}님🥳</FirstComment> 
           </WelcomeContainer>
           <HightLight>발바닥 천국</HightLight>과🐾 당신과 반려동물의 발걸음이 더 행복해지도록 정보를 등록해 보세요.
         </Description>
@@ -459,36 +434,30 @@ const UserEditPage = () => {
               value={phoneNumber}
               onChange={e => setPhoneNumber(e.target.value)}
             />
-            <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
 
         <InputContainer>
-          <Label>주소</Label>
-          <AddressContainer>
-            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly />
-            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-            <div id="popupDom">
-              {isPopupOpen && (
-                <PopupDom>
-                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
-                </PopupDom>
-              )}
-            </div>
-            <StyledInput
-              placeholder="기본주소를 입력해주세요"
-              value={address}
-              onChange={e => setAddress(e.target.value)}
-              required
-            />
-            <StyledInput
-              placeholder="상세 주소를 입력해주세요"
-              value={detailedAddress}
-              onChange={e => setDetailedAddress(e.target.value)}
-              required
-            />
-          </AddressContainer>
-        </InputContainer>
+  <Label>주소</Label>
+  <AddressContainer>
+    <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+    <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+    <div id="popupDom">
+      {isPopupOpen && (
+        <PopupDom>
+          <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+        </PopupDom>
+      )}
+    </div>
+    <StyledInput
+      placeholder="기본주소를 입력해주세요"
+      value={address}
+      onChange={e => setAddress(e.target.value)}
+      required
+    />
+  </AddressContainer>
+</InputContainer>
+
       </Container>
       <Divider />
 
