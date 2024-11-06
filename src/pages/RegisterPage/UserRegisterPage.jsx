@@ -414,24 +414,24 @@ const UserRegisterPage = () => {
         </InputContainer>
 
         <InputContainer>
-  <Label>주소</Label>
-  <AddressContainer>
-    <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
-    <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-    <div id="popupDom">
-      {isPopupOpen && (
-        <PopupDom>
-          <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
-        </PopupDom>
-      )}
-    </div>
-    <StyledInput
-      placeholder="기본주소를 입력해주세요"
-      value={address}
-      onChange={e => setAddress(e.target.value)}
-      required
-    />
-  </AddressContainer>
+        <Label>주소</Label>
+        <AddressContainer>
+          <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+          <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+          <div id="popupDom">
+            {isPopupOpen && (
+              <PopupDom>
+                <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+              </PopupDom>
+            )}
+          </div>
+        <StyledInput
+          placeholder="기본주소를 입력해주세요"
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+          required
+        />
+      </AddressContainer>
 </InputContainer>
       </Container>
       <Divider />
