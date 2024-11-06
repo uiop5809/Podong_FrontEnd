@@ -83,7 +83,6 @@ const PetItemDetailPage = () => {
       .then((response) => {
         console.log("댓글 등록 성공:", response.data);
         setNewComment("");
-        // 댓글을 서버에서 다시 가져와 업데이트
         return axios.get(`/petItemComments?petItem=${no}`);
       })
       .then((response) => {
@@ -115,7 +114,7 @@ const PetItemDetailPage = () => {
         </User1>
         <Title>제목: {itemDetail.name}</Title>
         <Icons>
-          <div>
+          <LikeCommentBox>
             <Like1
               onClick={() => {
                 good();
@@ -124,7 +123,7 @@ const PetItemDetailPage = () => {
             {itemDetail.good || 0}
             <Comment1 />
             {comments.length}
-          </div>
+          </LikeCommentBox>
           <div>
             <ListPrice>
               {itemDetail.price ? (
@@ -260,6 +259,13 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+const LikeCommentBox = styled.div`
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  font-size: 14px;
+`;
+
 const CommentST = styled.div`
   font-size: 14px;
   display: flex;
@@ -297,7 +303,7 @@ const Comment = styled.div`
   background: #ffffff;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   line-height: 1.5;
 `;
 
@@ -306,8 +312,8 @@ const CommentFrom = styled.form`
   display: flex;
   justify-content: flex-end;
   bottom: 0px;
-  margin-top: auto;
-  margin-bottom: 64px;
+  margin-top: 10px;
+  margin-bottom: 70px;
   padding: 0 20px;
 `;
 
@@ -321,7 +327,6 @@ const CommentCC = styled.input`
   border-radius: 20px;
   padding: 0px 15px;
   font-size: 14px;
-  margin-right: 10px;
   transition: background-color 0.3s ease;
   &:focus {
     background-color: #e6e6e6;
@@ -330,7 +335,7 @@ const CommentCC = styled.input`
 
 const CommentSubmit = styled.button`
   height: 40px;
-  width: 60px;
+  width: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -340,7 +345,7 @@ const CommentSubmit = styled.button`
   background-color: #ff6e00;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 15px;
   transition: background-color 0.3s ease;
   &:hover {
     background-color: #e65c00;
