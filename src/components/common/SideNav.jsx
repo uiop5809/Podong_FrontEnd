@@ -39,18 +39,16 @@ const SideNav = () => {
     { path: '/communityDetail', title: '상세 정보' },
     { path: '/communityWrite', title: '커뮤니티 작성' },
     { path: '/myPage/editUserRegister', title: '회원 정보 수정' },
-    { path: '/myPage/:userId/editPetRegister/:petId', title: '응애 정보 수정' },
-    { path: '/myPage/:userId/petRegister', title: '우리응애 등록' },
-    { path: '/myPage/:userId/editUserRegister/:userId', title: '회원 정보 수정' },
-    { path: '/myPage/:userId/missingSave', title: '실종 등록 완료' },
-    { path: '/myPage/:userId/missingRegister/:petId', title: '실종 등록' },
-    { path : '/userRegister', title: '회원정보 등록'},
-    { path: '/myPage/:userId', title: '마이 페이지' },
+    { path: '/myPage/editPetRegister', title: '응애 정보 수정' },
+    { path: '/myPage/missingRegister', title: '실종 등록' },
+    { path: '/myPage/missingSave', title: '실종 등록 완료' },
+    {path : '/petRegister', title: '우리응애 등록'},
+    {path : '/userRegister/:userId', title: '회원정보 등록'},
+    { path: '/myPage', title: '마이 페이지' },
     { path: '/orderList/orderDetail/orderCancel', title: '주문 취소' },
     { path: '/orderList/orderDetail', title: '주문 상세' },
     { path: '/orderList', title: '주문 내역' },
     { path: '/alert', title: '알림' },
-
   ];
 
   const getPageTitle = pathname => {
