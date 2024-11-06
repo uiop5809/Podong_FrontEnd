@@ -211,13 +211,6 @@ const User1 = styled.div`
   font-size: 16px;
   margin-top: 10px;
 `;
-
-const VscAccount1 = styled(VscAccount)`
-  font-size: 12px;
-  margin-right: 3px;
-  align-items: center;
-  justify-content: center;
-`;
 const Title = styled.div`
   font-size: 20px;
   font-weight: bold;
@@ -261,28 +254,53 @@ const Line = styled.div`
   border-top: 1px solid #ff6e00;
   margin: 10px 0px;
 `;
-const User2 = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  margin-top: 10px;
-`;
-const ListDate = styled.div`
-  font-size: 8px;
-  color: #8d8d8d;
-  display: flex;
-  margin-left: 5px;
-  margin-top: 2px;
-`;
-const Comment = styled.div`
-  font-size: 12px;
-  display: flex;
-`;
-const CommentST = styled.div`
-  font-size: 12px;
+
+const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const CommentST = styled.div`
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+`;
+
+const User2 = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #333;
+`;
+
+const VscAccount1 = styled(VscAccount)`
+  font-size: 18px;
+  margin-right: 5px;
+  color: #ff6e00;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ListDate = styled.div`
+  font-size: 10px;
+  color: #888;
+  margin-left: 10px;
+`;
+
+const Comment = styled.div`
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  line-height: 1.5;
+`;
+
 const CommentFrom = styled.form`
   width: 100%;
   display: flex;
@@ -290,11 +308,9 @@ const CommentFrom = styled.form`
   bottom: 0px;
   margin-top: auto;
   margin-bottom: 64px;
+  padding: 0 20px;
 `;
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+
 const CommentCC = styled.input`
   height: 40px;
   width: 100%;
@@ -302,20 +318,31 @@ const CommentCC = styled.input`
   border-style: none;
   outline: none;
   background-color: #f0f0f0;
-  border-width: 0.5px;
+  border-radius: 20px;
+  padding: 0px 15px;
+  font-size: 14px;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+  &:focus {
+    background-color: #e6e6e6;
+  }
 `;
+
 const CommentSubmit = styled.button`
-  height: 36px;
-  width: 56px;
+  height: 40px;
+  width: 60px;
   display: flex;
-  position: absolute;
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  margin: 2px 2px 2px 0px;
+  margin: 0px 10px;
   cursor: pointer;
-  transition: border-color 0.3s ease, color 0.3s ease;
+  background-color: #ff6e00;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
   &:hover {
-    text-shadow: 0px 0px 10px #8d8d8d;
+    background-color: #e65c00;
   }
 `;
