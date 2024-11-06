@@ -7,8 +7,7 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from '../../apis/AxiosInstance';
 import Cookies from 'js-cookie';
-import { ScrollableContainer, Container,Label } from './CommonStyle';
-
+import { ScrollableContainer, Container, Label } from './CommonStyle';
 
 const Description = styled.label`
   font-size: 13px;
@@ -284,7 +283,7 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-left: 20px;
+  margin: 0 auto;
 
   &:hover {
     background-color: #ff6e00;
@@ -323,7 +322,7 @@ const UserRegisterPage = () => {
 
   const handleRegister = async () => {
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
-    
+
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
       setNickname('');
@@ -414,25 +413,25 @@ const UserRegisterPage = () => {
         </InputContainer>
 
         <InputContainer>
-  <Label>주소</Label>
-  <AddressContainer>
-    <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
-    <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-    <div id="popupDom">
-      {isPopupOpen && (
-        <PopupDom>
-          <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
-        </PopupDom>
-      )}
-    </div>
-    <StyledInput
-      placeholder="기본주소를 입력해주세요"
-      value={address}
-      onChange={e => setAddress(e.target.value)}
-      required
-    />
-  </AddressContainer>
-</InputContainer>
+          <Label>주소</Label>
+          <AddressContainer>
+            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+            <div id="popupDom">
+              {isPopupOpen && (
+                <PopupDom>
+                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+                </PopupDom>
+              )}
+            </div>
+            <StyledInput
+              placeholder="기본주소를 입력해주세요"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              required
+            />
+          </AddressContainer>
+        </InputContainer>
       </Container>
       <Divider />
 
@@ -481,8 +480,8 @@ const UserRegisterPage = () => {
             <div className={`toggle-circle ${toggleStates[2] ? 'toggle--checked' : ''}`} />
           </ThirdToggleContainer>
         </SubContainer>
+        <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
       </Container>
-      <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
     </ScrollableContainer>
   );
 };

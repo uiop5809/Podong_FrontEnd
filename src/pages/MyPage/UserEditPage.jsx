@@ -7,16 +7,16 @@ import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from '../../apis/AxiosInstance';
 
 const ScrollableContainer = styled.div`
-  max-height: 100%;
-  margin: 64px 0;
+  min-height: 100vh;
+  margin: 64px 0 80px;
   width: 100%;
-`; 
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%;
-  margin-left: 5%;
+  margin: 0 auto;
 `; // 전체 컨테이너
 
 const Description = styled.label`
@@ -43,7 +43,7 @@ const FirstComment = styled.span`
 
 const HightLight = styled.span`
   color: #ff6e00;
-`; 
+`;
 
 const Label = styled.label`
   font-size: 10px;
@@ -312,7 +312,7 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-left: 20px;
+  margin: 0 auto 80px;
 
   &:hover {
     background-color: #ff6e00;
@@ -383,7 +383,7 @@ const UserEditPage = () => {
         detailedAddress,
         zoneCode,
         accountEmail: email,
-        profileNickname: profileNickname || '기본 프로필 닉네임', 
+        profileNickname: profileNickname || '기본 프로필 닉네임',
         health: toggleStates[0],
         petCare: toggleStates[1],
         missing: toggleStates[2],
@@ -409,7 +409,7 @@ const UserEditPage = () => {
         <Description>
           <WelcomeContainer>
             <WelcomeComment>안녕하세요</WelcomeComment>
-            <FirstComment>{nickname}님🥳</FirstComment> 
+            <FirstComment>{nickname}님🥳</FirstComment>
           </WelcomeContainer>
           <HightLight>발바닥 천국</HightLight>과🐾 당신과 반려동물의 발걸음이 더 행복해지도록 정보를 등록해 보세요.
         </Description>
@@ -438,26 +438,25 @@ const UserEditPage = () => {
         </InputContainer>
 
         <InputContainer>
-  <Label>주소</Label>
-  <AddressContainer>
-    <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
-    <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-    <div id="popupDom">
-      {isPopupOpen && (
-        <PopupDom>
-          <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
-        </PopupDom>
-      )}
-    </div>
-    <StyledInput
-      placeholder="기본주소를 입력해주세요"
-      value={address}
-      onChange={e => setAddress(e.target.value)}
-      required
-    />
-  </AddressContainer>
-</InputContainer>
-
+          <Label>주소</Label>
+          <AddressContainer>
+            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+            <div id="popupDom">
+              {isPopupOpen && (
+                <PopupDom>
+                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+                </PopupDom>
+              )}
+            </div>
+            <StyledInput
+              placeholder="기본주소를 입력해주세요"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              required
+            />
+          </AddressContainer>
+        </InputContainer>
       </Container>
       <Divider />
 
@@ -507,8 +506,8 @@ const UserEditPage = () => {
             <div className={`toggle-circle ${toggleStates[2] ? 'toggle--checked' : ''}`} />
           </ThirdToggleContainer>
         </SubContainer>
+        <RegisterButton onClick={handleUpdate}>저장하기</RegisterButton>
       </Container>
-      <RegisterButton onClick={handleUpdate}>저장하기</RegisterButton>
     </ScrollableContainer>
   );
 };
