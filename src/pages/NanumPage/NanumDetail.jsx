@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { VscAccount } from 'react-icons/vsc';
-import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-import { FiHeart } from 'react-icons/fi';
-import axios from '../../apis/AxiosInstance';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
+import { VscAccount } from "react-icons/vsc";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { FiHeart } from "react-icons/fi";
+import axios from "../../apis/AxiosInstance";
 
 const PetItemDetailPage = () => {
   const { no } = useParams(); //URL에서 글 번호(no)를 가져옴
@@ -15,64 +15,85 @@ const PetItemDetailPage = () => {
   useEffect(() => {
     axios
       .get(`https://ureca.store/api/petItems/${no}`)
-      .then(response => {
+      .then((response) => {
         setItemDetail(response.data);
-        console.log('나눔 상세 :', response.data);
+        console.log("나눔 상세 :", response.data);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
   }, [no]);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`https://ureca.store/api/petItemComments`);
+        const response = await axios.get(
+          `https://ureca.store/api/petItemComments`
+        );
         setComments(response.data);
-        console.log('댓글 목록 :', response.data);
+        console.log("댓글 목록 :", response.data);
       } catch (error) {
-        console.error('Error :', error);
+        console.error("Error :", error);
       }
     };
 
     fetchComments();
-  },  [refreshComments]);
+  }, [refreshComments]);
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = itemDetail.good + 1;
     axios
-      .put(`https://ureca.store/api/petItems/${no}`, { ...itemDetail, good: updatedGood })
-      .then(response => {
-        console.log('좋아요 업데이트:', response.data);
-        setItemDetail(prevDetail => ({ ...prevDetail, good: updatedGood }));
+      .put(`https://ureca.store/api/petItems/${no}`, {
+        ...itemDetail,
+        good: updatedGood,
       })
-      .catch(error => {
-        console.error('좋아요 업데이트 실패:', error);
+      .then((response) => {
+        console.log("좋아요 업데이트:", response.data);
+        setItemDetail((prevDetail) => ({ ...prevDetail, good: updatedGood }));
+      })
+      .catch((error) => {
+        console.error("좋아요 업데이트 실패:", error);
       });
   };
   //댓글 등록
-  const handleSubmit = e => {
-    e.preventDefault(); 
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const formData = new FormData(e.target);
-    const user = localStorage.getItem('userId');
+    const user = localStorage.getItem("userId");
     const data = Object.fromEntries(formData.entries());
     data.petItem = no;
     data.user = user;
     axios
-      .post('https://ureca.store/api/petItemComments', data)
-      .then(response => {
-        console.log('등록 : ', response.data);
-        setComments(prevComments => [...prevComments, response.data]);
-        console.log('등록 data : ', data);
-        alert('등록 성공!');
-        setRefreshComments(prev => !prev);
+      .post("https://ureca.store/api/petItemComments", data)
+      .then((response) => {
+        console.log("등록 : ", response.data);
+        setComments((prevComments) => [...prevComments, response.data]);
+        console.log("등록 data : ", data);
+        alert("등록 성공!");
+        setRefreshComments((prev) => !prev);
       })
-      .catch(error => console.error('오류 발생:', error));
+      .catch((error) => console.error("오류 발생:", error));
 
-    e.target.reset(); 
+    e.target.reset();
   };
-  
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      try {
+        const response = await axios.get(`/user/${userId}`);
+        const data = response.data;
+        setItemDetail((prev) => ({
+          ...prev,
+          username: data.nickname,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <Container>
@@ -83,7 +104,7 @@ const PetItemDetailPage = () => {
         </ImgBt>
         <User1>
           <VscAccount1 />
-          작성자: {itemDetail.user}
+          작성자: {itemDetail.username}
         </User1>
         <Title>제목: {itemDetail.name}</Title>
         <Icons>
@@ -95,25 +116,35 @@ const PetItemDetailPage = () => {
             />
             {itemDetail.good || 0}
             <Comment1 />
-            {comments.filter(item => item.petItem === itemDetail.petItemId).length}
+            {
+              comments.filter((item) => item.petItem === itemDetail.petItemId)
+                .length
+            }
           </div>
           <div>
-            <ListPrice> {itemDetail.price ? `${itemDetail.price.toLocaleString()}원` : <나눔>나눔</나눔>}</ListPrice>
+            <ListPrice>
+              {" "}
+              {itemDetail.price ? (
+                `${itemDetail.price.toLocaleString()}원`
+              ) : (
+                <나눔>나눔</나눔>
+              )}
+            </ListPrice>
           </div>
         </Icons>
         <Contents>작성글: {itemDetail.description}</Contents>
         <Line />
         <CommentST>
           {comments
-            .filter(item => item.petItem === itemDetail.petItemId)
-            .map(item => (
+            .filter((item) => item.petItem === itemDetail.petItemId)
+            .map((item) => (
               <div key={item.petItemCommentId}>
                 <User2>
                   <VscAccount1 />
                   작성자: {item.user}
                   <ListDate key={item.petItemCommentId}>
-                    {new Date(item.createdAt).toLocaleDateString('ko-KR', {
-                      timeZone: 'Asia/Seoul',
+                    {new Date(item.createdAt).toLocaleDateString("ko-KR", {
+                      timeZone: "Asia/Seoul",
                     })}
                   </ListDate>
                 </User2>
@@ -123,7 +154,12 @@ const PetItemDetailPage = () => {
         </CommentST>
       </ItemTitle>
       <CommentFrom onSubmit={handleSubmit}>
-        <CommentCC type="text" name="comment" placeholder="댓글을 달아주세요." required />
+        <CommentCC
+          type="text"
+          name="comment"
+          placeholder="댓글을 달아주세요."
+          required
+        />
         <CommentSubmit type="submit">등록</CommentSubmit>
       </CommentFrom>
     </Container>
@@ -144,7 +180,7 @@ const ListImg = styled.img`
   background-color: #d9d9d9;
   border-radius: 10px;
   flex-shrink: calc(); /* 이미지 크기를 고정 */
-  background-image: url(${props => props.src}); /* 이미지 URL 설정 */
+  background-image: url(${(props) => props.src}); /* 이미지 URL 설정 */
   background-size: cover; /* 이미지를 채우도록 설정 */
   background-position: center; /* 이미지 중앙 정렬 */
 `;
