@@ -1,20 +1,48 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../apis/AxiosInstance";
+import axios from "axios";
+import styled from "styled-components";
+import { useParams, useNavigate } from "react-router-dom";
 
-const CancelPay = ({ userId }) => {
+const CancelPay = () => {
+  const [userId, setUserId] = useState(null);
   const [impUid, setImpUid] = useState(null);
+  const [payAmount, setPayAmount] = useState(null);
+  const { orderId } = useParams();
+  const navigate = useNavigate();
 
-  // userId에 따른 imp_uid 가져오기
+
+  // 페이지가 렌더링되면 userId를 받아옴
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      console.error("userId를 찾을 수 없습니다.");
+      alert("userId를 찾을 수 없습니다.");
+    }
+  }, []);
+
+  // userId가 설정되면 fetchImpUid 실행
+  useEffect(() => {
+    if (userId) {
+      fetchImpUid();
+    }
+  }, [userId]);
+
+  // fetchImpUid 함수
   const fetchImpUid = async () => {
     try {
-      const response = await axios.get(`/payment/list/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/payment/list/${userId}`);
       const paymentData = response.data;
 
-      console.log("Fetched Payment Data:", paymentData); // 전체 데이터를 확인
+      // console.log("Fetched Payment Data:", paymentData);
 
-      // 배열의 첫 번째 객체의 impUid만 가져옵니다
       if (paymentData.length > 0 && paymentData[0].impUid) {
         setImpUid(paymentData[0].impUid);
+        setPayAmount(paymentData[0].pay_amount);
+
+        // impUid 설정 후 handleCancel 호출
+        handleCancel(paymentData[0].impUid, paymentData[0].pay_amount);
       } else {
         console.error("impUid를 찾을 수 없습니다.");
         alert("impUid를 찾을 수 없습니다.");
@@ -26,8 +54,8 @@ const CancelPay = ({ userId }) => {
   };
 
   // 결제 취소 요청 핸들링
-  const handleCancel = async () => {
-    if (!impUid) return; // imp_uid가 없는 경우 실행 중지
+  const handleCancel = async (impUid, payAmount) => {
+    if (!impUid) return;
 
     const confirm = window.confirm(`${impUid} / 결제를 취소하시겠습니까?`);
     if (confirm) {
@@ -38,18 +66,15 @@ const CancelPay = ({ userId }) => {
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
-            // eslint-disable-next-line no-undef
             imp_key: import.meta.env.VITE_IMP_KEY,
-            // eslint-disable-next-line no-undef
             imp_secret: import.meta.env.VITE_IMP_SECRET,
           },
         });
 
-        // 인증 토큰 추출
         const { access_token } = getToken.data.response;
 
         // 취소 요청
-        await getCancelData(access_token, impUid);
+        await getCancelData(access_token, impUid, payAmount);
       } catch (error) {
         console.error("토큰 추출 에러 발생:", error);
       }
@@ -57,13 +82,13 @@ const CancelPay = ({ userId }) => {
   };
 
   // 취소 요청 함수
-  const getCancelData = async (access_token, imp_uid) => {
+  const getCancelData = async (access_token, impUid, payAmount) => {
     try {
       const response = await axios.post(
         "/iamport/payments/cancel",
         {
-          imp_uid: imp_uid, // 결제번호 (필수)
-          cancel_request_amount: 1000,
+          imp_uid: impUid,
+          cancel_request_amount: payAmount,
         },
         {
           headers: {
@@ -74,28 +99,35 @@ const CancelPay = ({ userId }) => {
       );
       console.log("결제 취소 완료:", response.data);
       alert("결제가 취소되었습니다.");
+      navigate(`/paymentCancelDone/${orderId}`);
+      
     } catch (error) {
       console.error("결제 취소 에러 발생:", error);
       alert("결제 취소에 실패했습니다.");
     }
   };
 
-  // 컴포넌트가 렌더링될 때 imp_uid를 먼저 가져오고 handleCancel 함수 실행
-  useEffect(() => {
-    fetchImpUid();
-  }, []);
-
-  useEffect(() => {
-    if (impUid) {
-      handleCancel();
-    }
-  }, [impUid]);
-
   return (
-    <div>
-      <p>결제 취소 요청 중...</p>
-    </div>
+      <CancelPayContent>
+        <CancelPayMessage>결제 취소 요청 중...</CancelPayMessage>
+      </CancelPayContent>
   );
 };
 
 export default CancelPay;
+
+const CancelPayContent = styled.div`
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
+
+const CancelPayMessage = styled.p`
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff6b6b;
+`;

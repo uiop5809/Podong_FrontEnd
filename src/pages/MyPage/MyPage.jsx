@@ -61,6 +61,7 @@ const OrderBagImage = styled.img`
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 10px;
+  cursor: pointer;
 `;
 
 const OrderReviewImage = styled.img`
@@ -299,35 +300,27 @@ const NoPetsMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 50px 0; // 상하 여백 추가
+
+  margin: 50px 0;
   text-align: center;
 
   p {
-    margin-bottom: 20px; // 텍스트와 버튼 간격
+    margin-bottom: 20px;
     font-size: 16px;
     color: #555;
   }
 `;
 
 const PetAddButton = styled.button`
-  background-color: #E4E4E4;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 10px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-
-  &:hover {
     background-color: #D0D0D0;
-    transform: translateY(-2px); // 살짝 떠오르는 효과
+    transform: translateY(-2px); 
   }
 
   &:active {
     background-color: #D0D0D0;
-    transform: translateY(0); // 눌렸을 때 원래 자리로
+    transform: translateY(0); 
+
+    background-color: #b0b0b0;
   }
 `;
 
@@ -415,7 +408,7 @@ function MyPage() {
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
-                      <FaCircleUser size={70}  />
+                      <FaCircleUser size={70} />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
                         <ActivePetType>
@@ -436,10 +429,10 @@ function MyPage() {
                   </PetProfile>
                 ))
               ) : (
-                  <NoPetsMessage>
-                    <p>등록된 펫이 없습니다</p>
-                    <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
-                  </NoPetsMessage>
+                <NoPetsMessage>
+                  <p>등록된 펫이 없습니다</p>
+                  <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
+                </NoPetsMessage>
               )}
             </CardContainer>
             <ArrowButton direction="right" onClick={() => scroll('right')}>
@@ -449,7 +442,7 @@ function MyPage() {
 
           <OrderContainer>
             <OrderIconContainer>
-              <OrderBagImage src={images.bag} alt="주문내역" />
+              <OrderBagImage src={images.bag} alt="주문내역" onClick={() => navigate('/orderList')} />
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>
