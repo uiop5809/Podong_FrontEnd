@@ -4,6 +4,7 @@ import Lottie from 'lottie-react';
 import PaymentAnimation from '../PaymentPage/PaymentAnimation.json';
 import PropTypes from 'prop-types';
 import axios from '../../apis/AxiosInstance';
+import { IoMdSearch } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 const statuses = {
@@ -68,7 +69,7 @@ const PaymentEnd = () => {
       </ImageContainer>
       <Header>
         우리응애가 좋아할 선물 <br />
-        금방 도착할게요!
+        금방 도착할거에요!
       </Header>
 
       <ButtonContainer>
@@ -108,7 +109,7 @@ const PaymentEnd = () => {
         <ThinDivider />
       </Section>
 
-      <OrderDetailButton primary onClick={() => navigate('/orderDetail')}>주문상세보기</OrderDetailButton>
+      <OrderDetailButton primary onClick={() => navigate('/orderList')}>주문 목록보기</OrderDetailButton>
     </Container>
   );
 };
@@ -168,7 +169,8 @@ const ThickDivider = styled.div`
   width: 100%;
   height: 12px;
   background-color: #f3f3f3;
-  margin: 2px 0;
+  margin-top : 20px;
+  margin-bottom : 20px;
 `;
 
 const ThinDivider = styled.div`

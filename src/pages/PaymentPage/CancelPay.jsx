@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useParams, useNavigate } from "react-router-dom";
 
 const CancelPay = () => {
   const [userId, setUserId] = useState(null);
   const [impUid, setImpUid] = useState(null);
   const [payAmount, setPayAmount] = useState(null);
+  const { orderId } = useParams();
+  const navigate = useNavigate();
+
 
   // 페이지가 렌더링되면 userId를 받아옴
   useEffect(() => {
@@ -95,6 +99,8 @@ const CancelPay = () => {
       );
       console.log("결제 취소 완료:", response.data);
       alert("결제가 취소되었습니다.");
+      navigate(`/paymentCancelDone/${orderId}`);
+      
     } catch (error) {
       console.error("결제 취소 에러 발생:", error);
       alert("결제 취소에 실패했습니다.");

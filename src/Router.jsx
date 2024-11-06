@@ -49,10 +49,10 @@ function Router() {
             <Route path="healthCare" element={<HealthCare />} />
 
             <Route path="payment" element={<Payment />} />
-            <Route path="payCancelReq" element={<PayCancelReq />} />
+            <Route path="payCancelReq/:orderId" element={<PayCancelReq />} />
             <Route path="paymentEnd" element={<PaymentEnd />} />
             <Route path="paymentHistory" element={<PaymentHistory />} />
-            <Route path="paymentCancelDone" element={<PaymentCancelDone />} />
+            <Route path="paymentCancelDone/:orderId" element={<PaymentCancelDone />} />
 
             <Route path="mainpage/:userId" element={<MainPage />} />
             <Route path="nanumList" element={<Outlet />}>
