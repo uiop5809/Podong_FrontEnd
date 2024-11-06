@@ -82,8 +82,15 @@ const PetItemDetailPage = () => {
       })
       .then((response) => {
         console.log("댓글 등록 성공:", response.data);
-        setComments((prevComments) => [...prevComments, response.data]);
         setNewComment("");
+        // 댓글을 서버에서 다시 가져와 업데이트
+        return axios.get(`/petItemComments?petItem=${no}`);
+      })
+      .then((response) => {
+        const relevantComments = response.data.filter(
+          (item) => item.petItem === parseInt(no)
+        );
+        setComments(relevantComments);
       })
       .catch((error) => {
         console.error("댓글 등록 실패:", error);
@@ -120,7 +127,6 @@ const PetItemDetailPage = () => {
           </div>
           <div>
             <ListPrice>
-              {" "}
               {itemDetail.price ? (
                 `${itemDetail.price.toLocaleString()}원`
               ) : (
@@ -279,7 +285,6 @@ const CommentST = styled.div`
 `;
 const CommentFrom = styled.form`
   width: 100%;
-  position: absolute;
   display: flex;
   justify-content: flex-end;
   bottom: 0px;
@@ -287,9 +292,7 @@ const CommentFrom = styled.form`
   margin-bottom: 64px;
 `;
 const Container = styled.div`
-  height: 100dvh;
   display: flex;
-  position: relative;
   flex-direction: column;
 `;
 const CommentCC = styled.input`
