@@ -5,26 +5,8 @@ import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
 import UploadImg from '../../components/Register/UploadImg';
 import axios from '../../apis/AxiosInstance';
+import { ScrollableContainer, Container, Label } from './CommonStyle';
 
-const ScrollableContainer = styled.div`
-  max-height: 100%;
-  margin: 64px 0;
-  width: 100%;
-`; // 스크롤
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  margin-left: 5%;
-`;
-
-const Label = styled.label`
-  font-size: 10px;
-  color: #b3b3b3;
-  margin-bottom: 5px;
-  margin-top: 8px;
-`; 
 
 const StyledInput = styled.input`
   padding: 13px;
@@ -134,6 +116,7 @@ const PetRegisterPage = () => {
   };
 
   const handleRegister = async event => {
+    
     event.preventDefault();
     if (!validateForm()) return;
 
@@ -169,6 +152,7 @@ const PetRegisterPage = () => {
       });
       if (response.status === 201) {
         navigate('/');
+        alert('발바닥천국에 오신 것을 환영합니다!')
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
       }

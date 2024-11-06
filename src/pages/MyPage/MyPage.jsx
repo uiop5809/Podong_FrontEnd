@@ -6,26 +6,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../apis/AxiosInstance';
 import { images } from '../../components/Images';
-
-const ScrollableContainer = styled.div`
-  max-height: 100%;
-  border: 1px solid #ddd;
-  margin: 64px 0;
-  width: 100%;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-`;
-
-const MainContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
+import { ScrollableContainer, Container, MainContainer, UserInfo, EditButton } from './Sytles/MyPage';
 
 const StyledAvatar = styled(RxAvatar)`
   font-size: 24px;
@@ -33,45 +14,9 @@ const StyledAvatar = styled(RxAvatar)`
   width: 64px;
   height: 64px;
   margin-top: 36px;
-  margin-left: 40px;
+  margin-left: 60px;
   margin-bottom: 21px;
-`;
-
-const UserInfo = styled.span`
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-left: 5%;
-  text-align: left;
-`;
-
-const UserCommunityInfo = styled.span`
-  font-size: 11px;
-  color: #8d8d8d;
-  margin-top: 10px;
-  margin-left: 5%;
-  text-align: left;
-`;
-
-const EditButton = styled.button`
-  width: 67px;
-  height: 22px;
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 9px;
-  font-weight: bold;
-  margin-left: 10px;
-  margin-top: 3px;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
-`;
+`; //여기에 사용자 프로필 사진 불러와야함
 
 const SubContainer = styled.div`
   display: flex;
@@ -105,43 +50,9 @@ const PetInfoSecondRow = styled.div`
 `;
 
 const PetDetailInfo = styled.div`
-  margin-top: 23px;
   margin-left: 20px;
   display: flex;
   flex-direction: column;
-`;
-
-const PetProfileEditButton = styled.button`
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  padding: 5px 10px;
-  font-size: 8px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
-`;
-
-const PetAddButton = styled.button`
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  padding: 5px 10px;
-  font-size: 8px;
-  margin-top:10px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
 `;
 
 const OrderBagImage = styled.img`
@@ -150,6 +61,7 @@ const OrderBagImage = styled.img`
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 10px;
+  cursor: pointer;
 `;
 
 const OrderReviewImage = styled.img`
@@ -351,6 +263,7 @@ const PetEditBtn = styled.button`
   border-radius: 20px;
   cursor: pointer;
   font-size: 8px;
+  margin-left: 10%;
   font-weight: normal;
   transition: background-color 0.3s;
 
@@ -379,17 +292,37 @@ const LastComment = styled.span`
     font-weight: bold;
   }
 `;
-
 const NoPetsMessage = styled.div`
-  font-size: 12;
+  font-size: 14px;
   font-weight: bold;
-  margin-bottom: 10px;
+  color: #333;
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
-  margin-left:75px;
+  align-items: center;
+  justify-content: center;
+
+  margin: 50px 0;
+  text-align: center;
+
+  p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #555;
+  }
 `;
 
+const PetAddButton = styled.button`
+    background-color: #D0D0D0;
+    transform: translateY(-2px); 
+  }
+
+  &:active {
+    background-color: #D0D0D0;
+    transform: translateY(0); 
+
+    background-color: #b0b0b0;
+  }
+`;
 
 function MyPage() {
   const navigate = useNavigate();
@@ -453,7 +386,6 @@ function MyPage() {
       <Container>
         <MainContainer>
           <StyledAvatar />
-
           <UserInfo>
             {userData ? userData.nickname : '불러오는 중...'}
             <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>수정</EditButton>
@@ -471,12 +403,12 @@ function MyPage() {
                 filteredPets.map(pet => (
                   <PetProfile key={pet.id}>
                     <PetInfoFirstRow>
-                      <PetNameComment>우리응애 프로필</PetNameComment>
+                      <PetNameComment>우리응애</PetNameComment>
                       <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>추가</PetAddButton>
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
-                      <FaCircleUser size={80} style={{ marginTop: '18px' }} />
+                      <FaCircleUser size={70} />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
                         <ActivePetType>
@@ -497,10 +429,10 @@ function MyPage() {
                   </PetProfile>
                 ))
               ) : (
-                  <NoPetsMessage>
-                    <p>등록된 펫이 없습니다</p>
-                    <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
-                  </NoPetsMessage>
+                <NoPetsMessage>
+                  <p>등록된 펫이 없습니다</p>
+                  <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
+                </NoPetsMessage>
               )}
             </CardContainer>
             <ArrowButton direction="right" onClick={() => scroll('right')}>
@@ -510,7 +442,7 @@ function MyPage() {
 
           <OrderContainer>
             <OrderIconContainer>
-              <OrderBagImage src={images.bag} alt="주문내역" />
+              <OrderBagImage src={images.bag} alt="주문내역" onClick={() => navigate('/orderList')} />
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>

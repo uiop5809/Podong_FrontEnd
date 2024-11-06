@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Lottie from 'lottie-react';
 import PayCancelAnimation from './PayCancelAnimation.json';
+import { useParams } from 'react-router-dom';
+import axios from '../../apis/AxiosInstance';
 
 const Container = styled.div`
   display: flex;
@@ -16,7 +18,7 @@ const ImageContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 `;
 
 const Header = styled.div`
@@ -28,11 +30,6 @@ const CancelMessage = styled.h1`
   font-size: 24px;
   font-weight: bold;
   color: #333;
-`;
-
-const OrderNumber = styled.p`
-  font-size: 14px;
-  color: #999;
 `;
 
 const Content = styled.div`
@@ -71,110 +68,90 @@ const TotalPrice = styled.p`
   margin-top: 10px;
 `;
 
-const PaymentDetails = styled.div`
-  margin-top: 20px;
+const StyleStrong = styled.div`
+  white-space: nowrap;
+  width: 60px;
 `;
 
-const PaymentAmount = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
+const PaymentDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 `;
 
-const PaymentMethod = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-top: 5px;
+const PaymentDetailRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
-const PaymentPG = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentPGnum = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentCard = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentBuyerName = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentBuyerAddr = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentBuyerPost = styled.p`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-`;
-
-const PaymentTotal = styled.p`
+const PaymentDetailTitle = styled(StyleStrong)`
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  margin-top: 10px;
+`;
+
+const PaymentDetailValue = styled.span`
+  font-size: 12px;
+  color: #666;
 `;
 
 const PaymentCancelDone = () => {
-  const [orderNumber, setOrderNumber] = useState('');
   const [content, setContent] = useState({});
+  const { orderId } = useParams();
+  const [payment, setPayment] = useState(null);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    // Fetching data from another page or API
-    const fetchData = async () => {
-      // Simulating a data fetch
-      const fetchedOrderNumber = '17423029019301231';
-      const fetchedContent = {
-        itemTitle: '환불된 상품 이름',
-        totalPrice: '30,000원',
-        details: [
-          '사이즈 : S',
-          '색상 : 빨간색',
-          '###############',
-          '상품에 대한 디테일 넣을 부분'
-        ],
-        paymentDetails: {
-          paymentAmount: '30,000원',
-          paymentMethod: '카드',
-          paymentPG: 'KG이니시스',
-          paymentPGnum: '1231241238588376',
-          paymentCard: 'LG',
-          paymentBuyerName: '고창준',
-          paymentBuyerAddr: '서울시 엘지구 엘지동 1-1',
-          paymentBuyerPost: '123-123'
-        }
-      };
-
-      setOrderNumber(fetchedOrderNumber);
-      setContent(fetchedContent);
+    const fetchOrderDetail = async () => {
+      try {
+        const response = await axios.get(`/order/detail/${orderId}`);
+        const orderDetail = response.data;
+        const fetchedContent = {
+          itemTitle: orderDetail.productDTO.productTitle.replace(/<[^>]*>/g, ''),
+          totalPrice: `${orderDetail.productDTO.productLprice}원`,
+          details: [],
+        };
+        setContent(fetchedContent);
+      } catch (error) {
+        console.error('주문 상세 정보를 가져오는 중 오류 발생:', error);
+      }
     };
 
-    fetchData();
-  }, []);
+    fetchOrderDetail();
+  }, [orderId]);
+
+  useEffect(() => {
+    const fetchPaymentLog = async () => {
+      try {
+        const response = await axios.get(`/payment/list/${userId}`);
+        if (response.data.length > 0) {
+          setPayment(response.data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching payment log:', error);
+      }
+    };
+
+    fetchPaymentLog();
+  }, [userId]);
 
   return (
     <Container>
       <ImageContainer>
-        <Lottie animationData={PayCancelAnimation} style={{ width: '250px', height: '250px' }} />
+        <Lottie animationData={PayCancelAnimation} style={{ width: '230px', height: '230px' }} />
       </ImageContainer>
       <Header>
         <CancelMessage>결제가 취소되었어요</CancelMessage>
-        <OrderNumber>주문번호 {orderNumber}</OrderNumber>
       </Header>
       <Content>
         <Item>
@@ -186,15 +163,44 @@ const PaymentCancelDone = () => {
             ))}
           </Details>
         </Item>
-        <PaymentDetails>
-          <PaymentAmount>환불금액 : {content.paymentDetails?.paymentAmount}</PaymentAmount>
-          <PaymentMethod>결제수단 : {content.paymentDetails?.paymentMethod}</PaymentMethod>
-          <PaymentPG>PG사 : {content.paymentDetails?.paymentPG}</PaymentPG>
-          <PaymentPGnum>PG승인번호 : {content.paymentDetails?.paymentPGnum}</PaymentPGnum>
-          <PaymentCard>결제상세 : {content.paymentDetails?.paymentCard}</PaymentCard>
-          <PaymentBuyerName>주문자 : {content.paymentDetails?.paymentBuyerName}</PaymentBuyerName>
-          <PaymentBuyerAddr>주소 : {content.paymentDetails?.paymentBuyerAddr}  [ {content.paymentDetails?.paymentBuyerPost} ]</PaymentBuyerAddr>
-        </PaymentDetails>
+        <PaymentDetailsContainer>
+  {payment && (
+    <>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>주문 날짜 :</PaymentDetailTitle>
+        <PaymentDetailValue>{new Date(payment.createdAt).toLocaleString()}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>주문 번호 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.merchantId}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>결제 수단 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.payMethod}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>금액 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.payAmount.toLocaleString()} 원</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>카드명 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.cardName}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>카드 번호 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.cardNumber}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>할부 개월 수:</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.installmentMonths}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
+        <PaymentDetailTitle>PG사명:</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.pg}</PaymentDetailValue>
+      </PaymentDetailRow>
+    </>
+  )}
+</PaymentDetailsContainer>
       </Content>
     </Container>
   );

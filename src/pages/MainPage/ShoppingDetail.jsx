@@ -13,8 +13,6 @@ const ShoppingDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCartModalOpen, setCartModalOpen] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
-  // const userId = 5; // 테스트용 더미 유저 ID
-  // const { userId } = location.state || {};
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
@@ -42,7 +40,7 @@ const ShoppingDetail = () => {
     };
 
     axios
-      .post('/api/carts', cartItem)
+      .post('/carts', cartItem)
       .then(response => {
         alert(response.data);
         setCartModalOpen(false); // 장바구니에 담기 성공 후 팝업창 닫기

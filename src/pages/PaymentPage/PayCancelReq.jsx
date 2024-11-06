@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import CancelPay from "./CancelPay";
+import axios from '../../apis/AxiosInstance';
+import CancelPay from './CancelPay';
+import { useParams, useNavigate } from 'react-router-dom';
+
+const StyledH1 = styled.h1`
+  font-weight: bold;
+  font-size : 20px;
+  margin-bottom: 20px;
+`;
 
 const StyledH2 = styled.h2`
   font-weight: bold;
+  font-size : 15px;
   margin-bottom: 10px;
 `;
 
 const OrderCancellationWrapper = styled.div`
   padding: 20px;
   margin-top: 64px;
-`;
-
-const OrderInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: 13px;
 `;
 
 const CancelItem = styled.div`
@@ -27,6 +29,7 @@ const ItemInfo = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  position: relative;
 
   input {
     margin-right: 10px;
@@ -35,16 +38,25 @@ const ItemInfo = styled.div`
   label {
     display: flex;
     align-items: center;
+    position: relative;
 
     img {
-      width: 50px;
-      height: 50px;
+      width: 80px;
+      height: 80px;
       margin-right: 10px;
     }
 
     div {
+      display: flex;
+      flex-direction: column;
+
       p {
         margin: 0;
+      }
+
+      p:last-child {
+        align-self: flex-end;
+        margin-top: 10px;
       }
     }
   }
@@ -56,26 +68,69 @@ const CancelReason = styled.div`
   select {
     width: 100%;
     margin-top: 10px;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #d1d1d1;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      border-color: #ff6e00;
+      box-shadow: 0 0 5px rgba(255, 110, 0, 0.5);
+      outline: none;
+    }
   }
 
   textarea {
     margin-top: 10px;
     width: 100%;
     height: 100px;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #d1d1d1;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      border-color: #ff6e00;
+      box-shadow: 0 0 5px rgba(255, 110, 0, 0.5);
+      outline: none;
+    }
   }
 `;
 
 const RefundInfo = styled.div`
   margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+
+  
 `;
 
 const RefundDetails = styled.div`
+  .refund-amount {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff6e00;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
   .refund-detail {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+
+    span:first-child {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    span:last-child {
+      font-size: 16px;
+    }
   }
 `;
 
@@ -103,9 +158,25 @@ const CancelButton = styled.button`
 `;
 
 function PayCancelReq() {
+  const [orderDetail, setOrderDetail] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
   const [detailedReason, setDetailedReason] = useState('');
   const [isCancelRequested, setIsCancelRequested] = useState(false);
+  const { orderId } = useParams();
+
+  useEffect(() => {
+    const fetchOrderDetail = async () => {
+      try {
+        const response = await axios.get(`/order/detail/${orderId}`);
+        setOrderDetail(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('주문 상세 정보를 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchOrderDetail();
+  }, []);
 
   const handleReasonChange = (e) => {
     setCancelReason(e.target.value);
@@ -117,27 +188,30 @@ function PayCancelReq() {
 
   const handleCancel = () => {
     setIsCancelRequested(true);
-    console.log("주문 취소 요청");
   };
+
+  if (!orderDetail) {
+    return <div>Loading...</div>;
+  }
+
+  const { productDTO } = orderDetail;
 
   return (
     <OrderCancellationWrapper>
-      <OrderInfo>
-        <span>주문일시</span>
-        <span>24.10.17</span>
-      </OrderInfo>
       <CancelItem>
-        <StyledH2>취소 사유 선택</StyledH2>
+        <StyledH1>취소 상품</StyledH1>
         <Divider />
         <ItemInfo>
           <input type="checkbox" id="item1" />
           <label>
+            <img src={productDTO.productImage} alt="Product" />
             <div>
-              <p>상품명, 상품사진 등등 db</p>
-              <p>상품가격 db</p>
+              <p>{productDTO.productTitle.replace(/<[^>]*>/g, '')}</p>
+              <p>{productDTO.productLprice}원</p>
             </div>
           </label>
         </ItemInfo>
+        <Divider />
       </CancelItem>
       <CancelReason>
         <StyledH2>취소 사유</StyledH2>
@@ -159,23 +233,40 @@ function PayCancelReq() {
       <Divider />
       <RefundInfo>
         <RefundDetails>
+          <div className="refund-amount">
+            <span>최종 환불 금액</span>
+            <span>{productDTO.productLprice}원</span>
+            </div>
+          <Divider />
           <div className="refund-detail">
-            <span>환불 금액</span>
-            <span>37,000원</span>
+            <span>환불 요청금액</span>
+            <span>{productDTO.productLprice}원</span>
           </div>
           <div className="refund-detail">
             <span>상품액</span>
-            <span>37,000원</span>
+            <span>{productDTO.productLprice}원</span>
           </div>
           <div className="refund-detail">
             <span>배송비</span>
+            <span>0원</span>
+          </div>
+          <div className="refund-detail">
+            <span>총 차감금액</span>
+            <span>0원</span>
+          </div>
+          <div className="refund-detail">
+            <span>반품 배송비</span>
+            <span>0원</span>
+          </div>
+          <div className="refund-detail">
+            <span>쿠폰 및 배송 할인비</span>
             <span>0원</span>
           </div>
         </RefundDetails>
       </RefundInfo>
       <CancelButton onClick={handleCancel}>결제 취소</CancelButton>
 
-      {isCancelRequested && <CancelPay userId={1} />}
+      {isCancelRequested && <CancelPay userId />}
     </OrderCancellationWrapper>
   );
 }

@@ -114,7 +114,7 @@ const Payment = () => {
         pg: 'html5_inicis', // PG사명
         pay_method: 'card', // 결제수단
         merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
-        name: cartData.productTitle, // 결제명
+        name: cartData[0].productTitle, // 결제명
         amount: orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString(), // 결제 금액
         buyer_email: userData.accountEmail, // 구매자 이메일
         buyer_name: userData.nickname, // 구매자 이름
@@ -160,19 +160,11 @@ const Payment = () => {
             <label>주소</label>
           </AddressLabelWrapper>
           <AddressInputWrapper>
-            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly />
+            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
             <SearchAddressButton onClick={openPostCode}>주소변경</SearchAddressButton>
           </AddressInputWrapper>
           <AddressInputWrapper>
             <StyledInput placeholder="" value={address} onChange={e => setAddress(e.target.value)} required />
-          </AddressInputWrapper>
-          <AddressInputWrapper>
-            <StyledInput
-              placeholder=""
-              value={detailedAddress}
-              onChange={e => setDetailedAddress(e.target.value)}
-              required
-            />
           </AddressInputWrapper>
         </AddressInputGroup>
 
@@ -402,14 +394,15 @@ const StyledInput = styled.input`
   border-radius: 5px;
   font-size: 11px;
 `;
+  
+const AddressInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+`;
 
-const SearchAddressButton = styled.button`
-  position: absolute;
-  width: 70px;
-  height: 30px;
-  top: 20px;
-  right: 15px;
-  transform: translateY(-50%);
+  const SearchAddressButton = styled.button`
   background-color: #ffefef;
   color: #ff6e00;
   border: none;
@@ -419,6 +412,7 @@ const SearchAddressButton = styled.button`
   font-weight: bold;
   padding: 5px 10px;
   transition: background-color 0.3s;
+  margin-left: auto;
 
   &:hover {
     background-color: #ffd3d3;
@@ -438,12 +432,15 @@ const DeliveryNoteInputGroup = styled.div`
 `;
 
 const AddressLabelWrapper = styled.div`
-  margin-bottom: 5px;
+  flex-shrink: 0;
   font-weight: bold;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
 `;
 
 const DeliveryMethodLabelWrapper = styled.div`
-  margin-bottom: 5px;
+  margin-right : auto;
   font-weight: bold;
 `;
 
@@ -452,11 +449,7 @@ const DeliveryNoteLabelWrapper = styled.div`
   font-weight: bold;
 `;
 
-const AddressInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-`;
+
 
 const DeliveryMethodInputWrapper = styled.div`
   display: flex;

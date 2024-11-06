@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { images } from '../../components/Images';
-import { useNavigate } from 'react-router-dom';
-import UploadImg from '../../components/Register/UploadImg';
-import PopupDom from '../../components/Register/PopUpDom';
-import PopupPostCode from '../../components/Register/PopupPostCode';
-import axios from '../../apis/AxiosInstance';
-import { useParams } from 'react-router-dom';
-import Cookies from 'js-cookie';
-
-const ScrollableContainer = styled.div`
-  max-height: 100%;
-  border: 1px solid #ddd;
-  margin: 64px 0;
-  width: 100%;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  margin-left: 5%;
-`;
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { images } from "../../components/Images";
+import { useNavigate } from "react-router-dom";
+import UploadImg from "../../components/Register/UploadImg";
+import PopupDom from "../../components/Register/PopUpDom";
+import PopupPostCode from "../../components/Register/PopupPostCode";
+import axios from "../../apis/AxiosInstance";
+import Cookies from "js-cookie";
+import { ScrollableContainer, Container, Label } from "./CommonStyle";
 
 const Description = styled.label`
   font-size: 13px;
@@ -34,13 +20,6 @@ const Description = styled.label`
 
 const HightLight = styled.span`
   color: #ff6e00;
-`;
-
-const Label = styled.label`
-  font-size: 10px;
-  color: #b3b3b3;
-  margin-bottom: 10px;
-  margin-top: 5px;
 `;
 
 const KakaoEmail = styled.input`
@@ -95,9 +74,9 @@ const AddressContainer = styled.div`
 
 const SearchAddressButton = styled.button`
   position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
+  width: 60px;
+  height: 24px;
+  top: 10px;
   right: 5px;
   transform: translateY(-50%);
   background-color: #ffefef;
@@ -178,29 +157,7 @@ const PhonenumberInputrequired = styled.input`
   border-radius: 5px;
   font-size: 11px;
   background-color: white;
-  width: 65%;
-`;
-
-const PhoneNumberAuthorization = styled.button`
-  position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
-  right: 5px;
-  transform: translateY(-50%);
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
+  width: 100%;
 `;
 
 const AlarmAgreementContainer = styled.div`
@@ -326,31 +283,31 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-bottom: 80px;
-  margin-left: 20px;
-
+  margin: 0px;
   &:hover {
     background-color: #ff6e00;
     color: white;
   }
+  margin-bottom: 80px;
+  margin-left: 20px;
 `;
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
-  const [imgPath, setImgPath] = useState('');
+  const [imgPath, setImgPath] = useState("");
   const [toggleStates, setToggleStates] = useState([false, false, false]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [address, setAddress] = useState('');
-  const [zoneCode, setZoneCode] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [detailedAddress, setDetailedAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const [profileNickname, setProfileNickname] = useState('');
+  const [address, setAddress] = useState("");
+  const [zoneCode, setZoneCode] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [detailedAddress, setDetailedAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [profileNickname, setProfileNickname] = useState("");
 
   useEffect(() => {
-    const emailFromCookie = Cookies.get('email');
-    const profileNicknameFromCookie = Cookies.get('profile_nickname');
+    const emailFromCookie = Cookies.get("email");
+    const profileNicknameFromCookie = Cookies.get("profile_nickname");
 
     if (emailFromCookie) {
       setEmail(emailFromCookie);
@@ -364,30 +321,45 @@ const UserRegisterPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
 
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 남기기
+    let formattedValue = "";
+
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 3);
+    }
+    if (value.length > 3) {
+      formattedValue += "-" + value.substring(3, 7);
+    }
+    if (value.length > 7) {
+      formattedValue += "-" + value.substring(7, 11);
+    }
+
+    setPhoneNumber(formattedValue); // 포맷된 값으로 상태 업데이트
+  };
+
   const handleRegister = async () => {
-    // 닉네임 검증
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+
     if (!nicknameRegex.test(nickname)) {
-      alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
-      setNickname('');
+      alert("닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.");
+      setNickname("");
+      return;
+    }
+    if (!nickname || !phoneNumber || !address) {
+      alert("모든 정보를 입력해주세요.");
       return;
     }
 
-    // 필수 정보 검증
-    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
-      alert('모든 정보를 입력해주세요.');
-      return;
-    }
-
-    // 휴대폰 번호 유효성 검사
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
-      alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      alert("휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.");
+      setPhoneNumber("");
       return;
     }
 
-    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
-      alert('모든 정보를 입력해주세요.');
+    if (!nickname || !phoneNumber || !address) {
+      alert("모든 정보를 입력해주세요.");
       return;
     }
 
@@ -409,16 +381,15 @@ const UserRegisterPage = () => {
 
       console.log(userId);
 
-      // userId를 localStorage에 저장
-      localStorage.setItem('userId', userId);
-      alert('userId가 localStorage에 저장되었습니다: ' + userId);
-      navigate('/petRegister/:userId');
+      localStorage.setItem("userId", userId);
+      alert("userId가 localStorage에 저장되었습니다: " + userId);
+      navigate("/petRegister/:userId");
     } catch (error) {
-      console.error('Error updating user information:', error);
-      alert('사용자 정보 업데이트 중 오류가 발생했습니다.');
+      console.error("Error updating user information:", error);
+      alert("사용자 정보 업데이트 중 오류가 발생했습니다.");
     }
   };
-  const toggleHandler = index => {
+  const toggleHandler = (index) => {
     const newToggleStates = [...toggleStates];
     newToggleStates[index] = !newToggleStates[index];
     setToggleStates(newToggleStates);
@@ -427,14 +398,19 @@ const UserRegisterPage = () => {
     <ScrollableContainer>
       <Container>
         <Description>
-          <HightLight>발바닥 천국</HightLight>과🐾 당신의 반려동물 이야기를 시작해 볼까요?
+          <HightLight>발바닥 천국</HightLight>과🐾 당신의 반려동물 이야기를
+          시작해 볼까요?
           <br /> 정보를 입력해 주시면 더 행복한 발걸음을 만들어 드릴게요!
         </Description>
         <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
 
         <Label>이메일</Label>
         <InputContainer>
-          <KakaoEmail placeholder="이메일을 불러오고 있습니다..." value={email} disabled />
+          <KakaoEmail
+            placeholder="이메일을 불러오고 있습니다..."
+            value={email}
+            disabled
+          />
           <Icon src={images.kakaoIcon} alt="카카오 아이콘" />
         </InputContainer>
 
@@ -443,7 +419,7 @@ const UserRegisterPage = () => {
           <StyledInput
             placeholder="닉네임을 입력해주세요"
             value={nickname}
-            onChange={e => setNickname(e.target.value)}
+            onChange={(e) => setNickname(e.target.value)}
             required
           />
         </InputContainer>
@@ -455,34 +431,38 @@ const UserRegisterPage = () => {
               required
               placeholder="전화번호를 입력해주세요"
               value={phoneNumber}
-              onChange={e => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneNumberChange}
             />
-            <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
 
         <InputContainer>
           <Label>주소</Label>
           <AddressContainer>
-            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly />
-            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+            <PostSearchContainer
+              placeholder="우편번호"
+              value={zoneCode}
+              readOnly
+              style={{ display: "none" }}
+            />
+            <SearchAddressButton onClick={openPostCode}>
+              주소검색
+            </SearchAddressButton>
             <div id="popupDom">
               {isPopupOpen && (
                 <PopupDom>
-                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+                  <PopupPostCode
+                    onClose={closePostCode}
+                    setAddress={setAddress}
+                    setZoneCode={setZoneCode}
+                  />
                 </PopupDom>
               )}
             </div>
             <StyledInput
               placeholder="기본주소를 입력해주세요"
               value={address}
-              onChange={e => setAddress(e.target.value)}
-              required
-            />
-            <StyledInput
-              placeholder="상세 주소를 입력해주세요"
-              value={detailedAddress}
-              onChange={e => setDetailedAddress(e.target.value)}
+              onChange={(e) => setAddress(e.target.value)}
               required
             />
           </AddressContainer>
@@ -494,17 +474,26 @@ const UserRegisterPage = () => {
         <AlarmAgreementContainer>
           <SubTitle>앱 푸시 알림</SubTitle>
         </AlarmAgreementContainer>
-
         <SubContainer>
           <TextContainer>
             <SubTitleList>우리응애 건강관리</SubTitleList>
             <DescriptionContainer>
-              <SubDescription>예방접종일과 병원 정보를 빠르게 받아보세요!</SubDescription>
+              <SubDescription>
+                예방접종일과 병원 정보를 빠르게 받아보세요!
+              </SubDescription>
             </DescriptionContainer>
           </TextContainer>
           <FirstToggleContainer onClick={() => toggleHandler(0)}>
-            <div className={`toggle-container ${toggleStates[0] ? 'toggle--checked' : ''}`} />
-            <div className={`toggle-circle ${toggleStates[0] ? 'toggle--checked' : ''}`} />
+            <div
+              className={`toggle-container ${
+                toggleStates[0] ? "toggle--checked" : ""
+              }`}
+            />
+            <div
+              className={`toggle-circle ${
+                toggleStates[0] ? "toggle--checked" : ""
+              }`}
+            />
           </FirstToggleContainer>
         </SubContainer>
 
@@ -512,12 +501,22 @@ const UserRegisterPage = () => {
           <TextContainer>
             <SubTitleList>집사 생활</SubTitleList>
             <DescriptionContainer>
-              <SubDescription>내가 작성한 글의 댓글을 빠르게 확인하세요!</SubDescription>
+              <SubDescription>
+                내가 작성한 글의 댓글을 빠르게 확인하세요!
+              </SubDescription>
             </DescriptionContainer>
           </TextContainer>
           <SecondToggleContainer onClick={() => toggleHandler(1)}>
-            <div className={`toggle-container ${toggleStates[1] ? 'toggle--checked' : ''}`} />
-            <div className={`toggle-circle ${toggleStates[1] ? 'toggle--checked' : ''}`} />
+            <div
+              className={`toggle-container ${
+                toggleStates[1] ? "toggle--checked" : ""
+              }`}
+            />
+            <div
+              className={`toggle-circle ${
+                toggleStates[1] ? "toggle--checked" : ""
+              }`}
+            />
           </SecondToggleContainer>
         </SubContainer>
 
@@ -527,17 +526,27 @@ const UserRegisterPage = () => {
             <DescriptionContainer>
               <SubDescription>
                 다른 아이의 등록된 실종 위치 근처에 도착하면 알림을 보내드려요
-                <AlertAgreementDescription>가족의 품으로 가는 길, 도와주시면 감사하겠습니다*</AlertAgreementDescription>
+                <AlertAgreementDescription>
+                  가족의 품으로 가는 길, 도와주시면 감사하겠습니다*
+                </AlertAgreementDescription>
               </SubDescription>
             </DescriptionContainer>
           </TextContainer>
           <ThirdToggleContainer onClick={() => toggleHandler(2)}>
-            <div className={`toggle-container ${toggleStates[2] ? 'toggle--checked' : ''}`} />
-            <div className={`toggle-circle ${toggleStates[2] ? 'toggle--checked' : ''}`} />
+            <div
+              className={`toggle-container ${
+                toggleStates[2] ? "toggle--checked" : ""
+              }`}
+            />
+            <div
+              className={`toggle-circle ${
+                toggleStates[2] ? "toggle--checked" : ""
+              }`}
+            />
           </ThirdToggleContainer>
         </SubContainer>
+        <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
       </Container>
-      <RegisterButton onClick={handleRegister}>저장하기</RegisterButton>
     </ScrollableContainer>
   );
 };

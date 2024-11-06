@@ -3,18 +3,26 @@ import styled from 'styled-components';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { FaRegUserCircle, FaRegBell } from 'react-icons/fa';
 import { PiDogBold } from 'react-icons/pi';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate,useParams } from 'react-router-dom';
 
 const MainNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  // localStorage에서 userId 가져오기
+  const [userId, setUserId] = useState(localStorage.getItem('userId'));
 
   useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, [location.pathname]);
+
+  
+  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -23,18 +31,26 @@ const MainNav = () => {
     };
   }, []);
 
+  const handleUserIconClick = () => {
+    if (userId) {
+      navigate(`/myPage/${userId}`); // userId가 있으면 마이페이지로 이동
+    } else {
+      navigate('/login'); // userId가 없으면 로그인 페이지로 이동
+    }
+  };
+
   const icons = [
     { icon: <FaRegBell />, link: '/notifications' },
     { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
-    { icon: <FaRegUserCircle />, link: '/Login' },
   ];
+
+
 
   return (
     <>
       <Navbar $isScrolled={isScrolled}>
         <AnimalWrap>
-          <PiDogBold color="#FF6E00" />
-          <AnimalName>반려동물 이름</AnimalName>
+          <AnimalName>발바닥천국</AnimalName>
         </AnimalWrap>
         <NavIconWrap>
           {icons.map((item, index) => (
@@ -42,6 +58,10 @@ const MainNav = () => {
               {item.icon}
             </Link>
           ))}
+          {/* userId 존재 여부에 따라 동작하는 FaRegUserCircle 아이콘 */}
+          <span onClick={handleUserIconClick} style={{ cursor: 'pointer' }}>
+            <FaRegUserCircle />
+          </span>
         </NavIconWrap>
       </Navbar>
     </>
