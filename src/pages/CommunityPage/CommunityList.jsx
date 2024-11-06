@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { FcLike } from "react-icons/fc";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import axios from "../../apis/AxiosInstance";
-import { HiArrowSmDown } from "react-icons/hi";
-import { LuSearch } from "react-icons/lu";
+import { images } from "../../components/Images";
 
 const CommunityList = () => {
   const navigate = useNavigate();
   const [communityList, setCommunityList] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [latest, setLatest] = useState(false);
-  const [userNicknames, setUserNicknames] = useState({});
+  const [filteredCommunityList, setFilteredCommunityList] = useState([]);
+  const [activeCategory, setActiveCategory] = useState("전체");
+  const category = [
+    { src: images.categoryAll, name: "전체" },
+    { src: images.categoryFreedom, name: "자유" },
+    { src: images.categoryDongNea, name: "동네" },
+    { src: images.categoryExpert, name: "전문가" },
+    { src: images.categoryAnonymity, name: "익명" },
+    { src: images.categoryEvent, name: "이벤트" },
+  ];
 
   // 게시글 목록 불러오기
   useEffect(() => {
@@ -20,101 +24,53 @@ const CommunityList = () => {
       .get("/communities")
       .then((response) => {
         setCommunityList(response.data);
+        setFilteredCommunityList(response.data);
         console.log("게시글 목록:", response.data);
-        response.data.forEach((item) => {
-          if (!userNicknames[item.user]) {
-            fetchUserNickname(item.user);
-          }
-        });
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
 
-  // 사용자 닉네임 가져오기 함수
-  const fetchUserNickname = (userId) => {
-    axios
-      .get(`/user/${userId}`)
-      .then((response) => {
-        setUserNicknames((prev) => ({
-          ...prev,
-          [userId]: response.data.nickname,
-        }));
-      })
-      .catch((error) => {
-        console.error("Error fetching user nickname:", error);
-      });
-  };
-
-  // 좋아요 수 증가 함수
-  const good = (postId) => {
-    const updatedItemList = communityList.map((item) => {
-      if (item.postId === postId) {
-        const updatedGood = (item.good || 0) + 1;
-        axios
-          .put(`/communities/${postId}`, {
-            ...item,
-            good: updatedGood,
-          })
-          .then((response) => {
-            console.log("좋아요 업데이트:", response.data);
-          })
-          .catch((error) => {
-            console.error("좋아요 업데이트 실패:", error);
-          });
-        return { ...item, good: updatedGood };
-      }
-      return item;
-    });
-    setCommunityList(updatedItemList);
-  };
-
-  // 댓글 목록 불러오기
-  useEffect(() => {
-    axios
-      .get(`/communityComments`)
-      .then((response) => {
-        setComments(response.data);
-        console.log("댓글 목록 :", response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-
-  // 최신순 정렬 함수
-  const handleLatest = () => {
-    const sortedList = [...communityList].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    setCommunityList(sortedList);
-    setLatest(true);
+  // 카테고리 필터링 함수
+  const filterByCategory = (selectedCategory) => {
+    setActiveCategory(selectedCategory);
+    if (selectedCategory === "전체") {
+      setFilteredCommunityList(communityList);
+    } else {
+      const filteredList = communityList.filter(
+        (item) => item.category === selectedCategory
+      );
+      setFilteredCommunityList(filteredList);
+    }
   };
 
   return (
     <ItemTitle>
-      <Search>
-        <Box type="search" placeholder="단어를 입력하세요" />
-        <LuSearch1 />
-        <Buttons>
-          <ButtonCh onClick={handleLatest}>
-            최신순
-            <HiArrowSmDown1 />
-          </ButtonCh>
-          <BuWrite
-            onClick={() => {
-              navigate("/community/write");
-            }}
+      <Col>
+        <CommunityText>고양이가 세상을 지배한다</CommunityText>
+        <WriteBtn
+          onClick={() => {
+            navigate("/community/write");
+          }}
+        >
+          글 작성
+        </WriteBtn>
+      </Col>
+      <Category>
+        {category.map((item, index) => (
+          <CategoryBtn
+            key={index}
+            $active={activeCategory === item.name}
+            onClick={() => filterByCategory(item.name)}
           >
-            글 작성
-          </BuWrite>
-        </Buttons>
-      </Search>
-
-      <All>전체 {communityList.length.toLocaleString()}개</All>
+            <CategoryImg src={item.src} alt={item.name} />
+            {item.name}
+          </CategoryBtn>
+        ))}
+      </Category>
       <RowLi>
-        {communityList.map((item) => (
+        {filteredCommunityList.map((item) => (
           <Lists
             key={item.postId}
             onClick={(e) => {
@@ -125,27 +81,11 @@ const CommunityList = () => {
             <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.title}</ListTItle>
-              <ListUser>
-                작성자: {userNicknames[item.user] || "로딩 중..."}
-              </ListUser>
+              <ListUser>작성자: {item.user}</ListUser>
               <ListDate>
                 {new Date(item.createdAt).toLocaleDateString("ko-KR", {
                   timeZone: "Asia/Seoul",
                 })}
-                <Icons>
-                  <FcLike1
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      good(item.postId);
-                    }}
-                  />
-                  {item.good || 0}
-                  <Comment1 />
-                  {
-                    comments.filter((comment) => comment.post === item.postId)
-                      .length
-                  }
-                </Icons>
               </ListDate>
             </ListTitlesContainer>
           </Lists>
@@ -164,53 +104,21 @@ const ItemTitle = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const Buttons = styled.div`
-  position: absolute;
-  right: 0px;
-  display: flex;
-  gap: 5px;
-`;
-const Box = styled.input`
-  width: 50%;
-  height: 30px;
-  margin: 10px 0px;
-  padding-left: 10px;
-  border-radius: 5px;
-  border: 1px solid #f0f0f0;
-  background-color: #f0f0f0;
-  outline: none;
-  &::placeholder {
-    font-size: 12px;
-    color: #b3b3b3;
-  }
-`;
-const HiArrowSmDown1 = styled(HiArrowSmDown)`
-  font-size: 20px;
-`;
-const Search = styled.div`
+const Col = styled.div`
   width: 100%;
-  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
 `;
-const LuSearch1 = styled(LuSearch)`
-  position: absolute;
-  top: 16px;
-  left: 43%;
-  border-radius: 15px;
-  color: #b3b3b3;
-`;
-const ButtonCh = styled.button`
+const CommunityText = styled.div`
   display: flex;
   align-items: center;
-  border-radius: 8px;
-  padding: 3px 0px 3px 6px;
-  &:hover {
-    background-color: #f0f0f0;
-  }
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 15px;
+  font-weight: bold;
+  color: #ff6e00;
 `;
-const BuWrite = styled.button`
+const WriteBtn = styled.button`
   width: 64px;
   height: 28px;
   font-size: 12px;
@@ -219,15 +127,34 @@ const BuWrite = styled.button`
   border-radius: 8px;
   border: 1px solid #ff6e00;
   outline: none;
+  transition: border-color 0.3s;
   align-items: center;
   justify-content: center;
   color: white;
-  cursor: pointer;
+  margin-right: 15px;
 `;
-const All = styled.div`
-  font-size: 12px;
-  color: #8d8d8d;
-  margin: 10px 0px;
+const Category = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0px 20px 0px;
+  align-items: center;
+`;
+const CategoryBtn = styled.div`
+  display: flex;
+  font-size: 13px;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  opacity: ${({ $active }) => ($active ? "1" : "0.5")};
+  transition: opacity 0.3s;
+  &:hover {
+    opacity: 1;
+  }
+`;
+const CategoryImg = styled.img`
+  width: 25px;
+  height: 30px;
 `;
 const RowLi = styled.div`
   display: flex;
@@ -282,20 +209,4 @@ const ListDate = styled.div`
   width: 100%;
   align-items: center;
   justify-content: flex-end;
-`;
-const Icons = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 14px;
-  color: #8d8d8d;
-  margin-left: 5px;
-`;
-const FcLike1 = styled(FcLike)`
-  font-size: 16px;
-  cursor: pointer;
-`;
-const Comment1 = styled(IoChatbubbleEllipsesOutline)`
-  font-size: 16px;
-  margin-left: 10px;
 `;
