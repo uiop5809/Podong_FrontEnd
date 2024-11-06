@@ -7,14 +7,15 @@ import { FiHeart } from "react-icons/fi";
 import axios from "../../apis/AxiosInstance";
 
 const PetItemDetailPage = () => {
-  const { no } = useParams(); //URL에서 글 번호(no)를 가져옴
+  const { no } = useParams();
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
-  const [refreshComments, setRefreshComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [users, setUsers] = useState({});
 
   useEffect(() => {
     axios
-      .get(`https://ureca.store/api/petItems/${no}`)
+      .get(`/petItems/${no}`)
       .then((response) => {
         setItemDetail(response.data);
         console.log("나눔 상세 :", response.data);
@@ -22,29 +23,41 @@ const PetItemDetailPage = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [no]);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await axios.get(
-          `https://ureca.store/api/petItemComments`
+    axios
+      .get(`/petItemComments?petItem=${no}`)
+      .then((response) => {
+        const relevantComments = response.data.filter(
+          (item) => item.petItem === parseInt(no)
         );
-        setComments(response.data);
-        console.log("댓글 목록 :", response.data);
-      } catch (error) {
-        console.error("Error :", error);
-      }
-    };
+        setComments(relevantComments);
+        console.log("댓글 목록 :", relevantComments);
 
-    fetchComments();
-  }, [refreshComments]);
+        // 유저 정보 가져오기
+        const userIds = [...new Set(relevantComments.map((item) => item.user))];
+        axios
+          .all(userIds.map((userId) => axios.get(`/users/${userId}`)))
+          .then((responses) => {
+            const userMap = {};
+            responses.forEach((response) => {
+              userMap[response.data.userId] = response.data.nickname;
+            });
+            setUsers(userMap);
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching comments:", error);
+      });
+  }, [no]);
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = itemDetail.good + 1;
     axios
-      .put(`https://ureca.store/api/petItems/${no}`, {
+      .put(`/petItems/${no}`, {
         ...itemDetail,
         good: updatedGood,
       })
@@ -56,65 +69,31 @@ const PetItemDetailPage = () => {
         console.error("좋아요 업데이트 실패:", error);
       });
   };
-  //댓글 등록
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const user = localStorage.getItem("userId");
-    const data = Object.fromEntries(formData.entries());
-    data.petItem = no;
-    data.user = user;
-    axios
-      .post("https://ureca.store/api/petItemComments", data)
-      .then((response) => {
-        console.log("등록 : ", response.data);
-        setComments((prevComments) => [...prevComments, response.data]);
-        console.log("등록 data : ", data);
-        alert("등록 성공!");
-        setRefreshComments((prev) => !prev);
-      })
-      .catch((error) => console.error("오류 발생:", error));
 
-    e.target.reset();
+  // 댓글 등록
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    const userId = localStorage.getItem("userId");
+    axios
+      .post("/petItemComments", {
+        petItem: no,
+        user: userId,
+        comment: newComment,
+      })
+      .then((response) => {
+        console.log("댓글 등록 성공:", response.data);
+        setComments((prevComments) => [...prevComments, response.data]);
+        setNewComment("");
+      })
+      .catch((error) => {
+        console.error("댓글 등록 실패:", error);
+      });
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem("userId");
-      try {
-        const response = await axios.get(`/user/${userId}`);
-        const data = response.data;
-        setItemDetail((prev) => ({
-          ...prev,
-          username: data.nickname,
-        }));
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
-    const fetchCommentUserData = async () => {
-      const updatedComments = await Promise.all(
-        comments.map(async (comment) => {
-          try {
-            const response = await axios.get(`/user/${comment.user}`);
-            const userData = response.data;
-            return { ...comment, username: userData.nickname };
-          } catch (error) {
-            console.error("Failed to fetch comment user data:", error);
-            return comment;
-          }
-        })
-      );
-      setComments(updatedComments);
-    };
-    if (comments.length > 0) {
-      fetchCommentUserData();
-    }
-  }, [comments]);
+  // 댓글 입력 핸들러
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
 
   return (
     <Container>
@@ -137,10 +116,7 @@ const PetItemDetailPage = () => {
             />
             {itemDetail.good || 0}
             <Comment1 />
-            {
-              comments.filter((item) => item.petItem === itemDetail.petItemId)
-                .length
-            }
+            {comments.length}
           </div>
           <div>
             <ListPrice>
@@ -156,29 +132,29 @@ const PetItemDetailPage = () => {
         <Contents>작성글: {itemDetail.description}</Contents>
         <Line />
         <CommentST>
-          {comments
-            .filter((item) => item.petItem === itemDetail.petItemId)
-            .map((item) => (
-              <div key={item.petItemCommentId}>
-                <User2>
-                  <VscAccount1 />
-                  작성자: {item.username}
-                  <ListDate key={item.petItemCommentId}>
-                    {new Date(item.createdAt).toLocaleDateString("ko-KR", {
-                      timeZone: "Asia/Seoul",
-                    })}
-                  </ListDate>
-                </User2>
-                <Comment>{item.comment}</Comment>
-              </div>
-            ))}
+          {comments.map((item) => (
+            <div key={item.petItemCommentId}>
+              <User2>
+                <VscAccount1 />
+                작성자: {users[item.user]}
+                <ListDate>
+                  {new Date(item.createdAt).toLocaleDateString("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                  })}
+                </ListDate>
+              </User2>
+              <Comment>{item.comment}</Comment>
+            </div>
+          ))}
         </CommentST>
       </ItemTitle>
-      <CommentFrom onSubmit={handleSubmit}>
+      <CommentFrom onSubmit={handleCommentSubmit}>
         <CommentCC
           type="text"
           name="comment"
           placeholder="댓글을 달아주세요."
+          value={newComment}
+          onChange={handleCommentChange}
           required
         />
         <CommentSubmit type="submit">등록</CommentSubmit>
@@ -188,6 +164,7 @@ const PetItemDetailPage = () => {
 };
 
 export default PetItemDetailPage;
+
 const ItemTitle = styled.div`
   display: flex;
   flex-direction: column;
