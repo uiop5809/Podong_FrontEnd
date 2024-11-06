@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const ScrollableContainer = styled.div`
-max-height: 100%;
-margin: 64px 0;
-width: 100%;
+  min-height: 100vh;
+  margin: 64px 0 80px;
+  width: 100%;
 `;
 
 export const Container = styled.div`
@@ -23,23 +23,22 @@ export const UserInfo = styled.span`
   font-size: 16px;
   font-weight: bold;
   margin-top: 20px;
-  margin-left: 5%;
+  margin: 0 auto;
   text-align: left;
 `;
 
 export const EditButton = styled.button`
+  color: #ff6e00;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 3px;
+  margin: 0 auto;
+  transition: background-color 0.3s;
 
-color: #ff6e00;
-border: none;
-border-radius: 20px;
-cursor: pointer;
-font-size:11px;
-font-weight: bold;
-margin-top: 3px;
-margin-left: 5%;
-transition: background-color 0.3s;
-
-&:hover {
-  color: #e65c00;
-}
+  &:hover {
+    color: #e65c00;
+  }
 `;
