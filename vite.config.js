@@ -14,6 +14,9 @@ export default defineConfig({
       "/api": {
         target: "https://ureca.store/api",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, "/api"),
+        secure: false,
+        ws: true,
       },
     },
   },

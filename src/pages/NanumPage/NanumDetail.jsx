@@ -10,21 +10,11 @@ const PetItemDetailPage = () => {
   const { no } = useParams(); //URL에서 글 번호(no)를 가져옴
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const userId = localStorage.getItem('userId');
-  //     if (!userId) {
-  //       console.error('User ID not found in local storage');
-  //       return;
-  //     }
-  //   );
+  const [refreshComments, setRefreshComments] = useState(false);
 
   useEffect(() => {
-    // 상세정보 불러오기
-
     axios
-      .get(`/petItems/${no}`)
+      .get(`https://ureca.store/api/petItems/${no}`)
       .then(response => {
         setItemDetail(response.data);
         console.log('나눔 상세 :', response.data);
@@ -35,24 +25,24 @@ const PetItemDetailPage = () => {
   }, [no]);
 
   useEffect(() => {
-    axios
-      .get(`/petItemComments`)
-      .then(response => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`https://ureca.store/api/petItemComments`);
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+      } catch (error) {
+        console.error('Error :', error);
+      }
+    };
+
+    fetchComments();
+  },  [refreshComments]);
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = itemDetail.good + 1;
-
-    // 서버의 좋아요 수 업데이트 요청
     axios
-      .put(`/petItems/${no}`, { ...itemDetail, good: updatedGood })
+      .put(`https://ureca.store/api/petItems/${no}`, { ...itemDetail, good: updatedGood })
       .then(response => {
         console.log('좋아요 업데이트:', response.data);
         setItemDetail(prevDetail => ({ ...prevDetail, good: updatedGood }));
@@ -63,29 +53,31 @@ const PetItemDetailPage = () => {
   };
   //댓글 등록
   const handleSubmit = e => {
-    e.preventDefault(); // 새로고침 방지
+    e.preventDefault(); 
     const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries()); //객체로 변환
-    // const now = new Date().toISOString();
-    // data.createdAt = now; // 현재 시간 추가
+    const user = localStorage.getItem('userId');
+    const data = Object.fromEntries(formData.entries());
     data.petItem = no;
-    //글 등록
+    data.user = user;
     axios
-      .post('/petItemComments', data)
+      .post('https://ureca.store/api/petItemComments', data)
       .then(response => {
         console.log('등록 : ', response.data);
         setComments(prevComments => [...prevComments, response.data]);
         console.log('등록 data : ', data);
+        alert('등록 성공!');
+        setRefreshComments(prev => !prev);
       })
       .catch(error => console.error('오류 발생:', error));
 
-    e.target.reset(); // 입력값 초기화
+    e.target.reset(); 
   };
+  
 
   return (
     <Container>
       <ItemTitle>
-        <ListImg src={`http://localhost:8080/uploads/${itemDetail.imageUrl}`} alt={itemDetail.imageUrl} />
+        <ListImg src={itemDetail.imageUrl} alt={itemDetail.imageUrl} />
         <ImgBt>
           <ImgNo>1 / 5</ImgNo>
         </ImgBt>
@@ -118,7 +110,7 @@ const PetItemDetailPage = () => {
               <div key={item.petItemCommentId}>
                 <User2>
                   <VscAccount1 />
-                  작성자: {item.length > 0 && item[0].user}
+                  작성자: {item.user}
                   <ListDate key={item.petItemCommentId}>
                     {new Date(item.createdAt).toLocaleDateString('ko-KR', {
                       timeZone: 'Asia/Seoul',
@@ -130,9 +122,7 @@ const PetItemDetailPage = () => {
             ))}
         </CommentST>
       </ItemTitle>
-
       <CommentFrom onSubmit={handleSubmit}>
-        <input type="number" name="user" placeholder="유저번호" required />
         <CommentCC type="text" name="comment" placeholder="댓글을 달아주세요." required />
         <CommentSubmit type="submit">등록</CommentSubmit>
       </CommentFrom>
@@ -255,14 +245,17 @@ const CommentST = styled.div`
 `;
 const CommentFrom = styled.form`
   width: 100%;
+  position: absolute;
   display: flex;
   justify-content: flex-end;
+  bottom: 0px;
   margin-top: auto;
   margin-bottom: 64px;
 `;
 const Container = styled.div`
   height: 100dvh;
   display: flex;
+  position: relative;
   flex-direction: column;
 `;
 const CommentCC = styled.input`

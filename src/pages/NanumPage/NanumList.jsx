@@ -15,7 +15,7 @@ const PetItemListPage = () => {
   //게시글 목록 불러오기
   useEffect(() => {
     axios
-      .get('/petItems')
+      .get('https://ureca.store/api/petItems')
       .then(response => {
         setPetItemList(response.data); // 응답 데이터 저장
         console.log('게시글 목록:', response.data);
@@ -32,7 +32,7 @@ const PetItemListPage = () => {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
         axios
-          .put(`/petItems/${petItemId}`, { ...item, good: updatedGood })
+          .put(`https://ureca.store/api/petItems/${petItemId}`, { ...item, good: updatedGood })
           .then(response => {
             console.log('좋아요 업데이트:', response.data);
           })
@@ -49,7 +49,7 @@ const PetItemListPage = () => {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`/petItemComments`)
+      .get(`https://ureca.store/api/petItemComments`)
       .then(response => {
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
@@ -94,7 +94,7 @@ const PetItemListPage = () => {
               e.preventDefault();
               navigate(`/nanumList/detail/${item.petItemId}`);
             }}>
-            <ListImg src={`http://localhost:8080/uploads/${item.imageUrl}`} />
+            <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
               <ListUser>작성자{item.user}</ListUser>
@@ -194,6 +194,7 @@ const BuWrite = styled.button`
   align-items: center;
   justify-content: center;
   color: white;
+  cursor: pointer;
 `;
 const All = styled.div`
   font-size: 12px;
@@ -219,9 +220,10 @@ const ListImg = styled.img`
   background-color: #d9d9d9;
   border-radius: 8px;
   flex-shrink: 0; /* 이미지 크기를 고정 */
-  background-image: url(${props => props.src}); /* 이미지 URL 설정 */
-  background-size: cover; /* 이미지를 채우도록 설정 */
-  background-position: center; /* 이미지 중앙 정렬 */
+  background-image: url(${props => props.src});
+  background-size: cover; 
+  background-position: center; 
+  cursor: pointer;
 `;
 const ListTitlesContainer = styled.div`
   display: flex;
@@ -275,6 +277,7 @@ const Icons = styled.div`
 `;
 const FcLike1 = styled(FcLike)`
   font-size: 16px;
+  cursor: pointer;
 `;
 const Comment1 = styled(IoChatbubbleEllipsesOutline)`
   font-size: 16px;
