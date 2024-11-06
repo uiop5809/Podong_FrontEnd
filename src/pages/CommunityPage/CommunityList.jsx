@@ -3,11 +3,15 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "../../apis/AxiosInstance";
 import { images } from "../../components/Images";
+import { FcLike } from "react-icons/fc";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 
 const CommunityList = () => {
   const navigate = useNavigate();
   const [communityList, setCommunityList] = useState([]);
   const [filteredCommunityList, setFilteredCommunityList] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [userNicknames, setUserNicknames] = useState({});
   const [activeCategory, setActiveCategory] = useState("전체");
   const category = [
     { src: images.categoryAll, name: "전체" },
@@ -26,6 +30,64 @@ const CommunityList = () => {
         setCommunityList(response.data);
         setFilteredCommunityList(response.data);
         console.log("게시글 목록:", response.data);
+        response.data.forEach((item) => {
+          if (!userNicknames[item.user]) {
+            fetchUserNickname(item.user);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  // 사용자 닉네임 가져오기 함수
+  const fetchUserNickname = (userId) => {
+    axios
+      .get(`/user/${userId}`)
+      .then((response) => {
+        setUserNicknames((prev) => ({
+          ...prev,
+          [userId]: response.data.nickname,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching user nickname:", error);
+      });
+  };
+
+  // 좋아요 수 증가 함수
+  const good = (postId) => {
+    const updatedItemList = communityList.map((item) => {
+      if (item.postId === postId) {
+        const updatedGood = (item.good || 0) + 1;
+        // 서버의 좋아요 수 업데이트 요청
+        axios
+          .put(`/communities/${postId}`, {
+            ...item,
+            good: updatedGood,
+          })
+          .then((response) => {
+            console.log("좋아요 업데이트:", response.data);
+          })
+          .catch((error) => {
+            console.error("좋아요 업데이트 실패:", error);
+          });
+        return { ...item, good: updatedGood };
+      }
+      return item;
+    });
+    setCommunityList(updatedItemList);
+    setFilteredCommunityList(updatedItemList);
+  };
+
+  // 댓글 목록 불러오기
+  useEffect(() => {
+    axios
+      .get(`/communityComments`)
+      .then((response) => {
+        setComments(response.data);
+        console.log("댓글 목록 :", response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -81,11 +143,27 @@ const CommunityList = () => {
             <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.title}</ListTItle>
-              <ListUser>작성자: {item.user}</ListUser>
+              <ListUser>
+                작성자: {userNicknames[item.user] || "로딩 중..."}
+              </ListUser>
               <ListDate>
                 {new Date(item.createdAt).toLocaleDateString("ko-KR", {
                   timeZone: "Asia/Seoul",
                 })}
+                <Icons>
+                  <FcLike1
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      good(item.postId);
+                    }}
+                  />
+                  {item.good || 0}
+                  <Comment1 />
+                  {
+                    comments.filter((comment) => comment.post === item.postId)
+                      .length
+                  }
+                </Icons>
               </ListDate>
             </ListTitlesContainer>
           </Lists>
@@ -135,9 +213,10 @@ const WriteBtn = styled.button`
 `;
 const Category = styled.div`
   width: 100%;
+  height: 83px;
+  padding: 10px;
   display: flex;
-  justify-content: space-around;
-  margin: 10px 0px 20px 0px;
+  justify-content: space-between;
   align-items: center;
 `;
 const CategoryBtn = styled.div`
@@ -209,4 +288,20 @@ const ListDate = styled.div`
   width: 100%;
   align-items: center;
   justify-content: flex-end;
+`;
+const Icons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 14px;
+  color: #8d8d8d;
+  margin-left: 5px;
+`;
+const FcLike1 = styled(FcLike)`
+  font-size: 16px;
+  cursor: pointer;
+`;
+const Comment1 = styled(IoChatbubbleEllipsesOutline)`
+  font-size: 16px;
+  margin-left: 10px;
 `;
