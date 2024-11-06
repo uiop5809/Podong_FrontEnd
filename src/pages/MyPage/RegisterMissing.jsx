@@ -198,6 +198,8 @@ const RegisterMissing = () => {
   const handleSubmit = async () => {
     const formData = new FormData();
 
+  
+    const walkrouteId = 2;
 
     formData.append('petId', petId);
     formData.append('userId', userId); 

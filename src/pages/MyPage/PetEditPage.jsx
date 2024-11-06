@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
-import UploadImg from '../../components/Register/UploadImg';
+import DisplayImg from '../../components/Register/DisplayImg';
 import axios from '../../apis/AxiosInstance';
+import { useParams } from 'react-router-dom';
+import EditImg from '../../components/Register/EditImg';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -18,6 +20,25 @@ const Container = styled.div`
   width: 90%;
   margin-left: 5%;
 `;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 150px; /* 이미지 너비 */
+  height: 150px; /* 이미지 높이 */
+  margin-bottom: 20px; /* 간격 조정 */
+`;
+
+const OverlayImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 
 const Label = styled.label`
   font-size: 10px;
@@ -80,7 +101,7 @@ const RegisterButton = styled.button`
 `; // 등록 버튼
 
 const PetEditPage = () => {
-  const petId = 1;
+  const { petId } = useParams(); // URL에서 petId 가져오기
   const navigate = useNavigate();
 
   const [imgPath, setImgPath] = useState('');
@@ -121,7 +142,7 @@ const PetEditPage = () => {
         const petData = response.data;
 
         if (petData) {
-          setImgPath(`http://localhost:8080/uploads/${petData.petPicture}`);
+          setImgPath(petData.petPicture);
           setPetName(petData.petName);
           setBirthdate(petData.birthdate);
           setAge(calculateAge(petData.birthdate));
@@ -178,7 +199,7 @@ const PetEditPage = () => {
       });
       if (response.status === 200) {
         alert('반려동물 수정이 완료되었습니다.');
-        navigate('/userRegister');
+        navigate('/myPage/:userId');
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
@@ -210,8 +231,13 @@ const PetEditPage = () => {
 
   return (
     <ScrollableContainer>
-      <Container>
-        <UploadImg imgPath={imgPath} setImgPath={setImgPath} />
+    <Container>
+        <ImageWrapper>
+          <DisplayImg imgPath={imgPath} />
+          <OverlayImage>
+            <EditImg imgPath={imgPath} setImgPath={setImgPath} />
+          </OverlayImage>
+        </ImageWrapper>
         <Label>어떤 반려동물과 함께하고 계신가요?</Label>
         <SelectButtonContainer>
           <SelectButton selected={selectedPetType === '강아지'} onClick={() => handlePetTypeClick('강아지')}>
