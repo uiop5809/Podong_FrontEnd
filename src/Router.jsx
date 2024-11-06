@@ -33,7 +33,6 @@ import PaymentCancelDone from './pages/PaymentPage/PaymentCancelDone.jsx';
 import RecommendedRoutesPage from './pages/WalkPage/RecommendedRoutesPage.jsx';
 import OrderList from './pages/OrderPage/OrderList.jsx';
 import OrderDetail from './pages/OrderPage/OrderDetail.jsx';
-import OrderCancel from './pages/OrderPage/OrderCancel.jsx';
 
 function Router() {
   return (
@@ -88,8 +87,7 @@ function Router() {
 
             <Route path="orderList" element={<Outlet />}>
               <Route index element={<OrderList />} />
-              <Route path="orderDetail" element={<OrderDetail />} />
-              <Route path="orderCancel" element={<OrderCancel />} />
+              <Route path="orderDetail/:orderId" element={<OrderDetail />} />
             </Route>
           </Route>
         </Routes>
