@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { images } from '../../components/Images';
-
+import Cookies from 'js-cookie';
 const MainPage = () => {
   const [activeTab, setActiveTab] = useState('댕댕이');
   const [activeCategory, setActiveCategory] = useState('전체');
@@ -19,7 +19,8 @@ const MainPage = () => {
 
   const tabs = ['댕댕이', '고냥이'];
   const categories = ['전체', '사료', '간식', '영양제', '용품'];
-
+  const emailFromCookie = Cookies.get('email');
+  const profileNicknameFromCookie = Cookies.get('profile_nickname');
   const { userId } = useParams();
   if (typeof userId === 'string' && !isNaN(userId)) {
     localStorage.setItem('userId', userId);

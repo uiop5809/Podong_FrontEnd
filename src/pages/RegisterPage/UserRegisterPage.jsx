@@ -348,6 +348,7 @@ const UserRegisterPage = () => {
   const [email, setEmail] = useState('');
   const [profileNickname, setProfileNickname] = useState('');
 
+  
   useEffect(() => {
     const emailFromCookie = Cookies.get('email');
     const profileNicknameFromCookie = Cookies.get('profile_nickname');
@@ -364,8 +365,26 @@ const UserRegisterPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
 
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+    let formattedValue = '';
+
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 3);
+    }
+    if (value.length > 3) {
+      formattedValue += '-' + value.substring(3, 7);
+    }
+    if (value.length > 7) {
+      formattedValue += '-' + value.substring(7, 11);
+    }
+
+    setPhoneNumber(formattedValue); // 포맷된 값으로 상태 업데이트
+  };
+
   const handleRegister = async () => {
-    // 닉네임 검증
+   
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
@@ -383,6 +402,7 @@ const UserRegisterPage = () => {
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      setPhoneNumber('');
       return;
     }
 
@@ -392,7 +412,7 @@ const UserRegisterPage = () => {
     }
 
     try {
-      const response = await axios.post(`/user/Register`, {
+      const response = await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
         phoneNumber,
         address,
@@ -409,7 +429,6 @@ const UserRegisterPage = () => {
 
       console.log(userId);
 
-      // userId를 localStorage에 저장
       localStorage.setItem('userId', userId);
       alert('userId가 localStorage에 저장되었습니다: ' + userId);
       navigate('/petRegister/:userId');
@@ -455,7 +474,7 @@ const UserRegisterPage = () => {
               required
               placeholder="전화번호를 입력해주세요"
               value={phoneNumber}
-              onChange={e => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneNumberChange}
             />
             <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
