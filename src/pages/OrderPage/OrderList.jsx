@@ -21,6 +21,7 @@ const OrderList = () => {
   const fetchOrderList = async () => {
     try {
       const response = await axios.get(`/order/list/${userId}`);
+      console.log(response.data); // 응답 데이터에 orderId 포함 여부 확인
       const formattedData = response.data.map(product => ({
         ...product,
         status: statuses[product.status] || '상태 없음',
@@ -76,7 +77,12 @@ const OrderList = () => {
             <ButtonWrapper>
               <OrderButton>배송 조회</OrderButton>
               <OrderButton>재구매</OrderButton>
-              <OrderButton onClick={() => navigate('/orderList/orderDetail')}>주문 상세</OrderButton>
+              <OrderButton
+                onClick={() =>
+                  navigate(`/orderList/orderDetail/${product.orderId}`, { state: { quantity: product.quantity } })
+                }>
+                주문 상세
+              </OrderButton>
             </ButtonWrapper>
           </OrderCard>
         </OrderContainer>
