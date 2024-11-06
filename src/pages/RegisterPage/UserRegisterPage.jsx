@@ -288,6 +288,8 @@ const RegisterButton = styled.button`
     background-color: #ff6e00;
     color: white;
   }
+  margin-bottom: 80px;
+  margin-left: 20px;
 `;
 
 const UserRegisterPage = () => {

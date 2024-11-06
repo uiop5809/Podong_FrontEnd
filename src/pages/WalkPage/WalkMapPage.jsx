@@ -4,7 +4,7 @@ import WalkingTimer from "../../components/walking/WalkingTimer";
 import MissingPetAlert from "../../components/walking/MissingPetAlert";
 import { images } from "../../components/Images";
 
-const { kakao } = window;
+const { kakao } = typeof window !== "undefined" ? window : {};
 
 const sampleMissingPet = {
   name: "멍멍이",
@@ -123,16 +123,18 @@ const WalkMapPage = () => {
 
   /* 지도 관련*/
   useEffect(() => {
-    const mapContainer = document.getElementById("map");
-    const mapOptions = {
-      center: new kakao.maps.LatLng(
-        currentPosition.latitude,
-        currentPosition.longitude
-      ),
-      level: 3,
-    };
-    const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
-    setMap(kakaoMap);
+    if (typeof window !== "undefined" && window.kakao) {
+      const mapContainer = document.getElementById("map");
+      const mapOptions = {
+        center: new window.kakao.maps.LatLng(
+          currentPosition.latitude,
+          currentPosition.longitude
+        ),
+        level: 3,
+      };
+      const kakaoMap = new window.kakao.maps.Map(mapContainer, mapOptions);
+      setMap(kakaoMap);
+    }
   }, [currentPosition.latitude, currentPosition.longitude]);
 
   // 지도 클릭하여 출발지, 목적지 설정
