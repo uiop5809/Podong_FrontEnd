@@ -20,40 +20,29 @@ const InputFile = styled.label`
   font-size: 10px;
   font-weight: bold;
   transition: background-color 0.3s;
-  margin-top: -20px;
+  margin-top: -80px;
+  margin-left: 30px;
 `;
 
 const HiddenInput = styled.input`
   display: none;
 `;
-
-const ImageBox = styled.div`
-  margin-top: 10px;
-  padding: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const ImageContainer = styled.div`
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  margin-left: 30px;
+  overflow: hidden; 
   background-color: #FFD3D3;
-  overflow: hidden;
-  border: 1px solid #FFD3D3;
+  display: flex;
+  margin-left: 160px;
+  justify-content: center;
+  align-items: center;
 `;
-
 const StyledImage = styled.img`
-  width: 110%;
+  width: 100%; 
   height: 110%;
   border-radius: 50%;
   object-fit: cover;
-`;
-
-const ImageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `;
 
 const CameraIcon = styled(TbCameraHeart)`
@@ -78,17 +67,15 @@ const UploadImg = ({ imgPath, setImgPath }) => {
 
   return (
     <Container>
-      <ImageBox>
+      <ImageContainer>
         {imgPath instanceof File ? ( 
           <StyledImage src={URL.createObjectURL(imgPath)} alt="애완동물 사진" />
         ) : (
-          <ImageContainer>
-            <CameraIcon />
-          </ImageContainer>
+          <CameraIcon />
         )}
-      </ImageBox>
+      </ImageContainer>
       <InputFile htmlFor="inputForm">
-        등록
+        수정
         <HiddenInput
           type="file"
           id="inputForm"
