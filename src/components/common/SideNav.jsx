@@ -9,14 +9,11 @@ const SideNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -38,12 +35,10 @@ const SideNav = () => {
     { path: '/community', title: '커뮤니티' },
     { path: '/communityDetail', title: '상세 정보' },
     { path: '/communityWrite', title: '커뮤니티 작성' },
-    { path: '/myPage/editUserRegister', title: '회원 정보 수정' },
-    { path: '/myPage/editPetRegister', title: '응애 정보 수정' },
-    { path: '/myPage/missingRegister', title: '실종 등록' },
-    { path: '/myPage/missingSave', title: '실종 등록 완료' },
-    {path : '/petRegister', title: '우리응애 등록'},
-    {path : '/userRegister/:userId', title: '회원정보 등록'},
+    { path: `/myPage/${userId}/editUserRegister`, title: '회원 정보 수정' },
+    { path: `/myPage/${userId}/editPetRegister`, title: '응애 정보 수정' },
+    { path: `/myPage/${userId}/missingRegister`, title: '실종 등록' },
+    { path: `/myPage/${userId}/missingSave`, title: '실종 등록 완료' },
     { path: '/myPage', title: '마이 페이지' },
     { path: '/orderList/orderDetail/orderCancel', title: '주문 취소' },
     { path: '/orderList/orderDetail', title: '주문 상세' },
@@ -51,44 +46,53 @@ const SideNav = () => {
     { path: '/alert', title: '알림' },
   ];
 
-  const getPageTitle = pathname => {
+  const getPageTitle = (pathname) => {
     const sortedPages = pageTitles.sort((a, b) => b.path.length - a.path.length);
-    const exactMatch = sortedPages.find(page => page.path === pathname);
+    const exactMatch = sortedPages.find((page) => page.path === pathname);
     if (exactMatch) return exactMatch.title;
 
-    const partialMatch = sortedPages.find(page => pathname.startsWith(page.path));
+    const partialMatch = sortedPages.find((page) => pathname.startsWith(page.path));
     return partialMatch ? partialMatch.title : '제목';
   };
 
   const pageTitle = getPageTitle(location.pathname);
 
+  const handleUserIconClick = () => {
+    if (userId) {
+      navigate(`/myPage/${userId}`); // userId가 있으면 마이페이지로 이동
+    } else {
+      navigate('/login'); // userId가 없으면 로그인 페이지로 이동
+    }
+  };
+
   const icons = [
     { icon: <FaRegBell />, link: '/notifications' },
     { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
-    { icon: <FaRegUserCircle />, link: '/Login' },
   ];
 
   return (
-    <>
-      <Navbar $isScrolled={isScrolled}>
-        <BackBtn>
-          <StyledHiArrowLeft
-            size={18}
-            onClick={() => {
-              navigate(-1);
-            }}
-          />
-        </BackBtn>
-        <SideNaveTitle>{pageTitle}</SideNaveTitle>
-        <NavIconWrap>
-          {icons.map((item, index) => (
-            <Link to={item.link} key={index}>
-              {item.icon}
-            </Link>
-          ))}
-        </NavIconWrap>
-      </Navbar>
-    </>
+    <Navbar $isScrolled={isScrolled}>
+      <BackBtn>
+        <StyledHiArrowLeft
+          size={18}
+          onClick={() => {
+            navigate(-1);
+          }}
+        />
+      </BackBtn>
+      <SideNaveTitle>{pageTitle}</SideNaveTitle>
+      <NavIconWrap>
+        {icons.map((item, index) => (
+          <Link to={item.link} key={index}>
+            {item.icon}
+          </Link>
+        ))}
+        {/* 사용자 아이콘에 직접 onClick 추가 */}
+        <span onClick={handleUserIconClick} style={{ cursor: 'pointer' }}>
+          <FaRegUserCircle />
+        </span>
+      </NavIconWrap>
+    </Navbar>
   );
 };
 

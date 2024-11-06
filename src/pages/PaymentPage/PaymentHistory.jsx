@@ -100,6 +100,17 @@ const CardItem = styled.div`
   align-items: center;
 `;
 
+const StyleStrong = styled.div`
+  white-space: nowrap;
+  width: 60px;
+`;
+
+const StyledSpan = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const PaymentHistory = () => {
   const userId = localStorage.getItem('userId');
   const [payments, setPayments] = useState([]);
@@ -147,43 +158,43 @@ const PaymentHistory = () => {
         {payments.map((payment, index) => (
           <Card key={index}>
             <CardItem>
-              <strong>결제 상태 :</strong>
+              <StyleStrong>결제 상태 :</StyleStrong>
               <span>{payment.payStatus}</span>
             </CardItem>
             <CardItem>
-              <strong>주문 날짜 :</strong>
+              <StyleStrong>주문 날짜 :</StyleStrong>
               <span>{new Date(payment.createdAt).toLocaleString()}</span>
             </CardItem>
             <CardItem>
-              <strong>주문 번호 :</strong>
+              <StyleStrong>주문 번호 :</StyleStrong>
               <span>{payment.merchantId}</span>
             </CardItem>
             <CardItem>
-              <strong>상품명 :</strong>
-              <span>{payment.payName}</span>
+              <StyleStrong>상품명 :</StyleStrong>
+              <StyledSpan>{payment.payName.replace(/<[^>]*>/g, '')}</StyledSpan>
             </CardItem>
             <CardItem>
-              <strong>결제 수단 :</strong>
+              <StyleStrong>결제 수단 :</StyleStrong>
               <span>{payment.payMethod}</span>
             </CardItem>
             <CardItem>
-              <strong>금액 :</strong>
+              <StyleStrong>금액 :</StyleStrong>
               <span>{payment.payAmount.toLocaleString()} 원</span>
             </CardItem>
             <CardItem>
-              <strong>카드명 :</strong>
+              <StyleStrong>카드명 :</StyleStrong>
               <span>{payment.cardName}</span>
             </CardItem>
             <CardItem>
-              <strong>카드 번호 :</strong>
+              <StyleStrong>카드 번호 :</StyleStrong>
               <span>{payment.cardNumber}</span>
             </CardItem>
             <CardItem>
-              <strong>할부 개월 수:</strong>
+              <StyleStrong>할부 개월 수:</StyleStrong>
               <span>{payment.installmentMonths}</span>
             </CardItem>
             <CardItem>
-              <strong>PG사명:</strong>
+              <StyleStrong>PG사명:</StyleStrong>
               <span>{payment.pg}</span>
             </CardItem>
           </Card>
