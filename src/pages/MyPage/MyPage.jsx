@@ -62,6 +62,7 @@ const OrderBagImage = styled.img`
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 10px;
+  cursor: pointer;
 `;
 
 const OrderReviewImage = styled.img`
@@ -299,18 +300,18 @@ const NoPetsMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 50px 0; 
+  margin: 50px 0;
   text-align: center;
 
   p {
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
     font-size: 16px;
     color: #555;
   }
 `;
 
 const PetAddButton = styled.button`
-  background-color: #D0D0D0;
+  background-color: #d0d0d0;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -321,7 +322,7 @@ const PetAddButton = styled.button`
   transition: background-color 0.3s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: #B0B0B0;
+    background-color: #b0b0b0;
   }
 `;
 
@@ -389,9 +390,7 @@ function MyPage() {
           <StyledAvatar />
           <UserInfo>
             {userData ? userData.nickname : '조금만 기다려 주세요'}
-            <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>
-              수정
-          </EditButton>
+            <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>수정</EditButton>
           </UserInfo>
         </MainContainer>
 
@@ -411,7 +410,7 @@ function MyPage() {
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
-                      <FaCircleUser size={70}  />
+                      <FaCircleUser size={70} />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
                         <ActivePetType>
@@ -432,10 +431,10 @@ function MyPage() {
                   </PetProfile>
                 ))
               ) : (
-                  <NoPetsMessage>
-                    <p>등록된 펫이 없습니다</p>
-                    <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
-                  </NoPetsMessage>
+                <NoPetsMessage>
+                  <p>등록된 펫이 없습니다</p>
+                  <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
+                </NoPetsMessage>
               )}
             </CardContainer>
             <ArrowButton direction="right" onClick={() => scroll('right')}>
@@ -445,7 +444,7 @@ function MyPage() {
 
           <OrderContainer>
             <OrderIconContainer>
-              <OrderBagImage src={images.bag} alt="주문내역" />
+              <OrderBagImage src={images.bag} alt="주문내역" onClick={() => navigate('/orderList')} />
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>

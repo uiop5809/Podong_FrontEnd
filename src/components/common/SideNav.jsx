@@ -9,6 +9,7 @@ const SideNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,12 +39,10 @@ const SideNav = () => {
     { path: '/community', title: '커뮤니티' },
     { path: '/communityDetail', title: '상세 정보' },
     { path: '/communityWrite', title: '커뮤니티 작성' },
-    { path: '/myPage/editUserRegister', title: '회원 정보 수정' },
-    { path: '/myPage/editPetRegister', title: '응애 정보 수정' },
-    { path: '/myPage/missingRegister', title: '실종 등록' },
-    { path: '/myPage/missingSave', title: '실종 등록 완료' },
-    {path : '/petRegister', title: '우리응애 등록'},
-    {path : '/userRegister/:userId', title: '회원정보 등록'},
+    { path: `/myPage/${userId}/editUserRegister`, title: '회원 정보 수정' },
+    { path: `/myPage/${userId}/editPetRegister`, title: '응애 정보 수정' },
+    { path: `/myPage/${userId}/missingRegister`, title: '실종 등록' },
+    { path: `/myPage/${userId}/missingSave`, title: '실종 등록 완료' },
     { path: '/myPage', title: '마이 페이지' },
     { path: '/orderList/orderDetail/orderCancel', title: '주문 취소' },
     { path: '/orderList/orderDetail', title: '주문 상세' },
