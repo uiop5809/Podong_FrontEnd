@@ -5,11 +5,12 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const CancelPay = () => {
   const [userId, setUserId] = useState(null);
+  const [merchantId, setMerchantId] = useState(null);
   const [impUid, setImpUid] = useState(null);
   const [payAmount, setPayAmount] = useState(null);
   const { orderId } = useParams();
   const navigate = useNavigate();
-
+  
 
   // 페이지가 렌더링되면 userId를 받아옴
   useEffect(() => {
@@ -35,14 +36,12 @@ const CancelPay = () => {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/payment/list/${userId}`);
       const paymentData = response.data;
 
-      // console.log("Fetched Payment Data:", paymentData);
+      console.log("Fetched Payment Data:", paymentData);
 
       if (paymentData.length > 0 && paymentData[0].impUid) {
         setImpUid(paymentData[0].impUid);
-        setPayAmount(paymentData[0].pay_amount);
-
-        // impUid 설정 후 handleCancel 호출
-        handleCancel(paymentData[0].impUid, paymentData[0].pay_amount);
+        setMerchantId(paymentData[0].merchantId);
+        setPayAmount(paymentData[0].payAmount);
       } else {
         console.error("impUid를 찾을 수 없습니다.");
         alert("impUid를 찾을 수 없습니다.");
@@ -52,6 +51,13 @@ const CancelPay = () => {
       alert("impUid를 가져오는 데 실패했습니다.");
     }
   };
+
+  useEffect(() => {
+    if (impUid && payAmount) {
+      handleCancel(impUid, payAmount);
+    }
+  }, [impUid, payAmount]);
+
 
   // 결제 취소 요청 핸들링
   const handleCancel = async (impUid, payAmount) => {
@@ -99,6 +105,14 @@ const CancelPay = () => {
       );
       console.log("결제 취소 완료:", response.data);
       alert("결제가 취소되었습니다.");
+      console.log(merchantId, impUid);
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/payment/cancel`, {
+        params:{
+          id : merchantId,
+          iamUid : impUid,
+        }
+        });
+
       navigate(`/paymentCancelDone/${orderId}`);
       
     } catch (error) {
