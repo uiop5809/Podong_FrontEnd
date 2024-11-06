@@ -22,7 +22,7 @@ const CommunityList = () => {
 
   useEffect(() => {
     axios
-      .get('/communities')
+      .get('https://ureca.store/api/communities')
       .then(response => {
         setComunityList(response.data); // 응답 데이터 저장
         console.log('게시글 목록:', response.data);
@@ -39,7 +39,7 @@ const CommunityList = () => {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
         axios
-          .put(`/communities/${postId}`, { ...item, good: updatedGood })
+          .put(`https://ureca.store/api/communities/${postId}`, { ...item, good: updatedGood })
           .then(response => {
             console.log('좋아요 업데이트:', response.data);
           })
@@ -56,7 +56,7 @@ const CommunityList = () => {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`/communityComments`)
+      .get(`https://ureca.store/api/communityComments`)
       .then(response => {
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
@@ -69,7 +69,7 @@ const CommunityList = () => {
   return (
     <ItemTitle>
       <Col>
-        <CommunityText>community</CommunityText>
+        <CommunityText>고양이가 세상을 지배한다</CommunityText>
         <WriteBtn
           onClick={() => {
             navigate('/community/write');
@@ -96,7 +96,7 @@ const CommunityList = () => {
                   e.preventDefault();
                   navigate(`/community/detail/${item.postId}`);
                 }}>
-                <ListImg src={`/${item.imageUrl}`} />
+                <ListImg src={item.imageUrl}/>
                 <ListTitlesContainer>
                   <ListTItle>제목 : {item.title}</ListTItle>
                   <ListDate>
@@ -180,11 +180,14 @@ const Category = styled.div`
   display: flex;
   justify-content: space-around;
   margin: 10px 0px;
+  align-items: center;
 `;
 const CategoryBtn = styled.div`
   display: flex;
+  font-size:13px ;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
   opacity: ${({ $active }) => ($active ? '1' : '0.5')};
   transition: opacity 0.3s;
   &:hover {
@@ -192,8 +195,8 @@ const CategoryBtn = styled.div`
   }
 `;
 const CategoryImg = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 30px;
 `;
 
 const RowLi = styled.div`
@@ -218,6 +221,7 @@ const ListImg = styled.img`
   background-image: url(${props => props.src}); /* 이미지 URL 설정 */
   background-size: cover; /* 이미지를 채우도록 설정 */
   background-position: center; /* 이미지 중앙 정렬 */
+  cursor: pointer;
 `;
 const ListTitlesContainer = styled.div`
   display: flex;
@@ -263,6 +267,7 @@ const Icons = styled.div`
 `;
 const FcLike1 = styled(FcLike)`
   font-size: 16px;
+  cursor: pointer;
 `;
 const Hr = styled.div`
   width: 100%;

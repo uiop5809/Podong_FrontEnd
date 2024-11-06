@@ -16,8 +16,8 @@ const CommunityWrite = () => {
     { src: images.categoryAll, name: '전체' },
     { src: images.categoryFreedom, name: '자유' },
     { src: images.categoryDongNea, name: '동네' },
-    { src: images.categoryExport, name: '전문가' },
-    { src: images.categoryAnonymous, name: '익명' },
+    { src: images.categoryExpert, name: '전문가' },
+    { src: images.categoryAnonymity, name: '익명' },
     { src: images.categoryEvent, name: '이벤트' },
   ];
 
@@ -27,8 +27,7 @@ const CommunityWrite = () => {
 
     // FormData 객체 생성
     const formData = new FormData();
-    // const createdAt = new Date().toISOString();
-    // formData.append('createdAt', createdAt); // 현재 시간 추가
+    const user = localStorage.getItem('userId');
     formData.append('title', title);
     formData.append('contents', contents);
     formData.append('user', user);
@@ -37,7 +36,7 @@ const CommunityWrite = () => {
     }
 
     try {
-      const response = await axios.post('/communities', formData, {
+      const response = await axios.post('https://ureca.store/api/communities', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -79,11 +78,6 @@ const CommunityWrite = () => {
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="user">
-            유저 : <br />
-            <input id="user" value={user} type="number" onChange={e => setUser(e.target.value)} required />
-          </label>
-          <br />
           <LableImg htmlFor="imageUrl">
             <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
             {uploadedImage ? (
@@ -134,12 +128,14 @@ const CommunityWrite = () => {
           </label>
           <br />
         </div>
+        <div style={{display:'flex'}}> 
         <SubmitBtn>
           <Div>욕설 광고등 운영저책 위반 시 제재를 받으실 수 있습니다</Div>
           <BuWrite type="submit" disabled={loading}>
             {loading ? '등록중...' : '작성 완료'}
           </BuWrite>
         </SubmitBtn>
+        </div>
       </Form>
     </ItemTitle>
   );
@@ -194,7 +190,7 @@ const Category = styled.div`
   padding: 10px;
   display: flex;
   justify-content: space-around;
-  margin: 10px 0px;
+  margin: 0px 0px;
 `;
 const CategoryBtn = styled.div`
   display: flex;
@@ -202,18 +198,19 @@ const CategoryBtn = styled.div`
   align-items: center;
   opacity: ${({ $active }) => ($active ? '1' : '0.5')};
   transition: opacity 0.3s;
+  cursor: pointer;
   &:hover {
     opacity: 1;
   }
 `;
 const CategoryImg = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 30px;
 `;
 const Textarea = styled.textarea`
   margin: 10px 0px 15px 0px;
   width: 100%;
-  height: 15em;
+  height: 10em;
   display: flex;
   align-items: center;
   padding: 15px;
@@ -280,13 +277,17 @@ const LableImg = styled.label`
   position: relative;
   display: flex;
   width: 65px;
+  cursor: pointer;
 `;
 const Form = styled.form`
-  height: 100%;
+  height: 100vh;
   display: flex;
+  position: relative;
   flex-direction: column;
 `;
 const SubmitBtn = styled.div`
-  margin-top: auto;
-  margin-bottom: 0px;
+  position: absolute;
+  bottom:0px;
+  width: 100%;
+  justify-content: flex-end;
 `;

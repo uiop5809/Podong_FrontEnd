@@ -10,12 +10,11 @@ const CommunityDetail = () => {
   const { no } = useParams(); // %% URL에서 글 번호(no)를 가져옴 %%
   const [postDetail, setPostDetail] = useState([]);
   const [comments, setComments] = useState([]);
+  const [refreshComments, setRefreshComments] = useState(false);
 
   useEffect(() => {
-    // 상세정보 불러오기
-
     axios
-      .get(`/communities/${no}`)
+      .get(`https://ureca.store/api/communities/${no}`)
       .then(response => {
         setPostDetail(response.data);
         console.log('나눔 상세 :', response.data);
@@ -24,26 +23,27 @@ const CommunityDetail = () => {
         console.error('Error fetching data:', error);
       });
   }, [no]);
+ // 댓글 목록 불러오기
+useEffect(( ) => {
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`https://ureca.store/api/communityComments`);
+      setComments(response.data); // 댓글 목록 갱신
+      console.log('댓글 목록 :', response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
-  useEffect(() => {
-    axios
-      .get(`/communityComments`)
-      .then(response => {
-        setComments(response.data);
-        console.log('댓글 목록 :', response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  fetchComments();
+}, [refreshComments]);
+
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = postDetail.good + 1;
-
-    // 서버의 좋아요 수 업데이트 요청
     axios
-      .put(`/communities/${no}`, { ...postDetail, good: updatedGood })
+      .put(`https://ureca.store/api/communities/${no}`, { ...postDetail, good: updatedGood })
       .then(response => {
         console.log('좋아요 업데이트:', response.data);
         setPostDetail(prevDetail => ({ ...prevDetail, good: updatedGood }));
@@ -51,22 +51,23 @@ const CommunityDetail = () => {
       .catch(error => {
         console.error('좋아요 업데이트 실패:', error);
       });
-  };
+  }
   //댓글 등록
   const handleSubmit = e => {
     e.preventDefault(); // 새로고침 방지
     const formData = new FormData(e.target);
+    const user = localStorage.getItem('userId');
     const data = Object.fromEntries(formData.entries()); //객체로 변환
-    // const now = new Date().toISOString();
-    // data.createdAt = now; // 현재 시간 추가
     data.post = no;
-    //글 등록
+    data.user = user;
     axios
-      .post('/communityComments', data)
+      .post('https://ureca.store/api/communityComments', data)
       .then(response => {
         console.log('등록 : ', response.data);
         setComments(prevComments => [...prevComments, response.data]);
         console.log('등록 data : ', data);
+        alert('댓글이 등록되었습니다!');
+        setRefreshComments(prev => !prev);
       })
       .catch(error => console.error('오류 발생:', error));
 
@@ -76,7 +77,7 @@ const CommunityDetail = () => {
   return (
     <Container>
       <ItemTitle>
-        <ListImg src={`/${postDetail.imageUrl}`} alt={postDetail.imageUrl} />
+        <ListImg src={postDetail.imageUrl} alt={postDetail.imageUrl} />
         <ImgBt>
           <ImgNo>1 / 5</ImgNo>
         </ImgBt>
@@ -122,7 +123,6 @@ const CommunityDetail = () => {
         </CommentST>
       </ItemTitle>
       <CommentFrom onSubmit={handleSubmit}>
-        <input type="number" name="user" placeholder="유저번호" required />
         <CommentCC type="text" name="comment" placeholder="댓글을 달아주세요." required />
         <CommentSubmit type="submit">등록</CommentSubmit>
       </CommentFrom>
@@ -248,8 +248,10 @@ const CommentST = styled.div`
 `;
 const CommentFrom = styled.form`
   width: 100%;
+  position: absolute;
   display: flex;
   justify-content: flex-end;
+  bottom: 0px;
   margin-top: auto;
   margin-bottom: 64px;
 `;
@@ -257,6 +259,7 @@ const Container = styled.div`
   height: 100dvh;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 const CommentCC = styled.input`
   height: 40px;

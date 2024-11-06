@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { MdPhotoCamera } from 'react-icons/md';
 import axios from '../../apis/AxiosInstance';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 
 const PetItemPage = () => {
   const [selectedSaleType, setSelectedSaleType] = useState(''); // 버튼 판매 or 나눔
@@ -16,13 +17,11 @@ const PetItemPage = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async e => {
+    const user = localStorage.getItem('userId');
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
 
-    // FormData 객체 생성
     const formData = new FormData();
-    // const createdAt = new Date().toISOString();
-    // formData.append('createdAt', createdAt); // 현재 시간 추가
     formData.append('name', name);
     formData.append('description', description);
     formData.append('price', price);
@@ -31,9 +30,8 @@ const PetItemPage = () => {
     if (imageUrl) {
       formData.append('imageUrl', imageUrl);
     }
-
     try {
-      const response = await axios.post('/petItems', formData, {
+      const response = await axios.post('https://ureca.store/api/petItems', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -60,7 +58,8 @@ const PetItemPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
+// }, []);
   // 파일 선택 핸들러
   const handleFileChange = e => {
     if (e.target.files && e.target.files[0]) {
@@ -85,11 +84,6 @@ const PetItemPage = () => {
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="user">
-            유저 : <br />
-            <input id="user" value={user} type="number" onChange={e => setUser(e.target.value)} required />
-          </label>
-          <br />
           <LableImg htmlFor="imageUrl">
             <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
             {uploadedImage ? (
@@ -303,9 +297,12 @@ const LableImg = styled.label`
 const Form = styled.form`
   height: 100%;
   display: flex;
+  position: relative;
   flex-direction: column;
 `;
 const SubmitBtn = styled.div`
-  margin-top: auto;
-  margin-bottom: 0px;
+  position: absolute;
+  bottom:0px;
+  width: 100%;
+  justify-content: flex-end;
 `;
