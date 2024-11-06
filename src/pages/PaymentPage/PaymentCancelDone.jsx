@@ -167,6 +167,10 @@ const PaymentCancelDone = () => {
   {payment && (
     <>
       <PaymentDetailRow>
+        <PaymentDetailTitle>결제 상태 :</PaymentDetailTitle>
+        <PaymentDetailValue>{payment.payStatus}</PaymentDetailValue>
+      </PaymentDetailRow>
+      <PaymentDetailRow>
         <PaymentDetailTitle>주문 날짜 :</PaymentDetailTitle>
         <PaymentDetailValue>{new Date(payment.createdAt).toLocaleString()}</PaymentDetailValue>
       </PaymentDetailRow>
