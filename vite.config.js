@@ -12,7 +12,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/iamport/, ""), // "/iamport" 제거 후 전달
       },
       "/api": {
-        target: "http://localhost:8080",
+        target: "https://ureca.store/api",
         changeOrigin: true,
       },
     },
