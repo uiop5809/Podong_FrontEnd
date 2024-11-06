@@ -76,9 +76,9 @@ const Tab = styled.div`
 
 const CardContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20px;
-  width: 320%;
+  width: 100%;
 `;
 
 const Card = styled.div`
@@ -86,7 +86,7 @@ const Card = styled.div`
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: calc(33.333% - 20px);
+  width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
