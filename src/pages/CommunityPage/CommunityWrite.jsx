@@ -36,7 +36,7 @@ const CommunityWrite = () => {
     }
 
     try {
-      const response = await axios.post('/communities', formData, {
+      const response = await axios.post('https://ureca.store/api/communities', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

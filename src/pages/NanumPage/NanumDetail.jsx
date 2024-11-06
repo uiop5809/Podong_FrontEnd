@@ -10,10 +10,11 @@ const PetItemDetailPage = () => {
   const { no } = useParams(); //URL에서 글 번호(no)를 가져옴
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
+  const [refreshComments, setRefreshComments] = useState(false);
 
   useEffect(() => {
     axios
-      .get(`/petItems/${no}`)
+      .get(`https://ureca.store/api/petItems/${no}`)
       .then(response => {
         setItemDetail(response.data);
         console.log('나눔 상세 :', response.data);
@@ -26,7 +27,7 @@ const PetItemDetailPage = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`/petItemComments`);
+        const response = await axios.get(`https://ureca.store/api/petItemComments`);
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
       } catch (error) {
@@ -35,13 +36,13 @@ const PetItemDetailPage = () => {
     };
 
     fetchComments();
-  }, []);
+  },  [refreshComments]);
 
   // 좋아요 수 증가 함수
   const good = () => {
     const updatedGood = itemDetail.good + 1;
     axios
-      .put(`/petItems/${no}`, { ...itemDetail, good: updatedGood })
+      .put(`https://ureca.store/api/petItems/${no}`, { ...itemDetail, good: updatedGood })
       .then(response => {
         console.log('좋아요 업데이트:', response.data);
         setItemDetail(prevDetail => ({ ...prevDetail, good: updatedGood }));
@@ -59,21 +60,24 @@ const PetItemDetailPage = () => {
     data.petItem = no;
     data.user = user;
     axios
-      .post('/petItemComments', data)
+      .post('https://ureca.store/api/petItemComments', data)
       .then(response => {
         console.log('등록 : ', response.data);
         setComments(prevComments => [...prevComments, response.data]);
         console.log('등록 data : ', data);
+        alert('등록 성공!');
+        setRefreshComments(prev => !prev);
       })
       .catch(error => console.error('오류 발생:', error));
 
     e.target.reset(); 
   };
+  
 
   return (
     <Container>
       <ItemTitle>
-        <ListImg src={`http://localhost:8080/uploads/${itemDetail.imageUrl}`} alt={itemDetail.imageUrl} />
+        <ListImg src={itemDetail.imageUrl} alt={itemDetail.imageUrl} />
         <ImgBt>
           <ImgNo>1 / 5</ImgNo>
         </ImgBt>
@@ -241,14 +245,17 @@ const CommentST = styled.div`
 `;
 const CommentFrom = styled.form`
   width: 100%;
+  position: absolute;
   display: flex;
   justify-content: flex-end;
+  bottom: 0px;
   margin-top: auto;
   margin-bottom: 64px;
 `;
 const Container = styled.div`
   height: 100dvh;
   display: flex;
+  position: relative;
   flex-direction: column;
 `;
 const CommentCC = styled.input`

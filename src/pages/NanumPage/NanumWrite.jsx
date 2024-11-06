@@ -31,7 +31,7 @@ const PetItemPage = () => {
       formData.append('imageUrl', imageUrl);
     }
     try {
-      const response = await axios.post('/petItems', formData, {
+      const response = await axios.post('https://ureca.store/api/petItems', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -84,11 +84,6 @@ const PetItemPage = () => {
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
-          {/* <label htmlFor="user">
-            유저 : <br />
-            <input id="user" value={user} type="number" onChange={e => setUser(e.target.value)} required />
-          </label> */}
-          <br />
           <LableImg htmlFor="imageUrl">
             <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
             {uploadedImage ? (

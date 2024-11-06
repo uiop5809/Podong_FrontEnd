@@ -15,7 +15,7 @@ const PetItemListPage = () => {
   //게시글 목록 불러오기
   useEffect(() => {
     axios
-      .get('/petItems')
+      .get('https://ureca.store/api/petItems')
       .then(response => {
         setPetItemList(response.data); // 응답 데이터 저장
         console.log('게시글 목록:', response.data);
@@ -32,7 +32,7 @@ const PetItemListPage = () => {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
         axios
-          .put(`/petItems/${petItemId}`, { ...item, good: updatedGood })
+          .put(`https://ureca.store/api/petItems/${petItemId}`, { ...item, good: updatedGood })
           .then(response => {
             console.log('좋아요 업데이트:', response.data);
           })
@@ -49,7 +49,7 @@ const PetItemListPage = () => {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`/petItemComments`)
+      .get(`https://ureca.store/api/petItemComments`)
       .then(response => {
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
@@ -94,7 +94,7 @@ const PetItemListPage = () => {
               e.preventDefault();
               navigate(`/nanumList/detail/${item.petItemId}`);
             }}>
-            <ListImg src={`http://localhost:8080/uploads/${item.imageUrl}`} />
+            <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
               <ListUser>작성자{item.user}</ListUser>

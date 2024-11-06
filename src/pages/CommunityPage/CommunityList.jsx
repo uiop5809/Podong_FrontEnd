@@ -22,7 +22,7 @@ const CommunityList = () => {
 
   useEffect(() => {
     axios
-      .get('/communities')
+      .get('https://ureca.store/api/communities')
       .then(response => {
         setComunityList(response.data); // 응답 데이터 저장
         console.log('게시글 목록:', response.data);
@@ -39,7 +39,7 @@ const CommunityList = () => {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
         axios
-          .put(`/communities/${postId}`, { ...item, good: updatedGood })
+          .put(`https://ureca.store/api/communities/${postId}`, { ...item, good: updatedGood })
           .then(response => {
             console.log('좋아요 업데이트:', response.data);
           })
@@ -56,7 +56,7 @@ const CommunityList = () => {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`/communityComments`)
+      .get(`https://ureca.store/api/communityComments`)
       .then(response => {
         setComments(response.data);
         console.log('댓글 목록 :', response.data);
@@ -96,7 +96,7 @@ const CommunityList = () => {
                   e.preventDefault();
                   navigate(`/community/detail/${item.postId}`);
                 }}>
-                <ListImg src={`/${item.imageUrl}`} />
+                <ListImg src={item.imageUrl}/>
                 <ListTitlesContainer>
                   <ListTItle>제목 : {item.title}</ListTItle>
                   <ListDate>

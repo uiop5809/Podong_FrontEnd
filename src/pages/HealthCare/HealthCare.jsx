@@ -7,12 +7,49 @@ import styled from "styled-components";
 const HealthCare = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
+  const [petId, setPetId] = useState();
   const [showInput, setShowInput] = useState({
     hospital: true,
     nextVisit: false,
     healthCare: false,
   });
   const [memo, setMemo] = useState("");
+  const user = localStorage.getItem('userId');
+  console.log(user)
+  
+  const petData =  () => {
+    axios.get(`https://ureca.store/api/pets`)
+    .then((response) => {
+        setPetId( user === response.data.userId)
+        console.log('petId :', response.data);
+      })
+    }
+  
+
+  useEffect(() => {
+    const userData = (date) => {
+      if (!date || isNaN(new Date(date).getTime())) {
+        return ""; 
+      }
+      return new Date(date).toISOString().split("T")[0];
+    };
+
+
+
+
+        
+    // const  = async () => {
+    //   try {
+    //     const response = await axios.get(`https://ureca.store/api/healths`);
+    //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
+    //     console.log('댓글 목록:', response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
+
+    
+  }, []);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -20,33 +57,40 @@ const HealthCare = () => {
 
   const addAppointment = async (type, e) => {
     setAppointments([...appointments, { date: selectedDate, type, memo }]);
-    // e.preventDefault(); // 새로고침 방지
     const formData = new FormData();
     const formattedDate = formatDate(selectedDate);
-    formData.append("pet", 1);
-
-    if (type === "병원 방문일") {
-      formData.append("visitedDate", formattedDate);
-    } else if (type === "다음 방문일") {
-      formData.append("nextCheckupDate", formattedDate);
-    } else if (type === "건강 관리") {
-      formData.append("healthDate", formattedDate);
-      formData.append("notes", memo); // 메모 추가
-    }
-    console.log("건강 :", formData);
-
+    const userId = localStorage.getItem('userId');
+    
+    console.log("userId :", userId);
     try {
-      const response = await axios.post("/healths", formData, {
-        // headers: {
-        //   'Content-Type': 'application/json'
-        // },
-      });
-      console.log("등록 data : ", response.data);
+      // petId 가져오기
+      const response = await axios.get(`https://ureca.store/api/pets/pet/${userId}`);
+      const petId = response.data[0].petId;
+      console.log("petId :", petId);
+  
+      // petId를 포함하여 formData에 추가
+      formData.append("pet", petId);
+    
+      // 선택된 타입에 따라 필요한 필드를 formData에 추가
+      if (type === "병원 방문일") {
+        formData.append("visitedDate", formattedDate);
+      } else if (type === "다음 방문일") {
+        formData.append("nextCheckupDate", formattedDate);
+      } else if (type === "건강 관리") {
+        formData.append("healthDate", formattedDate);
+        formData.append("notes", memo); // 메모 추가
+      }
+      console.log("formData 내용:", formData);
+  
+      // formData를 포함하여 POST 요청 전송
+      const postResponse = await axios.post("/healths", formData);
+      console.log("등록 data : ", postResponse.data);
       alert("등록 성공");
       setMemo("");
+  
     } catch (error) {
       console.error("오류 발생:", error);
-      alert("오류 발생:");
+      alert("오류 발생");
     }
   };
 
@@ -101,16 +145,7 @@ const HealthCare = () => {
     }
   };
 
-  //   useEffect(()=>{
-  //   axios.get(`/healths`)
-  //   .then((response) => {
-  //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
-  //     console.log('댓글 목록 :', response.data);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error fetching data:", error);
-  //   });
-  // },[]);
+    
   return (
     <Container>
       <Legend>
@@ -220,7 +255,7 @@ const CalendarWrapper = styled.div`
 `;
 
 const StyledCalendar = styled(Calendar)`
-  width: 100%;
+  
 
   .react-calendar__tile {
     padding: 1em 0.5em;
@@ -235,6 +270,8 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__tile--active {
     background-color: #fff3e8;
     color: black;
+    height: 5px;
+    width: 5px;
   }
 
   .calendar-tile {
@@ -247,6 +284,10 @@ const StyledCalendar = styled(Calendar)`
     border-radius: 8px;
   }
 
+  .react-calendar__month-view__days__day--weekend {
+    color: #17a1fa;
+  }
+  
   .selected {
     background-color: #fff3e8;
   }
@@ -334,7 +375,8 @@ const RegisterButton = styled(Button)`
   margin-left: 5px;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #ec7a4f;
+    color: wheat;
   }
 `;
 
