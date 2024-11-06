@@ -5,7 +5,6 @@ import styled from 'styled-components';
 const ScrollableContainer = styled.div`
   max-height: 100%;
   overflow-y: auto; 
-  border: 1px solid #ddd;
   margin: 64px 0;
 `; // 스크롤 
 

@@ -8,10 +8,9 @@ import axios from '../../apis/AxiosInstance';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
-  border: 1px solid #ddd;
   margin: 64px 0;
   width: 100%;
-`; // 스크롤이 가능한 컨테이너
+`; 
 
 const Container = styled.div`
   display: flex;
@@ -163,7 +162,7 @@ const PetEditPage = () => {
     formData.append('petAge', age);
     formData.append('user', userId);
     formData.append('createdAt', new Date().toISOString());
-    formData.append('updatedAt', new Date().toISOString()); // 수정 시간
+    formData.append('updatedAt', new Date().toISOString()); 
 
     if (selectedPetType === '고양이') {
       formData.append('petType', selectCatList);

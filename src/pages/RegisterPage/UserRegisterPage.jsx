@@ -6,22 +6,9 @@ import UploadImg from '../../components/Register/UploadImg';
 import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from '../../apis/AxiosInstance';
-import { useParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { ScrollableContainer, Container,Label } from './CommonStyle';
 
-const ScrollableContainer = styled.div`
-  max-height: 100%;
-  border: 1px solid #ddd;
-  margin: 64px 0;
-  width: 100%;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  margin-left: 5%;
-`;
 
 const Description = styled.label`
   font-size: 13px;
@@ -34,13 +21,6 @@ const Description = styled.label`
 
 const HightLight = styled.span`
   color: #ff6e00;
-`;
-
-const Label = styled.label`
-  font-size: 10px;
-  color: #b3b3b3;
-  margin-bottom: 10px;
-  margin-top: 5px;
 `;
 
 const KakaoEmail = styled.input`
@@ -95,9 +75,9 @@ const AddressContainer = styled.div`
 
 const SearchAddressButton = styled.button`
   position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
+  width: 60px;
+  height: 24px;
+  top: 10px;
   right: 5px;
   transform: translateY(-50%);
   background-color: #ffefef;
@@ -178,29 +158,7 @@ const PhonenumberInputrequired = styled.input`
   border-radius: 5px;
   font-size: 11px;
   background-color: white;
-  width: 65%;
-`;
-
-const PhoneNumberAuthorization = styled.button`
-  position: absolute;
-  width: 100px;
-  height: 40px;
-  top: 43px;
-  right: 5px;
-  transform: translateY(-50%);
-  background-color: #ffefef;
-  color: #ff6e00;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffd3d3;
-  }
+  width: 100%;
 `;
 
 const AlarmAgreementContainer = styled.div`
@@ -326,7 +284,6 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin-bottom: 80px;
   margin-left: 20px;
 
   &:hover {
@@ -365,21 +322,18 @@ const UserRegisterPage = () => {
   const closePostCode = () => setIsPopupOpen(false);
 
   const handleRegister = async () => {
-    // 닉네임 검증
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
+    
     if (!nicknameRegex.test(nickname)) {
       alert('닉네임에는 특수문자를 사용할 수 없습니다. 다시 입력해 주세요.');
       setNickname('');
       return;
     }
-
-    // 필수 정보 검증
     if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
 
-    // 휴대폰 번호 유효성 검사
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
@@ -409,7 +363,6 @@ const UserRegisterPage = () => {
 
       console.log(userId);
 
-      // userId를 localStorage에 저장
       localStorage.setItem('userId', userId);
       alert('userId가 localStorage에 저장되었습니다: ' + userId);
       navigate('/petRegister/:userId');
@@ -457,36 +410,29 @@ const UserRegisterPage = () => {
               value={phoneNumber}
               onChange={e => setPhoneNumber(e.target.value)}
             />
-            <PhoneNumberAuthorization>인증하기</PhoneNumberAuthorization>
           </PhoneContainer>
         </InputContainer>
 
         <InputContainer>
-          <Label>주소</Label>
-          <AddressContainer>
-            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly />
-            <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
-            <div id="popupDom">
-              {isPopupOpen && (
-                <PopupDom>
-                  <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
-                </PopupDom>
-              )}
-            </div>
-            <StyledInput
-              placeholder="기본주소를 입력해주세요"
-              value={address}
-              onChange={e => setAddress(e.target.value)}
-              required
-            />
-            <StyledInput
-              placeholder="상세 주소를 입력해주세요"
-              value={detailedAddress}
-              onChange={e => setDetailedAddress(e.target.value)}
-              required
-            />
-          </AddressContainer>
-        </InputContainer>
+  <Label>주소</Label>
+  <AddressContainer>
+    <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+    <SearchAddressButton onClick={openPostCode}>주소검색</SearchAddressButton>
+    <div id="popupDom">
+      {isPopupOpen && (
+        <PopupDom>
+          <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+        </PopupDom>
+      )}
+    </div>
+    <StyledInput
+      placeholder="기본주소를 입력해주세요"
+      value={address}
+      onChange={e => setAddress(e.target.value)}
+      required
+    />
+  </AddressContainer>
+</InputContainer>
       </Container>
       <Divider />
 
@@ -494,7 +440,6 @@ const UserRegisterPage = () => {
         <AlarmAgreementContainer>
           <SubTitle>앱 푸시 알림</SubTitle>
         </AlarmAgreementContainer>
-
         <SubContainer>
           <TextContainer>
             <SubTitleList>우리응애 건강관리</SubTitleList>
