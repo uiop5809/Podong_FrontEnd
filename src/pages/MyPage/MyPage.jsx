@@ -41,7 +41,6 @@ const PetProfile = styled.div`
 
 const PetInfoFirstRow = styled.div`
   display: flex;
-  margin-bottom: 15px;
   justify-content: space-between;
 `;
 
@@ -71,7 +70,6 @@ const OrderReviewImage = styled.img`
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 10px;
-  cursor: pointer;
 `;
 
 const OrderPointImage = styled.img`
@@ -246,9 +244,10 @@ const MissingRegisterBtn = styled.button`
   background-color: white;
   color: black;
   border: none;
-  font-size: 9px;
+  border-radius: 5px;
+  font-size: 8px;
   cursor: pointer;
-  margin-right: 10px;
+  margin-right: 20px;
   font-weight: normal;
 
   &:hover {
@@ -261,8 +260,9 @@ const PetEditBtn = styled.button`
   background-color: white;
   color: black;
   border: none;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 8px;
   margin-left: 10%;
   font-weight: normal;
   transition: background-color 0.3s;
@@ -300,6 +300,7 @@ const NoPetsMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   margin: 50px 0;
   text-align: center;
 
@@ -311,17 +312,14 @@ const NoPetsMessage = styled.div`
 `;
 
 const PetAddButton = styled.button`
-  background-color: #d0d0d0;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-size: 11px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #D0D0D0;
+    transform: translateY(-2px); 
+  }
 
-  &:hover {
+  &:active {
+    background-color: #D0D0D0;
+    transform: translateY(0); 
+
     background-color: #b0b0b0;
   }
 `;
@@ -389,7 +387,7 @@ function MyPage() {
         <MainContainer>
           <StyledAvatar />
           <UserInfo>
-            {userData ? userData.nickname : '조금만 기다려 주세요'}
+            {userData ? userData.nickname : '불러오는 중...'}
             <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>수정</EditButton>
           </UserInfo>
         </MainContainer>
@@ -448,7 +446,7 @@ function MyPage() {
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>
-              <OrderReviewImage src={images.review} alt="결제내역" onClick={() => navigate('/paymentHistory')} />
+              <OrderReviewImage src={images.review} alt="결제내역" />
               <span>결제내역</span>
             </OrderIconContainer>
             <OrderIconContainer>

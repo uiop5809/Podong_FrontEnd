@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
 import SelectBox from '../../components/Register/SelectBox';
 import UploadImg from '../../components/Register/UploadImg';
 import axios from '../../apis/AxiosInstance';
+import { useParams } from 'react-router-dom';
 
 const ScrollableContainer = styled.div`
   max-height: 100%;
@@ -80,9 +81,8 @@ const RegisterButton = styled.button`
 `; // 등록 버튼
 
 const PetEditPage = () => {
-  const petId = 1;
   const navigate = useNavigate();
-
+  const { petId } = useParams();
   const [imgPath, setImgPath] = useState('');
   const [selectedPetType, setSelectedPetType] = useState('');
   const [petName, setPetName] = useState('');
@@ -121,7 +121,10 @@ const PetEditPage = () => {
         const petData = response.data;
 
         if (petData) {
-          setImgPath(`http://localhost:8080/uploads/${petData.petPicture}`);
+          // S3 버킷 URL을 imgPath로 설정
+          const imageURL = `https://sole-paradise.s3.ap-northeast-2.amazonaws.com/${petData.petPicture}`;
+          setImgPath(imageURL);
+
           setPetName(petData.petName);
           setBirthdate(petData.birthdate);
           setAge(calculateAge(petData.birthdate));
@@ -140,6 +143,7 @@ const PetEditPage = () => {
       } catch (error) {
         console.error('Error fetching pet data:', error);
       }
+      console.log("Image URL:", imgPath);
     };
 
     if (petId) {
@@ -176,6 +180,7 @@ const PetEditPage = () => {
       const response = await axios.put(`/pets/${petId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      
       if (response.status === 200) {
         alert('반려동물 수정이 완료되었습니다.');
         navigate('/userRegister');
