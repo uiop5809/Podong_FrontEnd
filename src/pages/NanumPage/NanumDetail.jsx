@@ -12,45 +12,58 @@ const PetItemDetailPage = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [users, setUsers] = useState({});
+  const [itemUserNickname, setItemUserNickname] = useState("");
+  const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
   useEffect(() => {
-    axios
-      .get(`/petItems/${no}`)
-      .then((response) => {
-        setItemDetail(response.data);
-        console.log("나눔 상세 :", response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    const fetchItemDetail = async () => {
+      try {
+        // 나눔 상세 가져오기
+        const itemResponse = await axios.get(`/petItems/${no}`);
+        setItemDetail(itemResponse.data);
+        console.log("나눔 상세 :", itemResponse.data);
 
-    axios
-      .get(`/petItemComments?petItem=${no}`)
-      .then((response) => {
-        const relevantComments = response.data.filter(
+        // 작성자의 닉네임 가져오기
+        const userResponse = await axios.get(`/user/${itemResponse.data.user}`);
+        setItemUserNickname(userResponse.data.nickname);
+      } catch (error) {
+        console.error("Error fetching item or user data:", error);
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        // 댓글 목록 가져오기
+        const commentsResponse = await axios.get(
+          `/petItemComments?petItem=${no}`
+        );
+        const relevantComments = commentsResponse.data.filter(
           (item) => item.petItem === parseInt(no)
         );
         setComments(relevantComments);
         console.log("댓글 목록 :", relevantComments);
 
-        // 유저 정보 가져오기
+        // 댓글 작성자들의 유저 정보 가져오기
         const userIds = [...new Set(relevantComments.map((item) => item.user))];
-        axios
-          .all(userIds.map((userId) => axios.get(`/users/${userId}`)))
-          .then((responses) => {
-            const userMap = {};
-            responses.forEach((response) => {
-              userMap[response.data.userId] = response.data.nickname;
-            });
-            setUsers(userMap);
-          })
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching comments:", error);
-      });
+        const userResponses = await Promise.all(
+          userIds.map((userId) => axios.get(`/user/${userId}`))
+        );
+
+        const userMap = {};
+        userResponses.forEach((response) => {
+          userMap[response.data.userId] = response.data.nickname;
+        });
+        setUsers(userMap);
+      } catch (error) {
+        console.error("Error fetching comments or user data:", error);
+      } finally {
+        setLoading(false); // 모든 로딩 완료 후 로딩 상태 해제
+      }
+    };
+
+    setLoading(true);
+    fetchItemDetail();
+    fetchComments();
   }, [no]);
 
   // 좋아요 수 증가 함수
@@ -110,7 +123,7 @@ const PetItemDetailPage = () => {
         </ImgBt>
         <User1>
           <VscAccount1 />
-          작성자: {itemDetail.username}
+          작성자: {itemUserNickname || "로딩 중..."}
         </User1>
         <Title>제목: {itemDetail.name}</Title>
         <Icons>
@@ -141,7 +154,7 @@ const PetItemDetailPage = () => {
             <div key={item.petItemCommentId}>
               <User2>
                 <VscAccount1 />
-                작성자: {users[item.user]}
+                작성자: {users[item.user] || "로딩 중..."}
                 <ListDate>
                   {new Date(item.createdAt).toLocaleDateString("ko-KR", {
                     timeZone: "Asia/Seoul",
