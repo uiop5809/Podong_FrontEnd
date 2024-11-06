@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoMdSearch } from 'react-icons/io';
 import axios from '../../apis/AxiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const statuses = {
   inTransit: '배송 중',
@@ -12,6 +13,7 @@ const statuses = {
 const OrderList = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem('userId');
 
@@ -26,16 +28,6 @@ const OrderList = () => {
       setProducts(formattedData);
     } catch (error) {
       console.error('주문 목록을 가져오는 중 오류 발생:', error);
-    }
-  };
-
-  // 주문 상세 정보를 가져오는 함수
-  const handleOrderDetail = async orderId => {
-    try {
-      const response = await axios.get(`/order/detail/${orderId}`);
-      console.log('주문 상세 정보:', response.data);
-    } catch (error) {
-      console.error('주문 상세 정보 조회 실패:', error);
     }
   };
 
@@ -84,7 +76,7 @@ const OrderList = () => {
             <ButtonWrapper>
               <OrderButton>배송 조회</OrderButton>
               <OrderButton>재구매</OrderButton>
-              <OrderButton onClick={() => handleOrderDetail(product.orderId)}>주문 상세</OrderButton>
+              <OrderButton onClick={() => navigate('/orderList/orderDetail')}>주문 상세</OrderButton>
             </ButtonWrapper>
           </OrderCard>
         </OrderContainer>
