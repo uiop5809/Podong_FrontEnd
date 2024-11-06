@@ -4,7 +4,7 @@ import WalkingTimer from "../../components/walking/WalkingTimer";
 import MissingPetAlert from "../../components/walking/MissingPetAlert";
 import { images } from "../../components/Images";
 
-const { kakao } = window;
+const { kakao } = typeof window !== "undefined" ? window : {};
 
 const sampleMissingPet = {
   name: "멍멍이",
