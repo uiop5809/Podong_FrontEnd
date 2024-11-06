@@ -283,8 +283,7 @@ const RegisterButton = styled.button`
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin: 0 auto;
-
+  margin: 0px;
   &:hover {
     background-color: #ff6e00;
     color: white;
@@ -304,6 +303,7 @@ const UserRegisterPage = () => {
   const [email, setEmail] = useState('');
   const [profileNickname, setProfileNickname] = useState('');
 
+  
   useEffect(() => {
     const emailFromCookie = Cookies.get('email');
     const profileNicknameFromCookie = Cookies.get('profile_nickname');
@@ -320,7 +320,26 @@ const UserRegisterPage = () => {
   const openPostCode = () => setIsPopupOpen(true);
   const closePostCode = () => setIsPopupOpen(false);
 
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+    let formattedValue = '';
+
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 3);
+    }
+    if (value.length > 3) {
+      formattedValue += '-' + value.substring(3, 7);
+    }
+    if (value.length > 7) {
+      formattedValue += '-' + value.substring(7, 11);
+    }
+
+    setPhoneNumber(formattedValue); // 포맷된 값으로 상태 업데이트
+  };
+
   const handleRegister = async () => {
+   
     const nicknameRegex = /^[a-zA-Z0-9가-힣]+$/;
 
     if (!nicknameRegex.test(nickname)) {
@@ -328,7 +347,7 @@ const UserRegisterPage = () => {
       setNickname('');
       return;
     }
-    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
+    if (!nickname || !phoneNumber || !address  ) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
@@ -336,16 +355,17 @@ const UserRegisterPage = () => {
     const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(phoneNumber)) {
       alert('휴대폰 번호는 010-1234-5678 형식으로 입력해 주세요.');
+      setPhoneNumber('');
       return;
     }
 
-    if (!nickname || !phoneNumber || !address || !detailedAddress || !zoneCode) {
+    if (!nickname || !phoneNumber || !address ) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
 
     try {
-      const response = await axios.post(`/user/Register`, {
+      const response = await axios.post(`http://localhost:8080/api/user/Register`, {
         nickname,
         phoneNumber,
         address,
@@ -407,7 +427,7 @@ const UserRegisterPage = () => {
               required
               placeholder="전화번호를 입력해주세요"
               value={phoneNumber}
-              onChange={e => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneNumberChange}
             />
           </PhoneContainer>
         </InputContainer>
