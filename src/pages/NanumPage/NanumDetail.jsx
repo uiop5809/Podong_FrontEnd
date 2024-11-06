@@ -95,6 +95,27 @@ const PetItemDetailPage = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchCommentUserData = async () => {
+      const updatedComments = await Promise.all(
+        comments.map(async (comment) => {
+          try {
+            const response = await axios.get(`/user/${comment.user}`);
+            const userData = response.data;
+            return { ...comment, username: userData.nickname };
+          } catch (error) {
+            console.error("Failed to fetch comment user data:", error);
+            return comment;
+          }
+        })
+      );
+      setComments(updatedComments);
+    };
+    if (comments.length > 0) {
+      fetchCommentUserData();
+    }
+  }, [comments]);
+
   return (
     <Container>
       <ItemTitle>
@@ -141,7 +162,7 @@ const PetItemDetailPage = () => {
               <div key={item.petItemCommentId}>
                 <User2>
                   <VscAccount1 />
-                  작성자: {item.user}
+                  작성자: {item.username}
                   <ListDate key={item.petItemCommentId}>
                     {new Date(item.createdAt).toLocaleDateString("ko-KR", {
                       timeZone: "Asia/Seoul",
