@@ -56,7 +56,7 @@ const OrderDetail = () => {
         <ProfileNickName>{userDTO.profileNickname}</ProfileNickName>
       </ProfilePicture>
       <ProductInfoWrap>
-        <OrderTitle>주문 목록 확인</OrderTitle>
+        <OrderTitle>주문 상세 확인</OrderTitle>
         <Wrap>
           <ProductImage src={productDTO.productImage} alt="Product" />
           <ProductDetails>
@@ -104,7 +104,7 @@ const OrderDetail = () => {
         <LastTotalPrice>{finalPrice}원</LastTotalPrice>
       </LastInfoRow>
       <ButtonWrapper>
-        <CancelButton onClick={() => navigate('/paymentCancel')}>주문 취소</CancelButton>
+        <CancelButton onClick={() => navigate(`/payCancelReq/${orderId}`)}>주문 취소</CancelButton>
         <InquireButton>문의하기</InquireButton>
       </ButtonWrapper>
     </Container>
