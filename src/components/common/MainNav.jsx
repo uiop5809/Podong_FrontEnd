@@ -50,8 +50,7 @@ const MainNav = () => {
     <>
       <Navbar $isScrolled={isScrolled}>
         <AnimalWrap>
-          <PiDogBold color="#FF6E00" />
-          <AnimalName>반려동물 이름</AnimalName>
+          <AnimalName>발바닥천국</AnimalName>
         </AnimalWrap>
         <NavIconWrap>
           {icons.map((item, index) => (

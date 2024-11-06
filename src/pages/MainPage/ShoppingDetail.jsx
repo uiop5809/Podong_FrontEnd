@@ -13,17 +13,7 @@ const ShoppingDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCartModalOpen, setCartModalOpen] = useState(false);
   const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
-  useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      
-      navigate('/login');
-    }
-    else{
-      alert("있음");
-    }
-  }, [navigate]);
-  
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     if (!product) {

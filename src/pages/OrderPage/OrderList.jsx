@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoMdSearch } from 'react-icons/io';
+import axios from '../../apis/AxiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const statuses = {
   inTransit: '배송 중',
@@ -9,14 +11,35 @@ const statuses = {
 };
 
 const OrderList = () => {
-  const deliveryStatus = statuses.inTransit;
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
-  const products = [
-    { id: 1, title: '공주가 되는 드레스', date: '24.10.22', price: '37,000원', status: deliveryStatus },
-  ];
+  const userId = localStorage.getItem('userId');
 
-  const filteredProducts = products.filter(product => product.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  // 주문 목록을 가져오는 함수
+  const fetchOrderList = async () => {
+    try {
+      const response = await axios.get(`/order/list/${userId}`);
+      const formattedData = response.data.map(product => ({
+        ...product,
+        status: statuses[product.status] || '상태 없음',
+      }));
+      setProducts(formattedData);
+    } catch (error) {
+      console.error('주문 목록을 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrderList();
+  }, []);
+
+  const filteredProducts = products.filter(
+    product =>
+      product.productDTO.productTitle &&
+      product.productDTO.productTitle.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <Container>
@@ -33,27 +56,27 @@ const OrderList = () => {
       </SearchBarWrapper>
 
       {filteredProducts.map(product => (
-        <OrderContainer key={product.id}>
+        <OrderContainer key={product.orderId}>
           <OrderDate>{product.date}</OrderDate>
           <OrderCard>
-            <DeliveryStatus status={product.status}>{product.status}</DeliveryStatus>
+            <DeliveryStatus>{statuses.inTransit}</DeliveryStatus>
             <OrderInfoWrap>
               <ImageWrapper>
-                <ProductImage src="https://via.placeholder.com/100" alt="Product" />
+                <ProductImage src={product.productDTO.productImage} alt="Product" />
               </ImageWrapper>
               <OrderDetails>
                 <ShippingInfo>무료 배송</ShippingInfo>
-                <ProductTitle>{product.title}</ProductTitle>
+                <ProductTitle>{product.productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
                 <OptionWrap>
-                  <ProductDetails>수량: 1개</ProductDetails>
-                  <Price>{product.price}</Price>
+                  <ProductDetails>수량: {product.quantity}</ProductDetails>
+                  <Price>{product.productDTO.productLprice}원</Price>
                 </OptionWrap>
               </OrderDetails>
             </OrderInfoWrap>
             <ButtonWrapper>
               <OrderButton>배송 조회</OrderButton>
               <OrderButton>재구매</OrderButton>
-              <OrderButton>주문 상세</OrderButton>
+              <OrderButton onClick={() => navigate('/orderList/orderDetail')}>주문 상세</OrderButton>
             </ButtonWrapper>
           </OrderCard>
         </OrderContainer>
@@ -142,18 +165,7 @@ const OrderDetails = styled.div`
 `;
 
 const DeliveryStatus = styled.div`
-  color: ${({ status }) => {
-    switch (status) {
-      case statuses.inTransit:
-        return '#ff6e00';
-      case statuses.preparing:
-        return '#939393';
-      case statuses.completed:
-        return '#000';
-      default:
-        return '#000';
-    }
-  }};
+  color: #ff6e00;
   font-size: 12px;
   font-weight: bold;
   margin-bottom: 5px;
