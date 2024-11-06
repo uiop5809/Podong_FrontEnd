@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { FaRegUserCircle, FaRegBell } from 'react-icons/fa';
-import { PiDogBold } from 'react-icons/pi';
 import { Link } from 'react-router-dom';
 
 const MainNav = () => {
@@ -33,8 +32,7 @@ const MainNav = () => {
     <>
       <Navbar $isScrolled={isScrolled}>
         <AnimalWrap>
-          <PiDogBold color="#FF6E00" />
-          <AnimalName>반려동물 이름</AnimalName>
+          <AnimalName>발바닥천국</AnimalName>
         </AnimalWrap>
         <NavIconWrap>
           {icons.map((item, index) => (
