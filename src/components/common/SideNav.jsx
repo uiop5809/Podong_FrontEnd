@@ -13,11 +13,7 @@ const SideNav = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -50,44 +46,53 @@ const SideNav = () => {
     { path: '/alert', title: '알림' },
   ];
 
-  const getPageTitle = pathname => {
+  const getPageTitle = (pathname) => {
     const sortedPages = pageTitles.sort((a, b) => b.path.length - a.path.length);
-    const exactMatch = sortedPages.find(page => page.path === pathname);
+    const exactMatch = sortedPages.find((page) => page.path === pathname);
     if (exactMatch) return exactMatch.title;
 
-    const partialMatch = sortedPages.find(page => pathname.startsWith(page.path));
+    const partialMatch = sortedPages.find((page) => pathname.startsWith(page.path));
     return partialMatch ? partialMatch.title : '제목';
   };
 
   const pageTitle = getPageTitle(location.pathname);
 
+  const handleUserIconClick = () => {
+    if (userId) {
+      navigate(`/myPage/${userId}`); // userId가 있으면 마이페이지로 이동
+    } else {
+      navigate('/login'); // userId가 없으면 로그인 페이지로 이동
+    }
+  };
+
   const icons = [
     { icon: <FaRegBell />, link: '/notifications' },
     { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
-    { icon: <FaRegUserCircle />, link: '/Login' },
   ];
 
   return (
-    <>
-      <Navbar $isScrolled={isScrolled}>
-        <BackBtn>
-          <StyledHiArrowLeft
-            size={18}
-            onClick={() => {
-              navigate(-1);
-            }}
-          />
-        </BackBtn>
-        <SideNaveTitle>{pageTitle}</SideNaveTitle>
-        <NavIconWrap>
-          {icons.map((item, index) => (
-            <Link to={item.link} key={index}>
-              {item.icon}
-            </Link>
-          ))}
-        </NavIconWrap>
-      </Navbar>
-    </>
+    <Navbar $isScrolled={isScrolled}>
+      <BackBtn>
+        <StyledHiArrowLeft
+          size={18}
+          onClick={() => {
+            navigate(-1);
+          }}
+        />
+      </BackBtn>
+      <SideNaveTitle>{pageTitle}</SideNaveTitle>
+      <NavIconWrap>
+        {icons.map((item, index) => (
+          <Link to={item.link} key={index}>
+            {item.icon}
+          </Link>
+        ))}
+        {/* 사용자 아이콘에 직접 onClick 추가 */}
+        <span onClick={handleUserIconClick} style={{ cursor: 'pointer' }}>
+          <FaRegUserCircle />
+        </span>
+      </NavIconWrap>
+    </Navbar>
   );
 };
 
