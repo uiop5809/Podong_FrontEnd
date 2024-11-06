@@ -87,7 +87,7 @@ function Router() {
 
             <Route path="orderList" element={<Outlet />}>
               <Route index element={<OrderList />} />
-              <Route path="orderDetail" element={<OrderDetail />} />
+              <Route path="orderDetail/:orderId" element={<OrderDetail />} />
             </Route>
           </Route>
         </Routes>
