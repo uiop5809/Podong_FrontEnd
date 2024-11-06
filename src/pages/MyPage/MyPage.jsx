@@ -171,6 +171,13 @@ const OrderContainer = styled.div`
   margin-top: 20px;
 `;
 
+const MissingStatus = styled.span`
+  color: red;
+  font-weight: bold;
+  font-size: 12px;
+  margin-top: 8px;
+`;
+
 const UserActiveInfo = styled.div`
   background-color: white;
   border: 1px solid #ddd;
@@ -314,8 +321,7 @@ const NoPetsMessage = styled.div`
 const PetAddButton = styled.button`
     background-color: #D0D0D0;
     transform: translateY(-2px); 
-  }
-
+  
   &:active {
     background-color: #D0D0D0;
     transform: translateY(0); 
@@ -324,6 +330,14 @@ const PetAddButton = styled.button`
   }
 `;
 
+const PetDeleteBtn = styled.button`
+  background-color: #ff6e00;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: 11px;
+`
 function MyPage() {
   const navigate = useNavigate();
 
@@ -363,6 +377,18 @@ function MyPage() {
   }, [allPets]);
 
   const userId = localStorage.getItem('userId');
+
+  const handleDeletePet = async (petId) => {
+    try {
+      await axios.delete(`/pets/${petId}`);
+      setFilteredPets(filteredPets.filter(pet => pet.petId !== petId));
+      alert('펫이 삭제되었습니다.');
+    } catch (error) {
+      console.error('펫 삭제 중 오류 발생:', error);
+      alert('펫 삭제에 실패했습니다.');
+    }
+  };
+
 
   const userActivities = [
     { src: images.myActivity, alt: '내 활동', text: '내 활동' },
@@ -408,7 +434,11 @@ function MyPage() {
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
-                      <FaCircleUser size={70} />
+                    <img
+                        src={pet.petPicture} 
+                        alt={`${pet.petName}의 사진`} 
+                        style={{ width: '70px', height: '70px', borderRadius: '50%' }} 
+                      />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
                         <ActivePetType>
@@ -423,6 +453,7 @@ function MyPage() {
                           <PetEditBtn onClick={() => navigate(`/myPage/${userId}/editPetRegister/${pet.petId}`)}>
                             수정
                           </PetEditBtn>
+                            <PetDeleteBtn onClick={() => handleDeletePet(pet.petId)}>삭제</PetDeleteBtn>
                         </PetButton>
                       </PetDetailInfo>
                     </PetInfoSecondRow>
@@ -439,7 +470,6 @@ function MyPage() {
               <MdOutlineArrowForward />
             </ArrowButton>
           </CardScrollableContainer>
-
           <OrderContainer>
             <OrderIconContainer>
               <OrderBagImage src={images.bag} alt="주문내역" onClick={() => navigate('/orderList')} />
