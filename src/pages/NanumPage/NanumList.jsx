@@ -12,18 +12,41 @@ const PetItemListPage = () => {
   const [petItemList, setPetItemList] = useState([]);
   const [comments, setComments] = useState([]);
   const [latest, setLatest] = useState(false);
+  const [userNicknames, setUserNicknames] = useState({});
+
   //게시글 목록 불러오기
   useEffect(() => {
     axios
-      .get("https://ureca.store/api/petItems")
+      .get("/petItems")
       .then((response) => {
         setPetItemList(response.data); // 응답 데이터 저장
         console.log("게시글 목록:", response.data);
+        // 각 사용자 닉네임을 가져오는 함수 호출
+        response.data.forEach((item) => {
+          if (!userNicknames[item.user]) {
+            fetchUserNickname(item.user);
+          }
+        });
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+
+  // 사용자 닉네임 가져오기 함수
+  const fetchUserNickname = (userId) => {
+    axios
+      .get(`/user/${userId}`)
+      .then((response) => {
+        setUserNicknames((prev) => ({
+          ...prev,
+          [userId]: response.data.nickname,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching user nickname:", error);
+      });
+  };
 
   // 좋아요 수 증가 함수
   const good = (petItemId) => {
@@ -32,7 +55,7 @@ const PetItemListPage = () => {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
         axios
-          .put(`https://ureca.store/api/petItems/${petItemId}`, {
+          .put(`/petItems/${petItemId}`, {
             ...item,
             good: updatedGood,
           })
@@ -52,7 +75,7 @@ const PetItemListPage = () => {
   // 댓글 목록 불러오기
   useEffect(() => {
     axios
-      .get(`https://ureca.store/api/petItemComments`)
+      .get(`/petItemComments`)
       .then((response) => {
         setComments(response.data);
         console.log("댓글 목록 :", response.data);
@@ -104,7 +127,9 @@ const PetItemListPage = () => {
             <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
-              <ListUser>작성자{item.user}</ListUser>
+              <ListUser>
+                작성자: {userNicknames[item.user] || "로딩 중..."}
+              </ListUser>
               <ListPrice>
                 {item.price ? (
                   `${item.price.toLocaleString()}원`
