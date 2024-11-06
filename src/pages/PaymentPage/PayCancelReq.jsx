@@ -117,7 +117,6 @@ function PayCancelReq() {
 
   const handleCancel = () => {
     setIsCancelRequested(true);
-    console.log("주문 취소 요청");
   };
 
   return (
