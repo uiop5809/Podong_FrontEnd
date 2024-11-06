@@ -19,6 +19,7 @@ const RouteMap = ({ routeData }) => {
     const map = new kakao.maps.Map(mapContainer, mapOption);
 
     const getCarDirection = async () => {
+      // eslint-disable-next-line no-undef
       const REST_API_KEY = import.meta.env.VITE_MOBILITY_REST_API_KEY;
       const url = "https://apis-navi.kakaomobility.com/v1/directions";
       const origin = `${routeData.start.lng},${routeData.start.lat}`;
@@ -92,7 +93,7 @@ const RouteMap = ({ routeData }) => {
 
 const RecommendedRoutesPage = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("환타 왕자");
+  const [name, setName] = useState("강아지 집사");
 
   useEffect(() => {
     const fetchUserData = async () => {
