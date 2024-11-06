@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { CatList, DogList } from '../../components/Register/PetData';
@@ -101,9 +101,9 @@ const RegisterButton = styled.button`
 `; // 등록 버튼
 
 const PetEditPage = () => {
-  const { petId } = useParams(); // URL에서 petId 가져오기
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  const { petId } = useParams();
   const [imgPath, setImgPath] = useState('');
   const [selectedPetType, setSelectedPetType] = useState('');
   const [petName, setPetName] = useState('');
@@ -161,6 +161,7 @@ const PetEditPage = () => {
       } catch (error) {
         console.error('Error fetching pet data:', error);
       }
+      console.log("Image URL:", imgPath);
     };
 
     if (petId) {
@@ -197,6 +198,7 @@ const PetEditPage = () => {
       const response = await axios.put(`/pets/${petId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      
       if (response.status === 200) {
         alert('반려동물 수정이 완료되었습니다.');
         navigate('/myPage/:userId');
