@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { FaRegUserCircle, FaRegBell } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { images } from '../Images';
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import { HiOutlineShoppingCart } from "react-icons/hi";
+import { FaRegUserCircle, FaRegBell } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { images } from "../Images";
 
 const MainNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
 
   // localStorage에서 userId 가져오기
-  const [userId, setUserId] = useState(localStorage.getItem('userId'));
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
+    const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUserId(storedUserId);
     }
@@ -24,9 +24,9 @@ const MainNav = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -34,20 +34,20 @@ const MainNav = () => {
     if (userId) {
       navigate(`/myPage/${userId}`); // userId가 있으면 마이페이지로 이동
     } else {
-      navigate('/login'); // userId가 없으면 로그인 페이지로 이동
+      navigate("/login"); // userId가 없으면 로그인 페이지로 이동
     }
   };
 
   const icons = [
-    { icon: <FaRegBell />, link: '/notifications' },
-    { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
+    { icon: <FaRegBell />, link: "/notifications" },
+    { icon: <HiOutlineShoppingCart size={17} />, link: "/shoppingCart" },
   ];
 
   return (
     <>
       <Navbar $isScrolled={isScrolled}>
         <AnimalWrap>
-          <AnimalName>
+          <AnimalName onClick={() => navigate("/")}>
             <img src={images.logo} alt="로고" />
           </AnimalName>
         </AnimalWrap>
@@ -58,7 +58,7 @@ const MainNav = () => {
             </Link>
           ))}
           {/* userId 존재 여부에 따라 동작하는 FaRegUserCircle 아이콘 */}
-          <span onClick={handleUserIconClick} style={{ cursor: 'pointer' }}>
+          <span onClick={handleUserIconClick} style={{ cursor: "pointer" }}>
             <FaRegUserCircle />
           </span>
         </NavIconWrap>
@@ -79,8 +79,9 @@ const Navbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${({ $isScrolled }) => ($isScrolled ? 'rgba(255, 255, 255, 0.7)' : '#ffffff')};
-  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? 'blur(4px)' : 'none')};
+  background-color: ${({ $isScrolled }) =>
+    $isScrolled ? "rgba(255, 255, 255, 0.7)" : "#ffffff"};
+  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? "blur(4px)" : "none")};
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 
   @media (min-width: 375px) {
@@ -94,12 +95,13 @@ const Navbar = styled.div`
 
 const AnimalWrap = styled.div`
   @font-face {
-    font-family: 'yg-jalnan';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-family: "yg-jalnan";
+    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff")
+      format("woff");
     font-weight: normal;
     font-style: normal;
   }
-  font-family: 'yg-jalnan';
+  font-family: "yg-jalnan";
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -110,6 +112,7 @@ const AnimalName = styled.div`
   img {
     width: 90px;
   }
+  cursor: pointer;
 `;
 
 const NavIconWrap = styled.div`
