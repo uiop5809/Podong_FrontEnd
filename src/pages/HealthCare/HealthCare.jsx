@@ -14,41 +14,56 @@ const HealthCare = () => {
     healthCare: false,
   });
   const [memo, setMemo] = useState("");
-  const user = localStorage.getItem('userId');
-  console.log(user)
-  const petData =  () => {
-    axios.get(`https://ureca.store/api/pets`)
-    .then((response) => {
-        setPetId( user === response.data.userId)
-        console.log('petId :', "ddd");
-      })
+  const userId = localStorage.getItem('userId');
+  console.log('User:', userId);
+  const formatDate = (date) => {
+    if (!date || isNaN(new Date(date).getTime())) {
+      return "";
     }
-  
+    return new Date(date).toISOString().split("T")[0];
+  };
+
+  // 펫 데이터 가져오기
+  const fetchPetData = () => {
+    axios.get(`https://ureca.store/api/pets`)
+      .then((response) => {
+        const filteredPets = response.data.filter(data => data.user === parseInt(userId));
+        if (filteredPets.length > 0) {
+          const petId = filteredPets.map(pet => pet.petId)[0];  // petId 추출
+          console.log('Filtered pet:', petId);
+          setPetId(petId);  // 상태 업데이트
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching pet data:", error);
+      });
+  };
+
+  // 건강 기록 데이터 가져오기
+  const fetchHealthData = async () => {
+    try {
+      const response = await axios.get(`https://ureca.store/api/healths`);
+      const PetHealthData = response.data.filter(item => item.pet === petId);
+      console.log('건강',PetHealthData);
+      
+      setAppointments(PetHealthData.map(item => ({
+        ...item,
+        date: new Date(item.date),
+      })));
+      console.log('건강 기록:', response.data);
+    } catch (error) {
+      console.error("Error :", error);
+    }
+  };
 
   useEffect(() => {
-    const userData = (date) => {
-      if (!date || isNaN(new Date(date).getTime())) {
-        return ""; 
-      }
-      return new Date(date).toISOString().split("T")[0];
-    };
-
-
-
-
-        
-    // const  = async () => {
-    //   try {
-    //     const response = await axios.get(`https://ureca.store/api/healths`);
-    //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
-    //     console.log('댓글 목록:', response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching data:", error);
-    //   }
-    // };
-
-    
+    fetchPetData();
+    fetchHealthData();
+    toggleInput();
   }, []);
+  useEffect(() => {
+    console.log('달력 관리', appointments);
+  }, [appointments]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -58,18 +73,8 @@ const HealthCare = () => {
     setAppointments([...appointments, { date: selectedDate, type, memo }]);
     const formData = new FormData();
     const formattedDate = formatDate(selectedDate);
-    const userId = localStorage.getItem('userId');
-    
-    console.log("userId :", userId);
     try {
-      // petId 가져오기
-      const response = await axios.get(`https://ureca.store/api/pets/pet/${userId}`);
-      const petId = response.data[0].petId;
-      console.log("petId :", petId);
-  
-      // petId를 포함하여 formData에 추가
       formData.append("pet", petId);
-    
       // 선택된 타입에 따라 필요한 필드를 formData에 추가
       if (type === "병원 방문일") {
         formData.append("visitedDate", formattedDate);
@@ -82,7 +87,7 @@ const HealthCare = () => {
       console.log("formData 내용:", formData);
   
       // formData를 포함하여 POST 요청 전송
-      const postResponse = await axios.post("/healths", formData);
+      const postResponse = await axios.post("https://ureca.store/api/healths", formData);
       console.log("등록 data : ", postResponse.data);
       alert("등록 성공");
       setMemo("");
@@ -97,9 +102,6 @@ const HealthCare = () => {
     setShowInput({ ...showInput, [type]: !showInput[type] });
   };
 
-  const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
-  };
 
   // 날짜에 따른 캘린더 타일 표시
   const tileContent = ({ date, view }) => {

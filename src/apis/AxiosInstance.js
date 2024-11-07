@@ -6,7 +6,7 @@ const token = tokenString ? JSON.parse(tokenString) : null;
 const Axios = axios.create({
 
   // eslint-disable-next-line no-undef
-  baseURL: http.localhost.8080,
+  baseURL: "http://localhost:8080/api",
   // baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: true,
 
