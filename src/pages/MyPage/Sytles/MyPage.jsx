@@ -22,9 +22,6 @@ export const MainContainer = styled.div`
 export const UserInfo = styled.span`
   font-size: 16px;
   font-weight: bold;
-  margin-top: 20px;
-  margin: 0 auto;
-  text-align: left;
 `;
 
 export const EditButton = styled.button`
@@ -34,8 +31,8 @@ export const EditButton = styled.button`
   cursor: pointer;
   font-size: 11px;
   font-weight: bold;
-  margin-top: 3px;
-  margin: 0 auto;
+  margin-top: 21px;
+  margin-left: 40px;
   transition: background-color 0.3s;
 
   &:hover {
