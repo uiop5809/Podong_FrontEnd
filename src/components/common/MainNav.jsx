@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { FaRegUserCircle, FaRegBell } from 'react-icons/fa';
-import { PiDogBold } from 'react-icons/pi';
-import { Link,useNavigate,useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { images } from '../Images';
 
 const MainNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,7 +19,6 @@ const MainNav = () => {
     }
   }, [location.pathname]);
 
-  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
@@ -44,13 +43,13 @@ const MainNav = () => {
     { icon: <HiOutlineShoppingCart size={17} />, link: '/shoppingCart' },
   ];
 
-
-
   return (
     <>
       <Navbar $isScrolled={isScrolled}>
         <AnimalWrap>
-          <AnimalName>발바닥천국</AnimalName>
+          <AnimalName>
+            <img src={images.logo} alt="로고" />
+          </AnimalName>
         </AnimalWrap>
         <NavIconWrap>
           {icons.map((item, index) => (
@@ -107,7 +106,10 @@ const AnimalWrap = styled.div`
 `;
 
 const AnimalName = styled.div`
-  margin-left: 4px;
+  margin-left: 5px;
+  img {
+    width: 90px;
+  }
 `;
 
 const NavIconWrap = styled.div`

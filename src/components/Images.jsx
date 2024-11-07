@@ -3,9 +3,8 @@ export const images = {
   cameraIcon: '/images/common/cameraIcon.svg',
   loginDogCat: '/images/common/loginDogCat.svg',
   logo: '/images/common/logo.svg',
-  kakaobtn:'/images/common/kakaobtn.svg',
+  kakaobtn: '/images/common/kakaobtn.svg',
   cancel: '/images/common/cancelButton.svg',
-
 
   // community
   categoryAll: '/images/community/categoryAll.svg',
@@ -29,23 +28,21 @@ export const images = {
 
   // mypage
 
-  alert: "/images/myPage/alert.svg",
-  blockHand: "/images/myPage/blockHand.svg",
-  bogwan: "/images/myPage/bogwan.svg",
-  calendar: "/images/myPage/calendar.svg",
-  hide: "/images/myPage/hide.svg",
-  imseeJeojang: "/images/myPage/imseeJeojang.svg",
-  myActivity: "/images/myPage/myActivity.svg",
-  bag: "/images/myPage/bag.svg",
-  coupon: "/images/myPage/coupon.svg",
-  missing: "/images/myPage/missing.svg",
-  paw: "/images/myPage/paw.svg",
-  point:"/images/myPage/point.svg",
-  review:"/images/myPage/review.svg",
-  mypagecat:"/images/myPage/mypagecat.svg",
-  dogprofile:"/images/myPage/dogprofile.svg",
-  
-
+  alert: '/images/myPage/alert.svg',
+  blockHand: '/images/myPage/blockHand.svg',
+  bogwan: '/images/myPage/bogwan.svg',
+  calendar: '/images/myPage/calendar.svg',
+  hide: '/images/myPage/hide.svg',
+  imseeJeojang: '/images/myPage/imseeJeojang.svg',
+  myActivity: '/images/myPage/myActivity.svg',
+  bag: '/images/myPage/bag.svg',
+  coupon: '/images/myPage/coupon.svg',
+  missing: '/images/myPage/missing.svg',
+  paw: '/images/myPage/paw.svg',
+  point: '/images/myPage/point.svg',
+  review: '/images/myPage/review.svg',
+  mypagecat: '/images/myPage/mypagecat.svg',
+  dogprofile: '/images/myPage/dogprofile.svg',
 
   // walk
   walkMap: '/images/walk/walkMap.svg',
@@ -64,4 +61,9 @@ export const images = {
   carouselImage6: '/images/carousel/carouselImage6.svg',
   carouselImage7: '/images/carousel/carouselImage7.svg',
   carouselImage8: '/images/carousel/carouselImage8.svg',
+
+  // payment
+  paymentBankBook: '/images/payment/paymentBankBook.svg',
+  paymentCard: '/images/payment/paymentCard.svg',
+  paymentPhone: '/images/payment/paymentPhone.svg',
 };
