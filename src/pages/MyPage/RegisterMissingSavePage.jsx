@@ -80,7 +80,7 @@ const RegisterButton = styled.button`
   text-align: center; 
   border-radius: 8px; 
   margin-top: 10px;
-  margin-bottom: 50px;
+  margin-bottom: 10%;
 
   &:hover {
     background-color: #FF6E00;

@@ -308,7 +308,7 @@ const RegisterButton = styled.button`
   justify-content: center;
   align-items: center;
   border: 1px solid #e4e4e4;
-  width: 90%;
+  width: 100%;
   height: 43px;
   text-align: center;
   border-radius: 8px;
