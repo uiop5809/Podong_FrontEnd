@@ -115,7 +115,7 @@ const CommunityDetail = () => {
         </ImgBt>
         <User1>
           <VscAccount1 />
-          작성자: {itemUserNickname || "로딩 중..."}
+          작성자: {itemUserNickname || ""}
         </User1>
         <Title>제목: {itemDetail.title}</Title>
         <Icons>
@@ -146,7 +146,7 @@ const CommunityDetail = () => {
             <div key={item.communityCommentId}>
               <User2>
                 <VscAccount1 />
-                작성자: {users[item.user] || "로딩 중..."}
+                작성자: {users[item.user] || ""}
                 <ListDate>
                   {new Date(item.createdAt).toLocaleDateString("ko-KR", {
                     timeZone: "Asia/Seoul",
