@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Lottie from 'lottie-react';
-import { useNavigate } from 'react-router-dom';
 import PayCancelAnimation from './PayCancelAnimation.json';
 import { useParams } from 'react-router-dom';
 import axios from '../../apis/AxiosInstance';
@@ -11,64 +10,62 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #fafafa;
-  min-height: 100vh;
+  background-color: #f8f8f8;
+  height: 100vh;
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const CancelMessage = styled.h1`
   font-size: 24px;
   font-weight: bold;
-  color: #ff4d4f;
-  margin-top: -40px;
+  color: #333;
 `;
 
 const Content = styled.div`
-  width: 90%;
+  width: 100%;
   max-width: 600px;
   background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-top: 0px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 `;
 
 const Item = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 `;
 
 const ItemTitle = styled.h2`
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
   color: #333;
 `;
 
 const Details = styled.div`
-  margin-top: 12px;
+  margin-top: 10px;
 `;
 
 const Detail = styled.p`
-  font-size: 12px;
-  color: #777;
-  margin-bottom: 6px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
 `;
 
 const TotalPrice = styled.p`
-  font-size: 13px;
+  font-size: 16px;
   font-weight: bold;
-  color: #444;
-  margin-top: 8px;
+  color: #333;
+  margin-top: 10px;
 `;
 
 const StyleStrong = styled.div`
@@ -79,18 +76,18 @@ const StyleStrong = styled.div`
 const PaymentDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  background-color: #f7f9fc;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  gap: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 `;
 
 const PaymentDetailRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 10px;
   border-bottom: 1px solid #e0e0e0;
   &:last-child {
     border-bottom: none;
@@ -98,46 +95,21 @@ const PaymentDetailRow = styled.div`
 `;
 
 const PaymentDetailTitle = styled(StyleStrong)`
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: bold;
   color: #333;
 `;
 
 const PaymentDetailValue = styled.span`
-  font-size: 13px;
-  color: #555;
+  font-size: 12px;
+  color: #666;
 `;
-
-const PaymentDoneBtn = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #ff6e00;
-  background-color: transparent;
-  color: #ff6e00;
-  width: 100%;
-  height: 45px;
-  text-align: center;
-  border-radius: 10px;
-  margin-top: 15px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: #ff6e00;
-    color: #fff;
-  }
-`;
-
-
 
 const PaymentCancelDone = () => {
   const [content, setContent] = useState({});
   const { orderId } = useParams();
   const [payment, setPayment] = useState(null);
   const userId = localStorage.getItem('userId');
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
@@ -232,7 +204,6 @@ const PaymentCancelDone = () => {
       </PaymentDetailRow>
     </>
   )}
-  <PaymentDoneBtn onClick={() => navigate('/')}>확인</PaymentDoneBtn>
 </PaymentDetailsContainer>
       </Content>
     </Container>
