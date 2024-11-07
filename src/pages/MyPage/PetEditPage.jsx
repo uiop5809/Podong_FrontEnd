@@ -256,7 +256,7 @@ const PetEditPage = () => {
           onChange={handlePetNameChange}
           required
         />
-        
+
         {selectedPetType === '고양이' && (
           <>
             <Label>묘종</Label>
