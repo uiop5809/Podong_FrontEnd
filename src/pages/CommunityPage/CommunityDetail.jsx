@@ -1,33 +1,30 @@
-import { useEffect, useState } from 'react';
-import { FiHeart } from 'react-icons/fi';
-import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-import { VscAccount } from 'react-icons/vsc';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import axios from '../../apis/AxiosInstance';
+import { useEffect, useState } from "react";
+import { FiHeart } from "react-icons/fi";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { VscAccount } from "react-icons/vsc";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
+import axios from "../../apis/AxiosInstance";
 
 const CommunityDetail = () => {
   const { no } = useParams(); // %% URL에서 글 번호(no)를 가져옴 %%
   const [itemDetail, setItemDetail] = useState([]);
   const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [users, setUsers] = useState({});
-  const [itemUserNickname, setItemUserNickname] = useState('');
+  const [itemUserNickname, setItemUserNickname] = useState("");
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
   useEffect(() => {
     const fetchItemDetail = async () => {
       try {
-        // 나눔 상세 가져오기
         const itemResponse = await axios.get(`/communities/${no}`);
         setItemDetail(itemResponse.data);
-        console.log('나눔 상세 :', itemResponse.data);
 
-        // 작성자의 닉네임 가져오기
         const userResponse = await axios.get(`/user/${itemResponse.data.user}`);
         setItemUserNickname(userResponse.data.nickname);
       } catch (error) {
-        console.error('Error fetching item or user data:', error);
+        console.error("Error fetching item or user data:", error);
       }
     };
 
@@ -35,21 +32,24 @@ const CommunityDetail = () => {
       try {
         // 댓글 목록 가져오기
         const commentsResponse = await axios.get(`/communityComments`);
-        const relevantComments = commentsResponse.data.filter(item => item.post === parseInt(no));
+        const relevantComments = commentsResponse.data.filter(
+          (item) => item.post === parseInt(no)
+        );
         setComments(relevantComments);
-        console.log('댓글 목록 :', relevantComments);
 
         // 댓글 작성자들의 유저 정보 가져오기
-        const userIds = [...new Set(relevantComments.map(item => item.user))];
-        const userResponses = await Promise.all(userIds.map(userId => axios.get(`/user/${userId}`)));
+        const userIds = [...new Set(relevantComments.map((item) => item.user))];
+        const userResponses = await Promise.all(
+          userIds.map((userId) => axios.get(`/user/${userId}`))
+        );
 
         const userMap = {};
-        userResponses.forEach(response => {
+        userResponses.forEach((response) => {
           userMap[response.data.userId] = response.data.nickname;
         });
         setUsers(userMap);
       } catch (error) {
-        console.error('Error fetching comments or user data:', error);
+        console.error("Error fetching comments or user data:", error);
       } finally {
         setLoading(false); // 모든 로딩 완료 후 로딩 상태 해제
       }
@@ -68,41 +68,41 @@ const CommunityDetail = () => {
         ...itemDetail,
         good: updatedGood,
       })
-      .then(response => {
-        console.log('좋아요 업데이트:', response.data);
-        setItemDetail(prevDetail => ({ ...prevDetail, good: updatedGood }));
+      .then((response) => {
+        setItemDetail((prevDetail) => ({ ...prevDetail, good: updatedGood }));
       })
-      .catch(error => {
-        console.error('좋아요 업데이트 실패:', error);
+      .catch((error) => {
+        console.error("좋아요 업데이트 실패:", error);
       });
   };
 
   // 댓글 등록
-  const handleCommentSubmit = e => {
+  const handleCommentSubmit = (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem("userId");
     axios
-      .post('/communityComments', {
+      .post("/communityComments", {
         post: no,
         user: userId,
         comment: newComment,
       })
-      .then(response => {
-        console.log('댓글 등록 성공:', response.data);
-        setNewComment('');
+      .then((response) => {
+        setNewComment("");
         return axios.get(`/communityComments`);
       })
-      .then(response => {
-        const relevantComments = response.data.filter(item => item.post === parseInt(no));
+      .then((response) => {
+        const relevantComments = response.data.filter(
+          (item) => item.post === parseInt(no)
+        );
         setComments(relevantComments);
       })
-      .catch(error => {
-        console.error('댓글 등록 실패:', error);
+      .catch((error) => {
+        console.error("댓글 등록 실패:", error);
       });
   };
 
   // 댓글 입력 핸들러
-  const handleCommentChange = e => {
+  const handleCommentChange = (e) => {
     setNewComment(e.target.value);
   };
 
@@ -115,7 +115,7 @@ const CommunityDetail = () => {
         </ImgBt>
         <User1>
           <VscAccount1 />
-          작성자: {itemUserNickname || '로딩 중...'}
+          작성자: {itemUserNickname || ""}
         </User1>
         <Title>제목: {itemDetail.title}</Title>
         <Icons>
@@ -130,20 +130,26 @@ const CommunityDetail = () => {
             {comments.length}
           </LikeCommentBox>
           <div>
-            <ListPrice>{itemDetail.price ? `${itemDetail.price.toLocaleString()}원` : <나눔>나눔</나눔>}</ListPrice>
+            <ListPrice>
+              {itemDetail.price ? (
+                `${itemDetail.price.toLocaleString()}원`
+              ) : (
+                <나눔>나눔</나눔>
+              )}
+            </ListPrice>
           </div>
         </Icons>
         <Contents>작성글: {itemDetail.contents}</Contents>
         <Line />
         <CommentST>
-          {comments.map(item => (
+          {comments.map((item) => (
             <div key={item.communityCommentId}>
               <User2>
                 <VscAccount1 />
-                작성자: {users[item.user] || '로딩 중...'}
+                작성자: {users[item.user] || ""}
                 <ListDate>
-                  {new Date(item.createdAt).toLocaleDateString('ko-KR', {
-                    timeZone: 'Asia/Seoul',
+                  {new Date(item.createdAt).toLocaleDateString("ko-KR", {
+                    timeZone: "Asia/Seoul",
                   })}
                 </ListDate>
               </User2>
@@ -182,7 +188,7 @@ const ListImg = styled.img`
   background-color: #d9d9d9;
   border-radius: 10px;
   flex-shrink: calc(); /* 이미지 크기를 고정 */
-  background-image: url(${props => props.src}); /* 이미지 URL 설정 */
+  background-image: url(${(props) => props.src}); /* 이미지 URL 설정 */
   background-size: cover; /* 이미지를 채우도록 설정 */
   background-position: center; /* 이미지 중앙 정렬 */
 `;

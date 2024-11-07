@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import axios from '../../apis/AxiosInstance';
-import CancelPay from './CancelPay';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import axios from "../../apis/AxiosInstance";
+import CancelPay from "./CancelPay";
+import { useParams, useNavigate } from "react-router-dom";
 
 const StyledH1 = styled.h1`
   font-weight: bold;
@@ -153,8 +153,8 @@ const CancelButton = styled.button`
 
 function PayCancelReq() {
   const [orderDetail, setOrderDetail] = useState(null);
-  const [cancelReason, setCancelReason] = useState('');
-  const [detailedReason, setDetailedReason] = useState('');
+  const [cancelReason, setCancelReason] = useState("");
+  const [detailedReason, setDetailedReason] = useState("");
   const [isCancelRequested, setIsCancelRequested] = useState(false);
   const { orderId } = useParams();
 
@@ -163,20 +163,19 @@ function PayCancelReq() {
       try {
         const response = await axios.get(`/order/detail/${orderId}`);
         setOrderDetail(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.error('주문 상세 정보를 가져오는 중 오류 발생:', error);
+        console.error("주문 상세 정보를 가져오는 중 오류 발생:", error);
       }
     };
 
     fetchOrderDetail();
   }, []);
 
-  const handleReasonChange = e => {
+  const handleReasonChange = (e) => {
     setCancelReason(e.target.value);
   };
 
-  const handleDetailedReasonChange = e => {
+  const handleDetailedReasonChange = (e) => {
     setDetailedReason(e.target.value);
   };
 
@@ -200,7 +199,7 @@ function PayCancelReq() {
           <label>
             <img src={productDTO.productImage} alt="Product" />
             <div>
-              <p>{productDTO.productTitle.replace(/<[^>]*>/g, '')}</p>
+              <p>{productDTO.productTitle.replace(/<[^>]*>/g, "")}</p>
               <p>{productDTO.productLprice}원</p>
             </div>
           </label>

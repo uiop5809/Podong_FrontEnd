@@ -56,7 +56,6 @@ const WalkingTimer = ({
         walkTime: formatTime(time),
         userId: userId,
       });
-      console.log("산책 경로 저장 성공:", response.data);
     } catch (error) {
       console.error("산책 경로 저장 실패:", error);
     }
