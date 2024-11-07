@@ -1,59 +1,65 @@
-import axios from '../../apis/AxiosInstance';
-import styled from 'styled-components';
-import { images } from '../../components/Images';
-import { MdPhotoCamera } from 'react-icons/md';
-import { useState } from 'react';
+import axios from "../../apis/AxiosInstance";
+import styled from "styled-components";
+import { images } from "../../components/Images";
+import { MdPhotoCamera } from "react-icons/md";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CommunityWrite = () => {
-  const [uploadedImage, setUploadedImage] = useState(''); //미리보기 이미지
-  const [title, setTitle] = useState(''); // 제목
-  const [contents, setContents] = useState(''); // 내용
-  const [user, setUser] = useState(''); // 유저
+  const [uploadedImage, setUploadedImage] = useState(""); //미리보기 이미지
+  const [title, setTitle] = useState(""); // 제목
+  const [contents, setContents] = useState(""); // 내용
+  const [user, setUser] = useState(""); // 유저
   const [imageUrl, setImageUrl] = useState(null); // 사진 파일
   const [loading, setLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('전체');
+  const [activeCategory, setActiveCategory] = useState("전체");
+  const navigate = useNavigate();
+
   const category = [
-    { src: images.categoryAll, name: '전체' },
-    { src: images.categoryFreedom, name: '자유' },
-    { src: images.categoryDongNea, name: '동네' },
-    { src: images.categoryExpert, name: '전문가' },
-    { src: images.categoryAnonymity, name: '익명' },
-    { src: images.categoryEvent, name: '이벤트' },
+    { src: images.categoryAll, name: "전체" },
+    { src: images.categoryFreedom, name: "자유" },
+    { src: images.categoryDongNea, name: "동네" },
+    { src: images.categoryExpert, name: "전문가" },
+    { src: images.categoryAnonymity, name: "익명" },
+    { src: images.categoryEvent, name: "이벤트" },
   ];
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
 
     // FormData 객체 생성
     const formData = new FormData();
-    const user = localStorage.getItem('userId');
-    formData.append('title', title);
-    formData.append('contents', contents);
-    formData.append('user', user);
+    const user = localStorage.getItem("userId");
+    formData.append("title", title);
+    formData.append("contents", contents);
+    formData.append("user", user);
     if (imageUrl) {
-      formData.append('imageUrl', imageUrl); // 'imageUrl'는 Spring Boot에서 받을 필드 이름과 일치해야 합니다
+      formData.append("imageUrl", imageUrl); // 'imageUrl'는 Spring Boot에서 받을 필드 이름과 일치해야 합니다
     }
 
     try {
-      const response = await axios.post('https://ureca.store/api/communities', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log('등록 data : ', response.data);
-      alert('등록 성공', response.data);
-      setTitle('');
-      setContents('');
-      setUser('');
+      const response = await axios.post(
+        "https://ureca.store/api/communities",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      navigate("/community");
+      setTitle("");
+      setContents("");
+      setUser("");
       setImageUrl(null); // 이미지 URL 초기화
       setUploadedImage(null); // 미리보기 이미지 초기화
     } catch (error) {
-      console.error('오류 발생:', error);
-      alert('오류 발생:');
-      setTitle('');
-      setContents('');
-      setUser('');
+      console.error("오류 발생:", error);
+      alert("오류 발생:");
+      setTitle("");
+      setContents("");
+      setUser("");
       setImageUrl(null); // 이미지 URL 초기화
       setUploadedImage(null); // 미리보기 이미지 초기화
     } finally {
@@ -62,13 +68,13 @@ const CommunityWrite = () => {
   };
 
   // 파일 선택 핸들러
-  const handleFileChange = e => {
+  const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]; // 첫 번째 파일만 선택
       setImageUrl(file);
       setUploadedImage(URL.createObjectURL(file));
       if (file.length > 1) {
-        alert('최대 1장의 이미지만 선택할 수 있습니다.');
+        alert("최대 1장의 이미지만 선택할 수 있습니다.");
         return;
       }
     }
@@ -79,7 +85,13 @@ const CommunityWrite = () => {
       <Form onSubmit={handleSubmit}>
         <div>
           <LableImg htmlFor="imageUrl">
-            <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
+            <input
+              type="file"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+              accept="image/*"
+              id="imageUrl"
+            />
             {uploadedImage ? (
               <ImgPreview
                 src={uploadedImage} // 미리보기 이미지를 보여줌
@@ -99,7 +111,7 @@ const CommunityWrite = () => {
               id="title"
               value={title}
               type="text"
-              onChange={e => setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
               required
               placeholder="제목을 입력해주세요"
             />
@@ -110,7 +122,8 @@ const CommunityWrite = () => {
               <CategoryBtn
                 key={index}
                 $active={activeCategory === item.name}
-                onClick={() => setActiveCategory(item.name)}>
+                onClick={() => setActiveCategory(item.name)}
+              >
                 <CategoryImg src={item.src} alt={item.name} />
                 {item.name}
               </CategoryBtn>
@@ -121,20 +134,20 @@ const CommunityWrite = () => {
             <Textarea
               id="contents"
               value={contents}
-              onChange={e => setContents(e.target.value)}
+              onChange={(e) => setContents(e.target.value)}
               required
               placeholder="공유하고 싶은 내용을 작성해주세요"
             />
           </label>
           <br />
         </div>
-        <div style={{display:'flex'}}> 
-        <SubmitBtn>
-          <Div>욕설 광고등 운영저책 위반 시 제재를 받으실 수 있습니다</Div>
-          <BuWrite type="submit" disabled={loading}>
-            {loading ? '등록중...' : '작성 완료'}
-          </BuWrite>
-        </SubmitBtn>
+        <div style={{ display: "flex" }}>
+          <SubmitBtn>
+            <Div>욕설 광고등 운영저책 위반 시 제재를 받으실 수 있습니다</Div>
+            <BuWrite type="submit" disabled={loading}>
+              {loading ? "등록중..." : "작성 완료"}
+            </BuWrite>
+          </SubmitBtn>
         </div>
       </Form>
     </ItemTitle>
@@ -196,7 +209,7 @@ const CategoryBtn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  opacity: ${({ $active }) => ($active ? '1' : '0.5')};
+  opacity: ${({ $active }) => ($active ? "1" : "0.5")};
   transition: opacity 0.3s;
   cursor: pointer;
   &:hover {
@@ -287,7 +300,7 @@ const Form = styled.form`
 `;
 const SubmitBtn = styled.div`
   position: absolute;
-  bottom:0px;
+  bottom: 0px;
   width: 100%;
   justify-content: flex-end;
 `;

@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { RxAvatar } from 'react-icons/rx';
-import { MdOutlineKeyboardArrowRight, MdOutlineArrowBack, MdOutlineArrowForward } from 'react-icons/md';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import axios from '../../apis/AxiosInstance';
-import { images } from '../../components/Images';
-import user from './user.png'
-import { ScrollableContainer, Container, MainContainer, UserInfo, EditButton } from './Sytles/MyPage';
+import React, { useState, useEffect, useRef } from "react";
+import { RxAvatar } from "react-icons/rx";
+import {
+  MdOutlineKeyboardArrowRight,
+  MdOutlineArrowBack,
+  MdOutlineArrowForward,
+} from "react-icons/md";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import axios from "../../apis/AxiosInstance";
+import { images } from "../../components/Images";
+import user from "./user.png";
+import {
+  ScrollableContainer,
+  Container,
+  MainContainer,
+  UserInfo,
+  EditButton,
+} from "./Sytles/MyPage";
 
 const SubContainer = styled.div`
   display: flex;
@@ -95,7 +105,7 @@ const Coupon = styled.span`
 `;
 
 const ActivePetName = styled.p`
-  margin-top:10px;
+  margin-top: 10px;
   font-size: 15px;
   font-weight: bold;
   color: #ff6e00;
@@ -157,7 +167,7 @@ const ArrowButton = styled.button`
     background-color: rgba(0, 0, 0, 0.7);
   }
 
-  ${({ direction }) => (direction === 'left' ? 'left: 10px;' : 'right: 10px;')}
+  ${({ direction }) => (direction === "left" ? "left: 10px;" : "right: 10px;")}
 `;
 
 const OrderContainer = styled.div`
@@ -312,33 +322,33 @@ const NoPetsMessage = styled.div`
 `;
 
 const PetAddButton = styled.button`
-    background-color: #D0D0D0;
-    margin-left: 100px;
-    padding: 5px 10px;
-    margin-right:8px;
-    font-size: 11px;
-    border-radius: 10px;
-    color: #fff;
-  
+  background-color: #d0d0d0;
+  margin-left: 100px;
+  padding: 5px 10px;
+  margin-right: 8px;
+  font-size: 11px;
+  border-radius: 10px;
+  color: #fff;
+
   &:hover {
-    background-color: #D0D0D0;
-    transform: translateY(0); 
+    background-color: #d0d0d0;
+    transform: translateY(0);
 
     background-color: #b0b0b0;
   }
 `;
 
 const PetDeleteBtn = styled.button`
-  background-color: #D0D0D0;
+  background-color: #d0d0d0;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 5px 10px;
   font-size: 11px;
-  
+
   &:hover {
-    background-color: #D0D0D0;
-    transform: translateY(0); 
+    background-color: #d0d0d0;
+    transform: translateY(0);
 
     background-color: #b0b0b0;
   }
@@ -354,9 +364,9 @@ function MyPage() {
 
   useEffect(() => {
     const fetchUserDataAndPets = async () => {
-      const userId = localStorage.getItem('userId');
+      const userId = localStorage.getItem("userId");
       if (!userId) {
-        console.error('유저데이터 없음');
+        console.error("유저데이터 없음");
         return;
       }
 
@@ -364,10 +374,10 @@ function MyPage() {
         const userResponse = await axios.get(`/user/${userId}`);
         setUserData(userResponse.data);
 
-        const petsResponse = await axios.get('/pets');
+        const petsResponse = await axios.get("/pets");
         setAllPets(petsResponse.data);
       } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+        console.error("데이터를 가져오는 중 오류 발생:", error);
       }
     };
 
@@ -375,40 +385,39 @@ function MyPage() {
   }, []);
 
   useEffect(() => {
-    const userId = parseInt(localStorage.getItem('userId'), 10);
+    const userId = parseInt(localStorage.getItem("userId"), 10);
     if (allPets.length > 0 && userId) {
-      const userPets = allPets.filter(pet => pet.user === userId);
+      const userPets = allPets.filter((pet) => pet.user === userId);
       setFilteredPets(userPets);
     }
   }, [allPets]);
 
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
 
   const handleDeletePet = async (petId) => {
     try {
       await axios.delete(`/pets/${petId}`);
-      setFilteredPets(filteredPets.filter(pet => pet.petId !== petId));
-      alert('펫이 삭제되었습니다.');
+      setFilteredPets(filteredPets.filter((pet) => pet.petId !== petId));
     } catch (error) {
-      console.error('펫 삭제 중 오류 발생:', error);
-      alert('펫 삭제에 실패했습니다.');
+      console.error("펫 삭제 중 오류 발생:", error);
     }
   };
-  
+
   const userActivities = [
-    { src: images.myActivity, alt: '내 활동', text: '내 활동' },
-    { src: images.bogwan, alt: '보관 게시글', text: '보관 게시글' },
-    { src: images.imseeJeojang, alt: '결제내역', text: '결제내역' },
-    { src: images.alert, alt: '알림 목록', text: '알림 목록' },
-    { src: images.hide, alt: '숨긴 게시글', text: '숨긴 게시글' },
-    { src: images.blockHand, alt: '차단 목록', text: '차단 목록' },
+    { src: images.myActivity, alt: "내 활동", text: "내 활동" },
+    { src: images.bogwan, alt: "보관 게시글", text: "보관 게시글" },
+    { src: images.imseeJeojang, alt: "결제내역", text: "결제내역" },
+    { src: images.alert, alt: "알림 목록", text: "알림 목록" },
+    { src: images.hide, alt: "숨긴 게시글", text: "숨긴 게시글" },
+    { src: images.blockHand, alt: "차단 목록", text: "차단 목록" },
   ];
 
-  const scroll = direction => {
+  const scroll = (direction) => {
     const { current } = cardContainerRef;
     if (current) {
-      const scrollAmount = direction === 'left' ? -current.clientWidth : current.clientWidth;
-      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      const scrollAmount =
+        direction === "left" ? -current.clientWidth : current.clientWidth;
+      current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -418,32 +427,51 @@ function MyPage() {
         <MainContainer>
           <Image src={user} alt="사용자 아바타" />
           <UserInfo>
-            {userData ? userData.nickname : '불러오는 중...'}
-            <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>수정</EditButton>
+            {userData ? userData.nickname : "불러오는 중..."}
+            <EditButton
+              onClick={() =>
+                navigate(`/myPage/${userId}/editUserRegister/${userId}`)
+              }
+            >
+              수정
+            </EditButton>
           </UserInfo>
         </MainContainer>
 
         <SubContainer>
           <CardScrollableContainer>
-            <ArrowButton direction="left" onClick={() => scroll('left')}>
+            <ArrowButton direction="left" onClick={() => scroll("left")}>
               <MdOutlineArrowBack />
             </ArrowButton>
 
             <CardContainer ref={cardContainerRef}>
               {filteredPets.length > 0 ? (
-                filteredPets.map(pet => (
+                filteredPets.map((pet) => (
                   <PetProfile key={pet.id}>
                     <PetInfoFirstRow>
                       <PetNameComment>우리응애</PetNameComment>
-                      <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>추가</PetAddButton>
-                      <PetDeleteBtn onClick={() => handleDeletePet(pet.petId)}>삭제</PetDeleteBtn>
+                      <PetAddButton
+                        onClick={() =>
+                          navigate(`/myPage/${userId}/petRegister`)
+                        }
+                      >
+                        추가
+                      </PetAddButton>
+                      <PetDeleteBtn onClick={() => handleDeletePet(pet.petId)}>
+                        삭제
+                      </PetDeleteBtn>
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
-                    <img
-                        src={pet.petPicture} 
-                        alt={`${pet.petName}의 사진`} 
-                        style={{ width: '80px', height: '80px', borderRadius: '50%', marginTop: '10px' }} 
+                      <img
+                        src={pet.petPicture}
+                        alt={`${pet.petName}의 사진`}
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "50%",
+                          marginTop: "10px",
+                        }}
                       />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
@@ -453,10 +481,21 @@ function MyPage() {
                         <ActivePetType>{pet.petWeight}kg</ActivePetType>
                         <PetButton>
                           <MissingRegisterBtn
-                            onClick={() => navigate(`/myPage/${userId}/missingRegister/${pet.petId}`)}>
+                            onClick={() =>
+                              navigate(
+                                `/myPage/${userId}/missingRegister/${pet.petId}`
+                              )
+                            }
+                          >
                             실종등록
                           </MissingRegisterBtn>
-                          <PetEditBtn onClick={() => navigate(`/myPage/${userId}/editPetRegister/${pet.petId}`)}>
+                          <PetEditBtn
+                            onClick={() =>
+                              navigate(
+                                `/myPage/${userId}/editPetRegister/${pet.petId}`
+                              )
+                            }
+                          >
                             수정
                           </PetEditBtn>
                         </PetButton>
@@ -467,21 +506,33 @@ function MyPage() {
               ) : (
                 <NoPetsMessage>
                   <p>등록된 펫이 없습니다</p>
-                  <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>펫 등록하기</PetAddButton>
+                  <PetAddButton
+                    onClick={() => navigate(`/myPage/${userId}/petRegister`)}
+                  >
+                    펫 등록하기
+                  </PetAddButton>
                 </NoPetsMessage>
               )}
             </CardContainer>
-            <ArrowButton direction="right" onClick={() => scroll('right')}>
+            <ArrowButton direction="right" onClick={() => scroll("right")}>
               <MdOutlineArrowForward />
             </ArrowButton>
           </CardScrollableContainer>
           <OrderContainer>
             <OrderIconContainer>
-              <OrderBagImage src={images.bag} alt="주문내역" onClick={() => navigate('/orderList')} />
+              <OrderBagImage
+                src={images.bag}
+                alt="주문내역"
+                onClick={() => navigate("/orderList")}
+              />
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>
-              <OrderReviewImage src={images.review} alt="결제내역" onClick={()=> navigate('/paymentHistory')}/>
+              <OrderReviewImage
+                src={images.review}
+                alt="결제내역"
+                onClick={() => navigate("/paymentHistory")}
+              />
               <span>결제내역</span>
             </OrderIconContainer>
             <OrderIconContainer>
@@ -528,9 +579,9 @@ function MyPage() {
           </MissingInfo>
           <LastComment
             onClick={() => {
-              alert('성공적으로 로그아웃 되었습니다');
-              navigate('/');
-            }}>
+              navigate("/");
+            }}
+          >
             로그아웃
           </LastComment>
         </SubContainer>
