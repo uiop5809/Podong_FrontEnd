@@ -148,7 +148,7 @@ const HealthCare = () => {
         } else if (appointment.type === "건강 관리") {
           color = "#33E949";
         }
-        return <Dot color={color} />;
+        return <SmallDot color={color} />;
       }
     }
     return null;
@@ -170,6 +170,19 @@ const HealthCare = () => {
         classes += " selected";
       }
 
+      const appointment = appointments.find(
+        (app) => formatDate(app.date) === dateStr
+      );
+      if (appointment) {
+        if (appointment.type === "병원 방문일") {
+          classes += " hospital-visit";
+        } else if (appointment.type === "다음 방문일") {
+          classes += " next-visit";
+        } else if (appointment.type === "건강 관리") {
+          classes += " health-care";
+        }
+      }
+
       return classes;
     }
   };
@@ -178,13 +191,13 @@ const HealthCare = () => {
     <Container>
       <Legend>
         <LegendItem>
-          <Dot color="#FB3737" /> 병원 방문일
+          <SmallDot color="#FB3737" /> 병원 방문일
         </LegendItem>
         <LegendItem>
-          <Dot color="#33E949" /> 건강 관리 기록
+          <SmallDot color="#33E949" /> 건강 관리 기록
         </LegendItem>
         <LegendItem>
-          <Dot color="#17A1FA" /> 다음 병원 방문일
+          <SmallDot color="#17A1FA" /> 다음 병원 방문일
         </LegendItem>
       </Legend>
       <CalendarWrapper>
@@ -286,15 +299,14 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__tile {
     padding: 1em 0.5em;
     height: 60px;
+    position: relative;
   }
 
   .react-calendar__tile--now {
-    background: #fff3e8;
     border-radius: 8px;
   }
 
   .react-calendar__tile--active {
-    background-color: #fff3e8;
     color: black;
     height: 5px;
     width: 5px;
@@ -305,6 +317,10 @@ const StyledCalendar = styled(Calendar)`
     height: 60px;
   }
 
+  .selected {
+    background-color: #fff3e8;
+  }
+
   .today {
     border: 2px solid #ffa764;
     border-radius: 8px;
@@ -312,10 +328,6 @@ const StyledCalendar = styled(Calendar)`
 
   .react-calendar__month-view__days__day--weekend {
     color: #17a1fa;
-  }
-
-  .selected {
-    background-color: #fff3e8;
   }
 `;
 
@@ -333,12 +345,13 @@ const LegendItem = styled.div`
   margin: 0 5px;
 `;
 
-const Dot = styled.span`
-  width: 8px;
-  height: 8px;
+const SmallDot = styled.span`
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
-  margin-right: 5px;
+  margin: 0 auto;
+  display: block;
 `;
 
 const AppointmentSection = styled.div`
