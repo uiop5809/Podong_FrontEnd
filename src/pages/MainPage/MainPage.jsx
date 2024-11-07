@@ -106,84 +106,88 @@ const MainPage = () => {
 
   return (
     <>
-      <CarouselContainer>
-        <CarouselImagesWrap>
-          <CarouselImage src={carouselImages[carouselIndex]} alt={`carousel ${carouselIndex + 1}`} />
-          <CarouselImage
-            src={carouselImages[(carouselIndex + 1) % carouselImages.length]}
-            alt={`carousel ${carouselIndex + 2}`}
-          />
-        </CarouselImagesWrap>
-      </CarouselContainer>
-      <TextWrap>
-        <TextSm>
-          <MainTextColor>사랑하는 우리응애</MainTextColor>용품 한 곳에서 해결하세요!
-        </TextSm>
-        <SearchBarWrap>
-          <SearchInputWrap>
-            <SearchInput
-              type="text"
-              placeholder="검색어 입력"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+      <Container>
+        <CarouselContainer>
+          <CarouselImagesWrap>
+            <CarouselImage src={carouselImages[carouselIndex]} alt={`carousel ${carouselIndex + 1}`} />
+            <CarouselImage
+              src={carouselImages[(carouselIndex + 1) % carouselImages.length]}
+              alt={`carousel ${carouselIndex + 2}`}
             />
-            <SearchIcon onClick={handleSearch} />
-          </SearchInputWrap>
-        </SearchBarWrap>
-      </TextWrap>
-      <TabWrap>
-        {tabs.map(tab => (
-          <Tab key={tab} $active={activeTab === tab} onClick={() => setActiveTab(tab)}>
-            {tab}
-          </Tab>
-        ))}
-      </TabWrap>
-      <CategoryWrap>
-        {categories.map(category => (
-          <Category key={category} $active={activeCategory === category} onClick={() => setActiveCategory(category)}>
-            {category}
-          </Category>
-        ))}
-      </CategoryWrap>
+          </CarouselImagesWrap>
+        </CarouselContainer>
+        <TextWrap>
+          <TextSm>
+            <MainTextColor>사랑하는 우리응애</MainTextColor>용품 한 곳에서 해결하세요!
+          </TextSm>
+          <SearchBarWrap>
+            <SearchInputWrap>
+              <SearchInput
+                type="text"
+                placeholder="검색어 입력"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              <SearchIcon onClick={handleSearch} />
+            </SearchInputWrap>
+          </SearchBarWrap>
+        </TextWrap>
+        <TabWrap>
+          {tabs.map(tab => (
+            <Tab key={tab} $active={activeTab === tab} onClick={() => setActiveTab(tab)}>
+              {tab}
+            </Tab>
+          ))}
+        </TabWrap>
+        <CategoryWrap>
+          {categories.map(category => (
+            <Category key={category} $active={activeCategory === category} onClick={() => setActiveCategory(category)}>
+              {category}
+            </Category>
+          ))}
+        </CategoryWrap>
 
-      <ProductGrid>
-        {paginatedData.map(product => (
-          <ProductWrap key={product.productId}>
-            <Link to={`/shoppingDetail/${product.productId}`} state={{ product, userId }}>
-              <ProductImage src={product.productImage} alt={product.productTitle} />
-              <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
-              <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>
-            </Link>
-          </ProductWrap>
-        ))}
-      </ProductGrid>
+        <ProductGrid>
+          {paginatedData.map(product => (
+            <ProductWrap key={product.productId}>
+              <Link to={`/shoppingDetail/${product.productId}`} state={{ product, userId }}>
+                <ProductImage src={product.productImage} alt={product.productTitle} />
+                <ProductTitle>{product.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
+                <ProductPrice>{Number(product.productLprice).toLocaleString()}원</ProductPrice>
+              </Link>
+            </ProductWrap>
+          ))}
+        </ProductGrid>
 
-      <Pagination>
-        <PageButton onClick={handlePrevPageRange} disabled={pageRange[0] === 1}>
-          <MdKeyboardDoubleArrowLeft size={15} />
-        </PageButton>
-        {pageRange.map(p => (
-          <PageButton key={p} onClick={() => handlePageChange(p)} $active={page === p}>
-            {p}
+        <Pagination>
+          <PageButton onClick={handlePrevPageRange} disabled={pageRange[0] === 1}>
+            <MdKeyboardDoubleArrowLeft size={15} />
           </PageButton>
-        ))}
-        <PageButton
-          onClick={handleNextPageRange}
-          disabled={pageRange[pageRange.length - 1] >= Math.ceil(data.length / itemsPerPage)}>
-          <MdKeyboardDoubleArrowRight size={15} />
-        </PageButton>
-      </Pagination>
+          {pageRange.map(p => (
+            <PageButton key={p} onClick={() => handlePageChange(p)} $active={page === p}>
+              {p}
+            </PageButton>
+          ))}
+          <PageButton
+            onClick={handleNextPageRange}
+            disabled={pageRange[pageRange.length - 1] >= Math.ceil(data.length / itemsPerPage)}>
+            <MdKeyboardDoubleArrowRight size={15} />
+          </PageButton>
+        </Pagination>
+      </Container>
     </>
   );
 };
 
 export default MainPage;
 
+const Container = styled.div`
+  padding: 64px 0 0;
+`;
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
   height: 140px;
-  margin-top: 64px;
   display: flex;
   align-items: center;
   justify-content: center;

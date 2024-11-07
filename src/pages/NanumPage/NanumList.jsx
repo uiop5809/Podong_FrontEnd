@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { LuSearch } from "react-icons/lu";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { FcLike } from "react-icons/fc";
-import axios from "../../apis/AxiosInstance";
-import { HiArrowSmDown } from "react-icons/hi";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { LuSearch } from 'react-icons/lu';
+import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import { FcLike } from 'react-icons/fc';
+import axios from '../../apis/AxiosInstance';
+import { HiArrowSmDown } from 'react-icons/hi';
 
 const PetItemListPage = () => {
   const navigate = useNavigate();
@@ -17,40 +17,40 @@ const PetItemListPage = () => {
   //게시글 목록 불러오기
   useEffect(() => {
     axios
-      .get("/petItems")
-      .then((response) => {
+      .get('/petItems')
+      .then(response => {
         setPetItemList(response.data); // 응답 데이터 저장
-        console.log("게시글 목록:", response.data);
+        console.log('게시글 목록:', response.data);
         // 각 사용자 닉네임을 가져오는 함수 호출
-        response.data.forEach((item) => {
+        response.data.forEach(item => {
           if (!userNicknames[item.user]) {
             fetchUserNickname(item.user);
           }
         });
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      .catch(error => {
+        console.error('Error fetching data:', error);
       });
   }, []);
 
   // 사용자 닉네임 가져오기 함수
-  const fetchUserNickname = (userId) => {
+  const fetchUserNickname = userId => {
     axios
       .get(`/user/${userId}`)
-      .then((response) => {
-        setUserNicknames((prev) => ({
+      .then(response => {
+        setUserNicknames(prev => ({
           ...prev,
           [userId]: response.data.nickname,
         }));
       })
-      .catch((error) => {
-        console.error("Error fetching user nickname:", error);
+      .catch(error => {
+        console.error('Error fetching user nickname:', error);
       });
   };
 
   // 좋아요 수 증가 함수
-  const good = (petItemId) => {
-    const updatedItemList = petItemList.map((item) => {
+  const good = petItemId => {
+    const updatedItemList = petItemList.map(item => {
       if (item.petItemId === petItemId) {
         const updatedGood = (item.good || 0) + 1;
         // 서버의 좋아요 수 업데이트 요청
@@ -59,11 +59,11 @@ const PetItemListPage = () => {
             ...item,
             good: updatedGood,
           })
-          .then((response) => {
-            console.log("좋아요 업데이트:", response.data);
+          .then(response => {
+            console.log('좋아요 업데이트:', response.data);
           })
-          .catch((error) => {
-            console.error("좋아요 업데이트 실패:", error);
+          .catch(error => {
+            console.error('좋아요 업데이트 실패:', error);
           });
         return { ...item, good: updatedGood };
       }
@@ -76,20 +76,18 @@ const PetItemListPage = () => {
   useEffect(() => {
     axios
       .get(`/petItemComments`)
-      .then((response) => {
+      .then(response => {
         setComments(response.data);
-        console.log("댓글 목록 :", response.data);
+        console.log('댓글 목록 :', response.data);
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      .catch(error => {
+        console.error('Error fetching data:', error);
       });
   }, []);
 
   // 최신순
   const handleLatest = () => {
-    const sortList = [...petItemList].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
+    const sortList = [...petItemList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     setPetItemList(sortList);
     setLatest(true); //정렬 변경
   };
@@ -106,9 +104,8 @@ const PetItemListPage = () => {
           </ButtonCh>
           <BuWrite
             onClick={() => {
-              navigate("/nanumList/write");
-            }}
-          >
+              navigate('/nanumList/write');
+            }}>
             글 작성
           </BuWrite>
         </Buuttons>
@@ -116,45 +113,32 @@ const PetItemListPage = () => {
 
       <All>전체 {petItemList.length.toLocaleString()}개</All>
       <RowLi>
-        {petItemList.map((item) => (
+        {petItemList.map(item => (
           <Lists
             key={item.petItemId}
-            onClick={(e) => {
+            onClick={e => {
               e.preventDefault();
               navigate(`/nanumList/detail/${item.petItemId}`);
-            }}
-          >
+            }}>
             <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
-              <ListUser>
-                작성자: {userNicknames[item.user] || "로딩 중..."}
-              </ListUser>
-              <ListPrice>
-                {item.price ? (
-                  `${item.price.toLocaleString()}원`
-                ) : (
-                  <나눔>나눔</나눔>
-                )}
-              </ListPrice>
+              <ListUser>작성자: {userNicknames[item.user] || '로딩 중...'}</ListUser>
+              <ListPrice>{item.price ? `${item.price.toLocaleString()}원` : <나눔>나눔</나눔>}</ListPrice>
               <ListDate>
-                {new Date(item.createdAt).toLocaleDateString("ko-KR", {
-                  timeZone: "Asia/Seoul",
+                {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+                  timeZone: 'Asia/Seoul',
                 })}
                 <Icons>
                   <FcLike1
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       good(item.petItemId);
                     }}
                   />
                   {item.good || 0}
                   <Comment1 />
-                  {
-                    comments.filter(
-                      (comment) => comment.petItem === item.petItemId
-                    ).length
-                  }
+                  {comments.filter(comment => comment.petItem === item.petItemId).length}
                 </Icons>
               </ListDate>
             </ListTitlesContainer>
@@ -170,7 +154,7 @@ export default PetItemListPage;
 const ItemTitle = styled.div`
   height: 100%;
   width: 100%;
-  padding: 64px 25px 64px 25px;
+  padding: 64px 25px 80px 25px;
   display: flex;
   flex-direction: column;
 `;
@@ -262,7 +246,7 @@ const ListImg = styled.img`
   background-color: #d9d9d9;
   border-radius: 8px;
   flex-shrink: 0; /* 이미지 크기를 고정 */
-  background-image: url(${(props) => props.src});
+  background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -274,6 +258,7 @@ const ListTitlesContainer = styled.div`
   align-items: center;
   justify-content: space-between; /* 상하 간격 자동 배분 */
   padding: 5px;
+  margin-left: 8px;
   cursor: pointer;
 `;
 const ListTItle = styled.div`
@@ -311,7 +296,7 @@ const ListDate = styled.div`
   color: #8d8d8d;
   width: 100%;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 `;
 const Icons = styled.div`
   display: flex;

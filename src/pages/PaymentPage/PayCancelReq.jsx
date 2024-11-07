@@ -6,19 +6,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 const StyledH1 = styled.h1`
   font-weight: bold;
-  font-size : 20px;
+  font-size: 20px;
   margin-bottom: 20px;
 `;
 
 const StyledH2 = styled.h2`
   font-weight: bold;
-  font-size : 15px;
+  font-size: 15px;
   margin-bottom: 10px;
 `;
 
 const OrderCancellationWrapper = styled.div`
-  padding: 20px;
-  margin-top: 64px;
+  min-height: 100vh;
+  padding: 64px 20px 80px;
 `;
 
 const CancelItem = styled.div`
@@ -90,6 +90,7 @@ const CancelReason = styled.div`
     border: 1px solid #d1d1d1;
     font-size: 14px;
     transition: border-color 0.3s, box-shadow 0.3s;
+    resize: none;
 
     &:focus {
       border-color: #ff6e00;
@@ -104,13 +105,11 @@ const RefundInfo = styled.div`
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
-
-  
 `;
 
 const RefundDetails = styled.div`
   .refund-amount {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     color: #ff6e00;
     display: flex;
@@ -123,13 +122,8 @@ const RefundDetails = styled.div`
     justify-content: space-between;
     margin-bottom: 10px;
 
-    span:first-child {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    span:last-child {
-      font-size: 16px;
+    span {
+      font-size: 14px;
     }
   }
 `;
@@ -178,11 +172,11 @@ function PayCancelReq() {
     fetchOrderDetail();
   }, []);
 
-  const handleReasonChange = (e) => {
+  const handleReasonChange = e => {
     setCancelReason(e.target.value);
   };
 
-  const handleDetailedReasonChange = (e) => {
+  const handleDetailedReasonChange = e => {
     setDetailedReason(e.target.value);
   };
 
@@ -236,7 +230,7 @@ function PayCancelReq() {
           <div className="refund-amount">
             <span>최종 환불 금액</span>
             <span>{productDTO.productLprice}원</span>
-            </div>
+          </div>
           <Divider />
           <div className="refund-detail">
             <span>환불 요청금액</span>

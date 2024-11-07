@@ -73,7 +73,9 @@ const PaymentEnd = () => {
       </Header>
 
       <ButtonContainer>
-        <Button primary>메인으로</Button>
+        <Button primary onClick={() => navigate('/')}>
+          메인으로
+        </Button>
         <Button>쇼핑 계속하기</Button>
       </ButtonContainer>
 
@@ -81,20 +83,20 @@ const PaymentEnd = () => {
 
       {filteredProducts.map(product => (
         <OrderContainer key={product.orderId}>
-            <DeliveryStatus>{statuses[product.status]}</DeliveryStatus>
-            <OrderInfoWrap>
-              <ImageWrapper>
-                <ProductImage src={product.productDTO.productImage} alt="Product" />
-              </ImageWrapper>
-              <OrderDetails>
-                <ShippingInfo>무료 배송</ShippingInfo>
-                <ProductTitle>{product.productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
-                <OptionWrap>
-                  <ProductDetails>수량: {product.quantity}</ProductDetails>
-                  <Price>{product.productDTO.productLprice}원</Price>
-                </OptionWrap>
-              </OrderDetails>
-            </OrderInfoWrap>
+          <DeliveryStatus>{statuses[product.status]}</DeliveryStatus>
+          <OrderInfoWrap>
+            <ImageWrapper>
+              <ProductImage src={product.productDTO.productImage} alt="Product" />
+            </ImageWrapper>
+            <OrderDetails>
+              <ShippingInfo>무료 배송</ShippingInfo>
+              <ProductTitle>{product.productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
+              <OptionWrap>
+                <ProductDetails>수량: {product.quantity}</ProductDetails>
+                <Price>{product.productDTO.productLprice}원</Price>
+              </OptionWrap>
+            </OrderDetails>
+          </OrderInfoWrap>
         </OrderContainer>
       ))}
 
@@ -109,7 +111,9 @@ const PaymentEnd = () => {
         <ThinDivider />
       </Section>
 
-      <OrderDetailButton primary onClick={() => navigate('/orderList')}>주문 목록보기</OrderDetailButton>
+      <OrderDetailButton primary onClick={() => navigate('/orderList')}>
+        주문 목록보기
+      </OrderDetailButton>
     </Container>
   );
 };
@@ -117,13 +121,13 @@ const PaymentEnd = () => {
 export default PaymentEnd;
 
 const Container = styled.div`
-  padding: 64px 20px 80px;
+  padding: 64px 0 80px;
 `;
 
 const Header = styled.h1`
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   text-align: center;
   color: #333;
 `;
@@ -132,7 +136,7 @@ const ImageContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-top: -20px;
 `;
 
 const ButtonContainer = styled.div`
@@ -140,6 +144,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
   gap: 10px;
   margin-bottom: 10px;
+  padding: 0 20px;
 `;
 
 const Button = styled.button`
@@ -167,10 +172,10 @@ const Button = styled.button`
 
 const ThickDivider = styled.div`
   width: 100%;
-  height: 12px;
+  height: 8px;
   background-color: #f3f3f3;
-  margin-top : 20px;
-  margin-bottom : 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const ThinDivider = styled.div`
@@ -179,7 +184,6 @@ const ThinDivider = styled.div`
   background-color: #ddd;
   margin: 15px 0;
 `;
-
 
 const OrderContainer = styled.div`
   padding: 0 20px;
@@ -254,8 +258,7 @@ const Section = styled.div`
 const SectionTitle = styled.h3`
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 15px;
-  color: #333;
+  padding: 0 20px;
 `;
 
 const DeliveryInfoRowContainer = styled.div`
@@ -263,27 +266,28 @@ const DeliveryInfoRowContainer = styled.div`
   justify-content: space-between;
   margin-bottom: 10px;
   align-items: center;
+  padding: 0 20px;
 `;
 
 const DeliveryLabel = styled.span`
+  font-size: 14px;
   font-weight: bold;
-  color: #555;
   min-width: 80px;
 `;
 
 const DeliveryValue = styled.span`
-  color: #333;
+  font-size: 14px;
   text-align: left;
   flex-grow: 1;
   font-size: 14px;
 `;
 
 const OrderDetailButton = styled(Button)`
-  width: 100%;
+  width: 90%;
   padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 64px;
-  max-width: 600px;
+  margin: 0 auto;
+  font-size: 14px;
+  border-radius: 8px;
 `;
 
 const DeliveryInfoRow = ({ label, value }) => {
