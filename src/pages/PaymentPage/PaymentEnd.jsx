@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import Lottie from 'lottie-react';
-import PaymentAnimation from '../PaymentPage/PaymentAnimation.json';
-import PropTypes from 'prop-types';
-import axios from '../../apis/AxiosInstance';
-import { IoMdSearch } from 'react-icons/io';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import Lottie from "lottie-react";
+import PaymentAnimation from "../PaymentPage/PaymentAnimation.json";
+import PropTypes from "prop-types";
+import axios from "../../apis/AxiosInstance";
+import { IoMdSearch } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const statuses = {
-  inTransit: '배송 중',
-  preparing: '배송 준비중',
-  completed: '배송 완료',
+  inTransit: "배송 중",
+  preparing: "배송 준비중",
+  completed: "배송 완료",
 };
 
 const PaymentEnd = () => {
-  const [buyer, setBuyer] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+  const [buyer, setBuyer] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     // 유저 정보를 가져오는 함수
@@ -29,12 +29,11 @@ const PaymentEnd = () => {
       try {
         const response = await axios.get(`/user/${userId}`);
         const userData = response.data;
-        console.log('User Data:', userData);
         setBuyer(userData.nickname);
         setPhone(userData.phoneNumber);
         setAddress(userData.address);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
 
@@ -42,13 +41,13 @@ const PaymentEnd = () => {
     const fetchOrderList = async () => {
       try {
         const response = await axios.get(`/order/list/${userId}`);
-        const formattedData = response.data.map(product => ({
+        const formattedData = response.data.map((product) => ({
           ...product,
-          status: statuses[product.status] || '상태 없음',
+          status: statuses[product.status] || "상태 없음",
         }));
         setProducts(formattedData);
       } catch (error) {
-        console.error('주문 목록을 가져오는 중 오류 발생:', error);
+        console.error("주문 목록을 가져오는 중 오류 발생:", error);
       }
     };
 
@@ -57,15 +56,20 @@ const PaymentEnd = () => {
   }, []);
 
   const filteredProducts = products.filter(
-    product =>
+    (product) =>
       product.productDTO.productTitle &&
-      product.productDTO.productTitle.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.productDTO.productTitle
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   return (
     <Container>
       <ImageContainer>
-        <Lottie animationData={PaymentAnimation} style={{ width: '250px', height: '250px' }} />
+        <Lottie
+          animationData={PaymentAnimation}
+          style={{ width: "250px", height: "250px" }}
+        />
       </ImageContainer>
       <Header>
         우리응애가 좋아할 선물 <br />
@@ -73,7 +77,7 @@ const PaymentEnd = () => {
       </Header>
 
       <ButtonContainer>
-        <Button primary onClick={() => navigate('/')}>
+        <Button primary onClick={() => navigate("/")}>
           메인으로
         </Button>
         <Button>쇼핑 계속하기</Button>
@@ -81,16 +85,21 @@ const PaymentEnd = () => {
 
       <ThickDivider />
 
-      {filteredProducts.map(product => (
+      {filteredProducts.map((product) => (
         <OrderContainer key={product.orderId}>
           <DeliveryStatus>{statuses[product.status]}</DeliveryStatus>
           <OrderInfoWrap>
             <ImageWrapper>
-              <ProductImage src={product.productDTO.productImage} alt="Product" />
+              <ProductImage
+                src={product.productDTO.productImage}
+                alt="Product"
+              />
             </ImageWrapper>
             <OrderDetails>
               <ShippingInfo>무료 배송</ShippingInfo>
-              <ProductTitle>{product.productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
+              <ProductTitle>
+                {product.productDTO.productTitle.replace(/<[^>]*>/g, "")}
+              </ProductTitle>
               <OptionWrap>
                 <ProductDetails>수량: {product.quantity}</ProductDetails>
                 <Price>{product.productDTO.productLprice}원</Price>
@@ -111,7 +120,7 @@ const PaymentEnd = () => {
         <ThinDivider />
       </Section>
 
-      <OrderDetailButton primary onClick={() => navigate('/orderList')}>
+      <OrderDetailButton primary onClick={() => navigate("/orderList")}>
         주문 목록보기
       </OrderDetailButton>
     </Container>
@@ -148,9 +157,9 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => (props.primary ? '#ff6e00' : 'white')};
-  color: ${props => (props.primary ? 'white' : '#ff6e00')};
-  border: ${props => (props.primary ? 'none' : '2px solid #ff6e00')};
+  background-color: ${(props) => (props.primary ? "#ff6e00" : "white")};
+  color: ${(props) => (props.primary ? "white" : "#ff6e00")};
+  border: ${(props) => (props.primary ? "none" : "2px solid #ff6e00")};
   padding: 8px 45px;
   font-size: 12px;
   font-weight: bold;
@@ -165,7 +174,7 @@ const Button = styled.button`
   justify-content: center;
 
   &:hover {
-    background-color: ${props => (props.primary ? '#e66e00' : '#e66e00')};
+    background-color: ${(props) => (props.primary ? "#e66e00" : "#e66e00")};
     color: white;
   }
 `;

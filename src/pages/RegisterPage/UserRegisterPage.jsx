@@ -377,8 +377,6 @@ const UserRegisterPage = () => {
       });
       const { userId } = response.data;
 
-      console.log(userId);
-
       localStorage.setItem("userId", userId);
       alert("userId가 localStorage에 저장되었습니다: " + userId);
       navigate("/petRegister/:userId");

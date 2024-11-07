@@ -10,7 +10,6 @@ const CancelPay = () => {
   const [payAmount, setPayAmount] = useState(null);
   const { orderId } = useParams();
   const navigate = useNavigate();
-  
 
   // 페이지가 렌더링되면 userId를 받아옴
   useEffect(() => {
@@ -33,10 +32,10 @@ const CancelPay = () => {
   // fetchImpUid 함수
   const fetchImpUid = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/payment/list/${userId}`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/payment/list/${userId}`
+      );
       const paymentData = response.data;
-
-      console.log("Fetched Payment Data:", paymentData);
 
       if (paymentData.length > 0 && paymentData[0].impUid) {
         setImpUid(paymentData[0].impUid);
@@ -57,7 +56,6 @@ const CancelPay = () => {
       handleCancel(impUid, payAmount);
     }
   }, [impUid, payAmount]);
-
 
   // 결제 취소 요청 핸들링
   const handleCancel = async (impUid, payAmount) => {
@@ -103,18 +101,15 @@ const CancelPay = () => {
           },
         }
       );
-      console.log("결제 취소 완료:", response.data);
       alert("결제가 취소되었습니다.");
-      console.log(merchantId, impUid);
       await axios.get(`${import.meta.env.VITE_BASE_URL}/payment/cancel`, {
-        params:{
-          id : merchantId,
-          iamUid : impUid,
-        }
-        });
+        params: {
+          id: merchantId,
+          iamUid: impUid,
+        },
+      });
 
       navigate(`/paymentCancelDone/${orderId}`);
-      
     } catch (error) {
       console.error("결제 취소 에러 발생:", error);
       alert("결제 취소에 실패했습니다.");
@@ -122,9 +117,9 @@ const CancelPay = () => {
   };
 
   return (
-      <CancelPayContent>
-        <CancelPayMessage>결제 취소 요청 중...</CancelPayMessage>
-      </CancelPayContent>
+    <CancelPayContent>
+      <CancelPayMessage>결제 취소 요청 중...</CancelPayMessage>
+    </CancelPayContent>
   );
 };
 
