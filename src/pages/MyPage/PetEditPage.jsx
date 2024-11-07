@@ -198,7 +198,6 @@ const PetEditPage = () => {
       });
       
       if (response.status === 200) {
-        alert('반려동물 수정이 완료되었습니다.');
         navigate('/myPage/:userId');
       } else {
         alert('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
