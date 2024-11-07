@@ -4,6 +4,7 @@ import PopupDom from '../../components/Register/PopUpDom';
 import PopupPostCode from '../../components/Register/PopupPostCode';
 import axios from '../../apis/AxiosInstance';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { images } from '../../components/Images';
 
 const Payment = () => {
   const [deliveryMethod, setDeliveryMethod] = useState('');
@@ -144,8 +145,8 @@ const Payment = () => {
     <PaymentPage>
       {/* 주문자 | 배송지 섹션 */}
       <Section>
-        <SectionTitle>주문자 | 배송지</SectionTitle>
-        <p>{profileNickname || '이름'}</p>
+        <SectionTitle>주문정보</SectionTitle>
+        <DeliveryName>주문인 : {profileNickname || '이름'}</DeliveryName>
 
         <div id="popupDom">
           {isPopupOpen && (
@@ -158,10 +159,10 @@ const Payment = () => {
         <AddressInputGroup>
           <AddressLabelWrapper>
             <label>주소</label>
+            <SearchAddressButton onClick={openPostCode}>주소변경</SearchAddressButton>
           </AddressLabelWrapper>
           <AddressInputWrapper>
             <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
-            <SearchAddressButton onClick={openPostCode}>주소변경</SearchAddressButton>
           </AddressInputWrapper>
           <AddressInputWrapper>
             <StyledInput placeholder="" value={address} onChange={e => setAddress(e.target.value)} required />
@@ -171,16 +172,17 @@ const Payment = () => {
         <DeliveryMethodInputGroup>
           <DeliveryMethodLabelWrapper>
             <label>배송지 출입방법 *</label>
+            <EditButton onClick={openModal}>변경</EditButton>
           </DeliveryMethodLabelWrapper>
           <DeliveryMethodInputWrapper>
             <Input type="text" value={deliveryMethod} readOnly placeholder="공동현관 비밀번호 #1234" />
-            <EditButton onClick={openModal}>변경</EditButton> {/* 변경 버튼 클릭 시 모달 열기 */}
           </DeliveryMethodInputWrapper>
         </DeliveryMethodInputGroup>
 
         <DeliveryNoteInputGroup>
           <DeliveryNoteLabelWrapper>
             <label>배송지 메모</label>
+            <EditButton>변경</EditButton>
           </DeliveryNoteLabelWrapper>
           <DeliveryNoteInputWrapper>
             <Input
@@ -189,7 +191,6 @@ const Payment = () => {
               onChange={e => setDeliveryNote(e.target.value)}
               placeholder="메모를 입력해주세요."
             />
-            <EditButton>변경</EditButton>
           </DeliveryNoteInputWrapper>
         </DeliveryNoteInputGroup>
       </Section>
@@ -297,14 +298,23 @@ const Payment = () => {
               value="카드&간편결제"
               onChange={() => handlePaymentChange('카드&간편결제')}
             />
+            <div>
+              <img src={images.paymentCard} alt="카드&간편결제" />
+            </div>
             카드&간편결제
           </label>
           <label>
             <input type="radio" name="payment" value="무통장입금" onChange={() => handlePaymentChange('무통장입금')} />
+            <div>
+              <img src={images.paymentBankBook} alt="무통장입금" />
+            </div>
             무통장입금
           </label>
           <label>
             <input type="radio" name="payment" value="핸드폰" onChange={() => handlePaymentChange('핸드폰')} />
+            <div>
+              <img src={images.paymentPhone} alt="핸드폰결제" width="18px" />
+            </div>
             핸드폰
           </label>
         </PaymentMethods>
@@ -373,7 +383,7 @@ const PaymentPage = styled.div`
   max-width: 500px;
   margin: 64px auto;
   font-family: Arial, sans-serif;
-  padding: 20px;
+  padding: 0 20px;
 `;
 
 const PostSearchContainer = styled.input`
@@ -391,10 +401,10 @@ const StyledInput = styled.input`
   width: 100%;
   margin-top: 4px;
   border: 1px solid #e4e4e4;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 11px;
 `;
-  
+
 const AddressInputWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -402,7 +412,7 @@ const AddressInputWrapper = styled.div`
   position: relative;
 `;
 
-  const SearchAddressButton = styled.button`
+const SearchAddressButton = styled.button`
   background-color: #ffefef;
   color: #ff6e00;
   border: none;
@@ -434,33 +444,53 @@ const DeliveryNoteInputGroup = styled.div`
 const AddressLabelWrapper = styled.div`
   flex-shrink: 0;
   font-weight: bold;
-  margin-right: 10px;
   display: flex;
   align-items: center;
+  margin-bottom: 5px;
+
+  label {
+    font-size: 14px;
+  }
 `;
 
 const DeliveryMethodLabelWrapper = styled.div`
-  margin-right : auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-weight: bold;
+  margin-bottom: 5px;
+
+  label {
+    font-size: 14px;
+  }
 `;
 
 const DeliveryNoteLabelWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 5px;
   font-weight: bold;
+
+  label {
+    font-size: 14px;
+  }
 `;
-
-
 
 const DeliveryMethodInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  position: relative;
+  justify-content: space-between;
+
+  ::placeholder {
+    font-size: 12px;
+  }
 `;
 
 const DeliveryNoteInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  position: relative;
+  justify-content: space-between;
 `;
 
 const EditButton = styled.button`
@@ -469,7 +499,6 @@ const EditButton = styled.button`
   padding: 6px 14px;
   border: none;
   border-radius: 4px;
-  margin-left: 4px;
   font-size: 10px;
   cursor: pointer;
   font-weight: bold;
@@ -485,32 +514,39 @@ const Section = styled.section`
   margin-bottom: 20px;
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 18px;
+const SectionTitle = styled.div`
   margin-bottom: 10px;
   color: #333;
   font-weight: bold;
 `;
 
+const DeliveryName = styled.div`
+  font-size: 14px;
+`;
+
 const Input = styled.input`
-  width: calc(100% - 70px);
+  width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 14px;
-  margin-right: 10px;
 `;
 
 const PaymentMethods = styled.div`
   label {
     display: flex;
     align-items: center;
-    font-size: 16px;
+    font-size: 12px;
     margin: 10px 0;
+    width: 100%;
   }
 
   input {
     margin-right: 10px;
+  }
+  div {
+    width: 24px;
+    margin-right: 5px;
   }
 `;
 
@@ -518,7 +554,8 @@ const OrderSummary = styled.div`
   p {
     display: flex;
     justify-content: space-between;
-    font-size: 16px;
+    font-size: 13px;
+    padding: 2px 0;
   }
 `;
 
@@ -527,8 +564,9 @@ const FinalAmount = styled.div`
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     color: #ff6e00;
+    margin-top: 10px;
   }
 `;
 
@@ -545,10 +583,10 @@ const PaymentButton = styled.button`
   color: white;
   padding: 15px;
   border: none;
-  border-radius: 4px;
-  font-size: 18px;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  margin-bottom: 64px;
+  margin-bottom: 80px;
 
   &:hover {
     background-color: #ffd3d3;

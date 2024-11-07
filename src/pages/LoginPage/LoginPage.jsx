@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { images } from "../../components/Images";
-import { useNavigate } from "react-router-dom";
-import loginbtn from "./loginbtn.png";
+import styled from 'styled-components';
+import { images } from '../../components/Images';
+import { useNavigate } from 'react-router-dom';
+import loginbtn from './loginbtn.png';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -9,13 +9,15 @@ const LoginPage = () => {
   return (
     <Container>
       <Image src={images.loginDogCat} alt="로그인 화면 강아지와 고양이 그림" />
-      <Title>지금 가입하면 5천원 즉시 할인!</Title>
+      <Title>
+        지금 가입하면 <StyledTitle>5천원 즉시 할인!</StyledTitle>{' '}
+      </Title>
       <Subtitle>우리 댕냥이 엄마쇼핑 시작해볼까요?</Subtitle>
       <a href="https://ureca.store/api/oauth2/authorization/kakao">
         <img src={loginbtn} alt="카카오 계정으로 로그인" />
       </a>
       <OtherMethodButton>다른 방법으로 시작하기</OtherMethodButton>
-      <SkipButton onClick={() => navigate("/")}>일단 둘러보기</SkipButton>
+      <SkipButton onClick={() => navigate('/')}>일단 둘러보기</SkipButton>
     </Container>
   );
 };
@@ -47,6 +49,10 @@ const Title = styled.h2`
   text-align: center;
 `;
 
+const StyledTitle = styled.span`
+  color: #ff6e00;
+`;
+
 const Subtitle = styled.p`
   font-size: 14px;
   color: #666666;
@@ -67,12 +73,15 @@ const Button = styled.button`
 `;
 
 const OtherMethodButton = styled(Button)`
-  background-color: #f5f5f5;
-  color: #666666;
+  background-color: #f0f0f0;
+  color: #b3b3b3;
+  border-radius: 8px;
+  margin-top: 5px;
+  font-size: 14px;
 
   &:hover {
-    background-color: #e0e0e0;
-    transform: scale(1.05);
+    background-color: #ff6e00;
+    color: #ffffff;
   }
 `;
 
