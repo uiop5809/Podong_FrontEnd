@@ -329,6 +329,62 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__month-view__days__day--weekend {
     color: #17a1fa;
   }
+
+  .react-calendar__tile {
+    padding: 1em 0.5em;
+    height: 60px;
+  }
+
+  .react-calendar__month-view__days__day--weekend {
+    color: #17a1fa;
+  }
+
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    abbr {
+      text-decoration-line: none;
+    }
+  }
+
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #9ca3af;
+  }
+
+  .react-calendar__navigation {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .react-calendar__navigation button {
+    min-width: 44px;
+    background: none;
+    font-size: 16px;
+
+    &:disabled {
+      background-color: #f0f0f0;
+    }
+
+    &:enabled:hover,
+    &:enabled:focus {
+      background-color: #fff3e8;
+    }
+  }
+
+  .react-calendar__tile {
+    &:enabled:hover,
+    &:enabled:focus {
+      background-color: #fff3e8;
+    }
+
+    &--now {
+      background: transparent;
+    }
+
+    &--active {
+      background: #fff3e8;
+      color: black;
+    }
+  }
 `;
 
 const Legend = styled.div`
@@ -346,8 +402,8 @@ const LegendItem = styled.div`
 `;
 
 const SmallDot = styled.span`
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
   margin: 0 auto;
