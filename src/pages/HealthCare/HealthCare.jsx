@@ -14,92 +14,112 @@ const HealthCare = () => {
     healthCare: false,
   });
   const [memo, setMemo] = useState("");
-  const user = localStorage.getItem('userId');
-  console.log(user)
-  
-  const petData =  () => {
-    axios.get(`https://ureca.store/api/pets`)
-    .then((response) => {
-        setPetId( user === response.data.userId)
-        console.log('petId :', response.data);
-      })
+  const userId = localStorage.getItem("userId");
+  console.log("User:", userId);
+
+  const formatDate = (date) => {
+    if (!date || isNaN(new Date(date).getTime())) {
+      return "";
     }
-  
+    return new Date(date).toISOString().split("T")[0];
+  };
+
+  // 펫 데이터 가져오기
+  const fetchPetData = () => {
+    axios
+      .get(`https://ureca.store/api/pets`)
+      .then((response) => {
+        const filteredPets = response.data.filter(
+          (data) => data.user === parseInt(userId)
+        );
+        if (filteredPets.length > 0) {
+          const petId = filteredPets.map((pet) => pet.petId)[0]; // petId 추출
+          console.log("Filtered pet:", petId);
+          setPetId(petId); // 상태 업데이트
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching pet data:", error);
+      });
+  };
+
+  // 건강 기록 데이터 가져오기
+  const fetchHealthData = async (petId) => {
+    try {
+      const response = await axios.get(`/healths`);
+      const PetHealthData = response.data.filter((item) => item.pet === petId);
+      console.log("건강", PetHealthData);
+
+      setAppointments(
+        PetHealthData.map((item) => {
+          let type = "";
+          if (item.visitedDate) {
+            type = "병원 방문일";
+          } else if (item.nextCheckupDate) {
+            type = "다음 방문일";
+          } else if (item.healthDate) {
+            type = "건강 관리";
+          }
+          return {
+            ...item,
+            date: new Date(
+              item.visitedDate || item.nextCheckupDate || item.healthDate
+            ),
+            type,
+          };
+        })
+      );
+      console.log("건강 기록:", response.data);
+    } catch (error) {
+      console.error("Error :", error);
+    }
+  };
 
   useEffect(() => {
-    const userData = (date) => {
-      if (!date || isNaN(new Date(date).getTime())) {
-        return ""; 
-      }
-      return new Date(date).toISOString().split("T")[0];
-    };
-
-
-
-
-        
-    // const  = async () => {
-    //   try {
-    //     const response = await axios.get(`https://ureca.store/api/healths`);
-    //     setAppointments(response.data.map(item => ({ ...item, date: new Date(item.date) })));
-    //     console.log('댓글 목록:', response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching data:", error);
-    //   }
-    // };
-
-    
+    fetchPetData();
   }, []);
+
+  useEffect(() => {
+    if (petId) {
+      fetchHealthData(petId);
+    }
+  }, [petId]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   const addAppointment = async (type, e) => {
-    setAppointments([...appointments, { date: selectedDate, type, memo }]);
+    e.preventDefault(); // 기본 동작 방지
+    const newAppointment = {
+      date: selectedDate,
+      type,
+      memo,
+    };
+    setAppointments([...appointments, newAppointment]);
     const formData = new FormData();
     const formattedDate = formatDate(selectedDate);
-    const userId = localStorage.getItem('userId');
-    
-    console.log("userId :", userId);
     try {
-      // petId 가져오기
-      const response = await axios.get(`https://ureca.store/api/pets/pet/${userId}`);
-      const petId = response.data[0].petId;
-      console.log("petId :", petId);
-  
-      // petId를 포함하여 formData에 추가
       formData.append("pet", petId);
-    
-      // 선택된 타입에 따라 필요한 필드를 formData에 추가
       if (type === "병원 방문일") {
         formData.append("visitedDate", formattedDate);
       } else if (type === "다음 방문일") {
         formData.append("nextCheckupDate", formattedDate);
       } else if (type === "건강 관리") {
         formData.append("healthDate", formattedDate);
-        formData.append("notes", memo); // 메모 추가
+        formData.append("notes", memo);
       }
-      console.log("formData 내용:", formData);
-  
-      // formData를 포함하여 POST 요청 전송
-      const postResponse = await axios.post("/healths", formData);
+
+      const postResponse = await axios.post("/healths", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       console.log("등록 data : ", postResponse.data);
-      alert("등록 성공");
       setMemo("");
-  
     } catch (error) {
       console.error("오류 발생:", error);
-      alert("오류 발생");
     }
-  };
-
-  const toggleInput = (type) => {
-    setShowInput({ ...showInput, [type]: !showInput[type] });
-  };
-
-  const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
   };
 
   // 날짜에 따른 캘린더 타일 표시
@@ -119,7 +139,7 @@ const HealthCare = () => {
         } else if (appointment.type === "건강 관리") {
           color = "#33E949";
         }
-        return <Dot color={color} />;
+        return <SmallDot color={color} />;
       }
     }
     return null;
@@ -141,22 +161,34 @@ const HealthCare = () => {
         classes += " selected";
       }
 
+      const appointment = appointments.find(
+        (app) => formatDate(app.date) === dateStr
+      );
+      if (appointment) {
+        if (appointment.type === "병원 방문일") {
+          classes += " hospital-visit";
+        } else if (appointment.type === "다음 방문일") {
+          classes += " next-visit";
+        } else if (appointment.type === "건강 관리") {
+          classes += " health-care";
+        }
+      }
+
       return classes;
     }
   };
 
-    
   return (
     <Container>
       <Legend>
         <LegendItem>
-          <Dot color="#FB3737" /> 병원 방문일
+          <SmallDot color="#FB3737" /> 병원 방문일
         </LegendItem>
         <LegendItem>
-          <Dot color="#33E949" /> 건강 관리 기록
+          <SmallDot color="#33E949" /> 건강 관리 기록
         </LegendItem>
         <LegendItem>
-          <Dot color="#17A1FA" /> 다음 병원 방문일
+          <SmallDot color="#17A1FA" /> 다음 병원 방문일
         </LegendItem>
       </Legend>
       <CalendarWrapper>
@@ -170,72 +202,24 @@ const HealthCare = () => {
       <AppointmentSection>
         <AppointmentInput>
           <label>병원 방문일</label>
-          <Button onClick={() => toggleInput("hospital")}>
-            {showInput.hospital ? "-" : "+"}
-          </Button>
+          <RegisterButton onClick={(e) => addAppointment("병원 방문일", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.hospital && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <RegisterButton onClick={(e) => addAppointment("병원 방문일", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
         <AppointmentInput>
           <label>다음 방문일</label>
-          <Button onClick={() => toggleInput("nextVisit")}>
-            {showInput.nextVisit ? "-" : "+"}
-          </Button>
+          <RegisterButton onClick={(e) => addAppointment("다음 방문일", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.nextVisit && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <RegisterButton onClick={(e) => addAppointment("다음 방문일", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
         <AppointmentInput>
           <label>건강 관리</label>
-          <Button onClick={() => toggleInput("healthCare")}>
-            {showInput.healthCare ? "-" : "+"}
-          </Button>
+
+          <RegisterButton onClick={(e) => addAppointment("건강 관리", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.healthCare && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <MemoInput
-              type="text"
-              placeholder="메모를 입력하세요"
-              value={memo}
-              onChange={(e) => setMemo(e.target.value)}
-            />
-            <RegisterButton onClick={(e) => addAppointment("건강 관리", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
       </AppointmentSection>
-      <AppointmentList>
-        {appointments.map((appointment, index) => (
-          <AppointmentItem key={index}>
-            {appointment.type} - {appointment.date.toLocaleDateString()}
-            {appointment.memo && (
-              <MemoText> - 메모: {appointment.memo}</MemoText>
-            )}
-          </AppointmentItem>
-        ))}
-      </AppointmentList>
     </Container>
   );
 };
@@ -255,20 +239,17 @@ const CalendarWrapper = styled.div`
 `;
 
 const StyledCalendar = styled(Calendar)`
-  
-
   .react-calendar__tile {
     padding: 1em 0.5em;
     height: 60px;
+    position: relative;
   }
 
   .react-calendar__tile--now {
-    background: #fff3e8;
     border-radius: 8px;
   }
 
   .react-calendar__tile--active {
-    background-color: #fff3e8;
     color: black;
     height: 5px;
     width: 5px;
@@ -279,6 +260,10 @@ const StyledCalendar = styled(Calendar)`
     height: 60px;
   }
 
+  .selected {
+    background-color: #fff3e8;
+  }
+
   .today {
     border: 2px solid #ffa764;
     border-radius: 8px;
@@ -287,9 +272,61 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__month-view__days__day--weekend {
     color: #17a1fa;
   }
-  
-  .selected {
-    background-color: #fff3e8;
+
+  .react-calendar__tile {
+    padding: 1em 0.5em;
+    height: 60px;
+  }
+
+  .react-calendar__month-view__days__day--weekend {
+    color: #17a1fa;
+  }
+
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    abbr {
+      text-decoration-line: none;
+    }
+  }
+
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #9ca3af;
+  }
+
+  .react-calendar__navigation {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .react-calendar__navigation button {
+    min-width: 44px;
+    background: none;
+    font-size: 16px;
+
+    &:disabled {
+      background-color: #f0f0f0;
+    }
+
+    &:enabled:hover,
+    &:enabled:focus {
+      background-color: #fff3e8;
+    }
+  }
+
+  .react-calendar__tile {
+    &:enabled:hover,
+    &:enabled:focus {
+      background-color: #fff3e8;
+    }
+
+    &--now {
+      background: transparent;
+    }
+
+    &--active {
+      background: #fff3e8;
+      color: black;
+    }
   }
 `;
 
@@ -307,12 +344,13 @@ const LegendItem = styled.div`
   margin: 0 5px;
 `;
 
-const Dot = styled.span`
+const SmallDot = styled.span`
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
-  margin-right: 5px;
+  margin: 0 auto;
+  display: block;
 `;
 
 const AppointmentSection = styled.div`
