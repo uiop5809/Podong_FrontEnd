@@ -100,6 +100,8 @@ const PetRegisterPage = () => {
     if (storedUserId) {
       setUserId(storedUserId);
     }
+
+    setBirthdate('2020-01-01');
   }, []);
 
   const handlePetTypeClick = value => setSelectedPetType(value);
@@ -267,9 +269,13 @@ const PetRegisterPage = () => {
             />
           </>
         )}
-        <Label>생일</Label>
-        <StyledInput type="date" value={birthdate} max={getCurrentDate()} onChange={handleBirthdateChange} />
-
+      <Label>생일</Label>
+      <StyledInput
+          type="date"
+          value={birthdate}
+          max={getCurrentDate()}
+          onChange={handleBirthdateChange}
+        />
         <Label>성별</Label>
         <SelectButtonContainer>
           <SelectButton selected={selectedGender === '남아'} onClick={() => handleGenderClick('남아')}>
