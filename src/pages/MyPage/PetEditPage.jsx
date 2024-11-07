@@ -145,14 +145,13 @@ const PetEditPage = () => {
         if (petData) {
           setImgPath(petData.petPicture);
           setPetName(petData.petName);
-          setBirthdate(petData.birthdate);
-          setAge(calculateAge(petData.birthdate));
+          setBirthdate('2020-01-01');
+          setAge(calculateAge('2020-01-01')); 
           setSelectedPetType(petData.dogOrCat);
           setSelectedGender(petData.gender ? '남아' : '여아');
           setIsNeutered(petData.neutering ? '네' : '아니요');
           setIsAllergic(petData.petAllergy ? '네' : '아니요');
           setWeight(petData.petWeight);
-          setUserId(petData.user);
           if (petData.dogOrCat === '고양이') {
             setSelectCatList(petData.petType);
           } else {

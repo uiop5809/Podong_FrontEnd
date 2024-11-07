@@ -262,7 +262,7 @@ const PetEditBtn = styled.button`
   border-radius: 20px;
   cursor: pointer;
   font-size: 10px;
-  margin-left: 15%;
+  margin-left: 10px;
   font-weight: normal;
   transition: background-color 0.3s;
 
