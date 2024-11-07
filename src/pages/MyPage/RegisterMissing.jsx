@@ -173,6 +173,10 @@ const RegisterMissing = () => {
   };
   const handleSubmit = async () => {
     const formData = new FormData();
+
+  
+    const walkrouteId = 2;
+
     formData.append('petId', petId);
     formData.append('userId', userId);
     formData.append('walkroute', walkrouteId); // 가져온 walkrouteId 사용
