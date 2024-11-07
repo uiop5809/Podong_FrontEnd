@@ -1,63 +1,59 @@
-import styled from "styled-components";
-import { MdPhotoCamera } from "react-icons/md";
-import axios from "../../apis/AxiosInstance";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { MdPhotoCamera } from 'react-icons/md';
+import axios from '../../apis/AxiosInstance';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PetItemPage = () => {
-  const [selectedSaleType, setSelectedSaleType] = useState(""); // 버튼 판매 or 나눔
+  const [selectedSaleType, setSelectedSaleType] = useState(''); // 버튼 판매 or 나눔
   const [showPriceBox, setShowPriceBox] = useState(false); // 가격 입력 박스 표시 여부
-  const [uploadedImage, setUploadedImage] = useState(""); //미리보기 이미지
-  const [name, setName] = useState(""); // 제목
-  const [description, setDescription] = useState(""); // 내용
-  const [price, setPrice] = useState(""); // 판매가격
-  const [user, setUser] = useState(""); // 유저
+  const [uploadedImage, setUploadedImage] = useState(''); //미리보기 이미지
+  const [name, setName] = useState(''); // 제목
+  const [description, setDescription] = useState(''); // 내용
+  const [price, setPrice] = useState(''); // 판매가격
+  const [user, setUser] = useState(''); // 유저
   const [imageUrl, setImageUrl] = useState(null); // 사진 파일
-  const [sharing, setSharing] = useState(""); // 나눔 . 판매 여부
+  const [sharing, setSharing] = useState(''); // 나눔 . 판매 여부
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    const user = localStorage.getItem("userId");
+  const handleSubmit = async e => {
+    const user = localStorage.getItem('userId');
     e.preventDefault(); // 새로고침 방지
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("price", price);
-    formData.append("user", user);
-    formData.append("sharing", sharing);
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('user', user);
+    formData.append('sharing', sharing);
     if (imageUrl) {
-      formData.append("imageUrl", imageUrl);
+      formData.append('imageUrl', imageUrl);
     }
     try {
-      const response = await axios.post(
-        "https://ureca.store/api/petItems",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("등록 data : ", response.data);
-      navigate("/nanumList");
-      setName("");
-      setDescription("");
-      setPrice("");
-      setUser("");
-      setSharing("");
+      const response = await axios.post('https://ureca.store/api/petItems', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('등록 data : ', response.data);
+      navigate('/nanumList');
+      setName('');
+      setDescription('');
+      setPrice('');
+      setUser('');
+      setSharing('');
       setImageUrl(null); // 이미지 URL 초기화
       setUploadedImage(null); // 미리보기 이미지 초기화
     } catch (error) {
-      console.error("오류 발생:", error);
-      alert("오류 발생:");
-      setName("");
-      setDescription("");
-      setPrice("");
-      setUser("");
-      setSharing("");
+      console.error('오류 발생:', error);
+      alert('오류 발생:');
+      setName('');
+      setDescription('');
+      setPrice('');
+      setUser('');
+      setSharing('');
       setImageUrl(null); // 이미지 URL 초기화
       setUploadedImage(null); // 미리보기 이미지 초기화
     } finally {
@@ -66,37 +62,32 @@ const PetItemPage = () => {
   };
   // }, []);
   // 파일 선택 핸들러
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]; // 첫 번째 파일만 선택
       setImageUrl(file);
       setUploadedImage(URL.createObjectURL(file));
       if (file.length > 1) {
-        alert("최대 1장의 이미지만 선택할 수 있습니다.");
+        alert('최대 1장의 이미지만 선택할 수 있습니다.');
         return;
       }
     }
   };
 
-  const handleSaleTypeClick = (type) => {
+  const handleSaleTypeClick = type => {
     setSelectedSaleType(type);
-    setSharing(type === "판매" ? 1 : 0);
-    setShowPriceBox(type === "판매"); // '판매' 선택 시만 가격 입력 박스 표시
-    setPrice(type === "판매" ? "" : "0");
+    setSharing(type === '판매' ? 1 : 0);
+    setShowPriceBox(type === '판매'); // '판매' 선택 시만 가격 입력 박스 표시
+    setPrice(type === '판매' ? '' : '0');
   };
 
   return (
     <ItemTitle>
       <Form onSubmit={handleSubmit}>
         <div>
+          <Title>사진 첨부</Title>
           <LableImg htmlFor="imageUrl">
-            <input
-              type="file"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-              accept="image/*"
-              id="imageUrl"
-            />
+            <input type="file" style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" id="imageUrl" />
             {uploadedImage ? (
               <ImgPreview
                 src={uploadedImage} // 미리보기 이미지를 보여줌
@@ -116,25 +107,21 @@ const PetItemPage = () => {
               id="name"
               value={name}
               type="text"
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               required
-              placeholder="제목을 입력해주세요"
+              placeholder="제목을 입력해주세요."
             />
           </label>
           <Title>거래 방식</Title>
           <ButtonRow>
             <SelectButton
-              onClick={() => handleSaleTypeClick("판매")}
-              selected={selectedSaleType === "판매"}
-              onChange={() => handleSaleTypeClick("판매")}
-            >
-              판매하기
+              onClick={() => handleSaleTypeClick('판매')}
+              selected={selectedSaleType === '판매'}
+              onChange={() => handleSaleTypeClick('판매')}>
+              판매
             </SelectButton>
-            <SelectButton
-              onClick={() => handleSaleTypeClick("나눔")}
-              selected={selectedSaleType === "나눔"}
-            >
-              나눔하기
+            <SelectButton onClick={() => handleSaleTypeClick('나눔')} selected={selectedSaleType === '나눔'}>
+              나눔
             </SelectButton>
           </ButtonRow>
           {showPriceBox && (
@@ -143,7 +130,7 @@ const PetItemPage = () => {
                 value={price}
                 id="price"
                 type="number"
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={e => setPrice(e.target.value)}
                 placeholder="금액을 입력해주세요"
               />
             </div>
@@ -153,7 +140,7 @@ const PetItemPage = () => {
             <Textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={e => setDescription(e.target.value)}
               required
               placeholder="공유하고 싶은 내용을 작성해주세요"
             />
@@ -163,7 +150,7 @@ const PetItemPage = () => {
         <SubmitBtn>
           <Div>욕설 광고등 운영저책 위반 시 제재를 받으실 수 있습니다</Div>
           <BuWrite type="submit" disabled={loading}>
-            {loading ? "등록중..." : "작성 완료"}
+            {loading ? '등록중...' : '작성 완료'}
           </BuWrite>
         </SubmitBtn>
       </Form>
@@ -195,38 +182,39 @@ const Title = styled.div`
   font-size: 15px;
   font-weight: bold;
   display: flex;
-  margin: 5px;
+  margin: 5px 0;
 `;
 const Box = styled.input`
   top: 0;
   width: 100%;
-  height: 30px;
+  height: 36px;
   margin: 10px 0px 15px 0px;
   display: flex;
   align-items: center;
-  padding-left: 20px;
+  padding-left: 10px;
   border-radius: 5px;
   border: 1px solid #e4e4e4;
   outline: none;
   transition: border-color 0.3s;
   &::placeholder {
-    font-size: 10px; /* placeholder의 글씨 크기를 작게 설정 */
+    font-size: 12px; /* placeholder의 글씨 크기를 작게 설정 */
     color: #e4e4e4; /* 필요에 따라 placeholder 색상 변경 */
   }
 `;
 const Textarea = styled.textarea`
   margin: 10px 0px 15px 0px;
   width: 100%;
-  height: 15em;
+  height: 150px;
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 13px 10px;
   border-radius: 5px;
+  resize: none;
   border: 1px solid #e4e4e4;
   outline: none;
   transition: border-color 0.3s;
   &::placeholder {
-    font-size: 10px; /* placeholder의 글씨 크기를 작게 설정 */
+    font-size: 13px; /* placeholder의 글씨 크기를 작게 설정 */
     color: #e4e4e4; /* 필요에 따라 placeholder 색상 변경 */
   }
 `;
@@ -247,20 +235,21 @@ const BuWrite = styled.button`
 const ButtonRow = styled.div`
   display: flex; // 플렉스 박스 레이아웃으로 설정
   gap: 10px; // 버튼 간의 간격
+  margin-bottom: 15px;
 `;
 const SelectButton = styled.div`
-  color: ${({ selected }) => (selected ? "white" : "black")};
+  color: ${({ selected }) => (selected ? 'white' : 'black')};
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid #e4e4e4;
   width: 172px;
-  height: 40px;
+  height: 36px;
   text-align: center;
   border-radius: 5px;
-  background-color: ${({ selected }) => (selected ? "#FF6E00" : "white")};
+  background-color: ${({ selected }) => (selected ? '#FF6E00' : 'white')};
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 
   &:hover {
@@ -269,7 +258,7 @@ const SelectButton = styled.div`
   }
 `;
 const Div = styled.div`
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   width: 100%;
   height: 20px;
