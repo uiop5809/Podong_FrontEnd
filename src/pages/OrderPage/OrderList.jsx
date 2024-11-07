@@ -1,34 +1,33 @@
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { IoMdSearch } from 'react-icons/io';
-import axios from '../../apis/AxiosInstance';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import { IoMdSearch } from "react-icons/io";
+import axios from "../../apis/AxiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const statuses = {
-  inTransit: '배송 중',
-  preparing: '배송 준비중',
-  completed: '배송 완료',
+  inTransit: "배송 중",
+  preparing: "배송 준비중",
+  completed: "배송 완료",
 };
 
 const OrderList = () => {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
 
   // 주문 목록을 가져오는 함수
   const fetchOrderList = async () => {
     try {
       const response = await axios.get(`/order/list/${userId}`);
-      console.log(response.data); // 응답 데이터에 orderId 포함 여부 확인
-      const formattedData = response.data.map(product => ({
+      const formattedData = response.data.map((product) => ({
         ...product,
-        status: statuses[product.status] || '상태 없음',
+        status: statuses[product.status] || "상태 없음",
       }));
       setProducts(formattedData);
     } catch (error) {
-      console.error('주문 목록을 가져오는 중 오류 발생:', error);
+      console.error("주문 목록을 가져오는 중 오류 발생:", error);
     }
   };
 
@@ -37,9 +36,11 @@ const OrderList = () => {
   }, []);
 
   const filteredProducts = products.filter(
-    product =>
+    (product) =>
       product.productDTO.productTitle &&
-      product.productDTO.productTitle.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.productDTO.productTitle
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -50,24 +51,29 @@ const OrderList = () => {
             type="text"
             placeholder="상품명 / 브랜드명으로 검색하세요."
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <SearchIcon />
         </SearchInputWrapper>
       </SearchBarWrapper>
 
-      {filteredProducts.map(product => (
+      {filteredProducts.map((product) => (
         <OrderContainer key={product.orderId}>
           <OrderDate>{product.date}</OrderDate>
           <OrderCard>
             <DeliveryStatus>{statuses.inTransit}</DeliveryStatus>
             <OrderInfoWrap>
               <ImageWrapper>
-                <ProductImage src={product.productDTO.productImage} alt="Product" />
+                <ProductImage
+                  src={product.productDTO.productImage}
+                  alt="Product"
+                />
               </ImageWrapper>
               <OrderDetails>
                 <ShippingInfo>무료 배송</ShippingInfo>
-                <ProductTitle>{product.productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductTitle>
+                <ProductTitle>
+                  {product.productDTO.productTitle.replace(/<[^>]*>/g, "")}
+                </ProductTitle>
                 <OptionWrap>
                   <ProductDetails>수량: {product.quantity}</ProductDetails>
                   <Price>{product.productDTO.productLprice}원</Price>
@@ -79,8 +85,11 @@ const OrderList = () => {
               <OrderButton>재구매</OrderButton>
               <OrderButton
                 onClick={() =>
-                  navigate(`/orderList/orderDetail/${product.orderId}`, { state: { quantity: product.quantity } })
-                }>
+                  navigate(`/orderList/orderDetail/${product.orderId}`, {
+                    state: { quantity: product.quantity },
+                  })
+                }
+              >
                 주문 상세
               </OrderButton>
             </ButtonWrapper>

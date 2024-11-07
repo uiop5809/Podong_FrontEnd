@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import axios from '../../apis/AxiosInstance';
-import { FaUserCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import axios from "../../apis/AxiosInstance";
+import { FaUserCircle } from "react-icons/fa";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
@@ -15,9 +15,8 @@ const OrderDetail = () => {
       try {
         const response = await axios.get(`/order/detail/${orderId}`);
         setOrderDetail(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.error('주문 상세 정보를 가져오는 중 오류 발생:', error);
+        console.error("주문 상세 정보를 가져오는 중 오류 발생:", error);
       }
     };
 
@@ -30,26 +29,31 @@ const OrderDetail = () => {
 
   const { productDTO, userDTO } = orderDetail;
 
-  const formatDate = dateString => {
+  const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, "0");
 
     return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}분`;
   };
 
-  const totalProductPrice = productDTO.productLprice * (state?.quantity || orderDetail.quantity);
+  const totalProductPrice =
+    productDTO.productLprice * (state?.quantity || orderDetail.quantity);
   const deliveryFee = totalProductPrice >= 30000 ? 0 : 3000;
-  const finalPrice = totalProductPrice + deliveryFee - (orderDetail.pointUsed || 0);
+  const finalPrice =
+    totalProductPrice + deliveryFee - (orderDetail.pointUsed || 0);
 
   return (
     <Container>
       <ProfilePicture>
         {userDTO.userPicture ? (
-          <UserImage src={userDTO.userPicture} alt={`${userDTO.profileNickname} profile`} />
+          <UserImage
+            src={userDTO.userPicture}
+            alt={`${userDTO.profileNickname} profile`}
+          />
         ) : (
           <FaUserCircle color="#ccc" size={30} />
         )}
@@ -60,7 +64,9 @@ const OrderDetail = () => {
         <Wrap>
           <ProductImage src={productDTO.productImage} alt="Product" />
           <ProductDetails>
-            <ProductName>{productDTO.productTitle.replace(/<[^>]*>/g, '')}</ProductName>
+            <ProductName>
+              {productDTO.productTitle.replace(/<[^>]*>/g, "")}
+            </ProductName>
             <OrderDate>{formatDate(userDTO.createdAt)}</OrderDate>
             <FlexWrap>
               <Quantity>수량: {state.quantity}개</Quantity>
@@ -96,7 +102,9 @@ const OrderDetail = () => {
         </InfoRow>
         <InfoRow>
           <Label>포인트 사용:</Label>
-          <PaymentValue>{orderDetail.pointUsed ? `(-${orderDetail.pointUsed}원)` : '0원'}</PaymentValue>
+          <PaymentValue>
+            {orderDetail.pointUsed ? `(-${orderDetail.pointUsed}원)` : "0원"}
+          </PaymentValue>
         </InfoRow>
       </PaymentInfo>
       <LastInfoRow>
@@ -104,7 +112,9 @@ const OrderDetail = () => {
         <LastTotalPrice>{finalPrice}원</LastTotalPrice>
       </LastInfoRow>
       <ButtonWrapper>
-        <CancelButton onClick={() => navigate(`/payCancelReq/${orderId}`)}>주문 취소</CancelButton>
+        <CancelButton onClick={() => navigate(`/payCancelReq/${orderId}`)}>
+          주문 취소
+        </CancelButton>
         <InquireButton>문의하기</InquireButton>
       </ButtonWrapper>
     </Container>

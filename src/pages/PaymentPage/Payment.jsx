@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import PopupDom from '../../components/Register/PopUpDom';
-import PopupPostCode from '../../components/Register/PopupPostCode';
-import axios from '../../apis/AxiosInstance';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { images } from '../../components/Images';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import PopupDom from "../../components/Register/PopUpDom";
+import PopupPostCode from "../../components/Register/PopupPostCode";
+import axios from "../../apis/AxiosInstance";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { images } from "../../components/Images";
 
 const Payment = () => {
-  const [deliveryMethod, setDeliveryMethod] = useState('');
-  const [deliveryNote, setDeliveryNote] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [deliveryNote, setDeliveryNote] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('');
-  const [textInputForEntrance, setTextInputForEntrance] = useState('');
-  const [textInputForOther, setTextInputForOther] = useState('');
+  const [selectedOption, setSelectedOption] = useState("");
+  const [textInputForEntrance, setTextInputForEntrance] = useState("");
+  const [textInputForOther, setTextInputForOther] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [address, setAddress] = useState('');
-  const [zoneCode, setZoneCode] = useState('');
-  const [detailedAddress, setDetailedAddress] = useState('');
-  const [profileNickname, setProfileNickname] = useState('');
+  const [address, setAddress] = useState("");
+  const [zoneCode, setZoneCode] = useState("");
+  const [detailedAddress, setDetailedAddress] = useState("");
+  const [profileNickname, setProfileNickname] = useState("");
   const navigate = useNavigate();
   const [orderItems, setOrderItems] = useState([]);
   const location = useLocation();
-  const userId = location.state?.userId || localStorage.getItem('userId');
+  const userId = location.state?.userId || localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -32,10 +32,10 @@ const Payment = () => {
 
         const userResponse = await axios.get(`/user/${userId}`);
         const userData = userResponse.data;
-        setAddress(userData.address || ''); // 주소 설정
-        setProfileNickname(userData.profileNickname || ''); // profileNickname 설정
+        setAddress(userData.address || ""); // 주소 설정
+        setProfileNickname(userData.profileNickname || ""); // profileNickname 설정
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error("Error fetching order details:", error);
       }
     };
 
@@ -43,30 +43,30 @@ const Payment = () => {
   }, [userId]);
 
   // 결제 방법 선택 시 실행되는 함수
-  const handlePaymentChange = method => {
+  const handlePaymentChange = (method) => {
     setPaymentMethod(method);
   };
 
   // 옵션 선택 시 실행되는 함수
-  const handleOptionChange = e => {
+  const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
   };
 
   // 공동현관 비밀번호 입력 시 실행되는 함수
-  const handleEntranceTextInputChange = e => {
+  const handleEntranceTextInputChange = (e) => {
     setTextInputForEntrance(e.target.value);
   };
 
   // 기타 입력 시 실행되는 함수
-  const handleOtherTextInputChange = e => {
+  const handleOtherTextInputChange = (e) => {
     setTextInputForOther(e.target.value);
   };
 
   // 모달 닫기 및 저장
   const saveAndCloseModal = () => {
-    if (selectedOption === '공동현관 비밀번호') {
+    if (selectedOption === "공동현관 비밀번호") {
       setDeliveryMethod(`공동현관 비밀번호 : ${textInputForEntrance}`);
-    } else if (selectedOption === '기타') {
+    } else if (selectedOption === "기타") {
       setDeliveryMethod(`기타 : ${textInputForOther}`);
     } else {
       setDeliveryMethod(selectedOption);
@@ -90,54 +90,57 @@ const Payment = () => {
 
   // 결제 버튼 클릭 시 실행되는 함수
   const handlePaymentButtonClick = () => {
-    if (paymentMethod === '카드&간편결제') {
+    if (paymentMethod === "카드&간편결제") {
       requestPayment();
     }
   };
 
   const requestPayment = async () => {
-    console.log('결제 요청 함수 호출'); // 결제 함수 호출 여부 확인
     const { IMP } = window; // 포트원 SDK 로드 확인
     if (!IMP) {
-      console.error('포트원 SDK 로드 실패');
+      console.error("포트원 SDK 로드 실패");
       return;
     }
-    IMP.init('imp02101050'); // 포트원 가맹점 식별코드
+    IMP.init("imp02101050"); // 포트원 가맹점 식별코드
     const response = await axios.get(`/user/${userId}`);
     const userData = response.data;
-    console.log('User Data:', userData);
     const cartResponse = await axios.get(`/carts/user/${userId}`);
     const cartData = cartResponse.data;
 
     // 결제 요청
     IMP.request_pay(
       {
-        pg: 'html5_inicis', // PG사명
-        pay_method: 'card', // 결제수단
+        pg: "html5_inicis", // PG사명
+        pay_method: "card", // 결제수단
         merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 (중복되지 않도록 생성)
         name: cartData[0].productTitle, // 결제명
-        amount: orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString(), // 결제 금액
+        amount: orderItems
+          .reduce(
+            (total, item) => total + item.productLprice * item.quantity,
+            0
+          )
+          .toLocaleString(), // 결제 금액
         buyer_email: userData.accountEmail, // 구매자 이메일
         buyer_name: userData.nickname, // 구매자 이름
         buyer_tel: userData.phoneNumber, // 구매자 전화번호
         buyer_addr: userData.address, // 구매자 주소
-        buyer_postcode: '000-000', // 구매자 우편번호
+        buyer_postcode: "000-000", // 구매자 우편번호
       },
-      rsp => {
+      (rsp) => {
         if (rsp.success) {
           // 프론트에서 결제가 완료되면
           axios
             .post(`/payment/list/${rsp.imp_uid}/${userId}`)
-            .then(res => {
-              navigate('/PaymentEnd');
+            .then((res) => {
+              navigate("/PaymentEnd");
             })
-            .catch(error => {
-              console.log('error');
+            .catch((error) => {
+              console.log("error");
             });
         } else {
-          console.log('error');
+          console.log("error");
         }
-      },
+      }
     );
   };
 
@@ -146,12 +149,16 @@ const Payment = () => {
       {/* 주문자 | 배송지 섹션 */}
       <Section>
         <SectionTitle>주문정보</SectionTitle>
-        <DeliveryName>주문인 : {profileNickname || '이름'}</DeliveryName>
+        <DeliveryName>주문인 : {profileNickname || "이름"}</DeliveryName>
 
         <div id="popupDom">
           {isPopupOpen && (
             <PopupDom>
-              <PopupPostCode onClose={closePostCode} setAddress={setAddress} setZoneCode={setZoneCode} />
+              <PopupPostCode
+                onClose={closePostCode}
+                setAddress={setAddress}
+                setZoneCode={setZoneCode}
+              />
             </PopupDom>
           )}
         </div>
@@ -159,13 +166,25 @@ const Payment = () => {
         <AddressInputGroup>
           <AddressLabelWrapper>
             <label>주소</label>
-            <SearchAddressButton onClick={openPostCode}>주소변경</SearchAddressButton>
+            <SearchAddressButton onClick={openPostCode}>
+              주소변경
+            </SearchAddressButton>
           </AddressLabelWrapper>
           <AddressInputWrapper>
-            <PostSearchContainer placeholder="우편번호" value={zoneCode} readOnly style={{ display: 'none' }} />
+            <PostSearchContainer
+              placeholder="우편번호"
+              value={zoneCode}
+              readOnly
+              style={{ display: "none" }}
+            />
           </AddressInputWrapper>
           <AddressInputWrapper>
-            <StyledInput placeholder="" value={address} onChange={e => setAddress(e.target.value)} required />
+            <StyledInput
+              placeholder=""
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
           </AddressInputWrapper>
         </AddressInputGroup>
 
@@ -175,7 +194,12 @@ const Payment = () => {
             <EditButton onClick={openModal}>변경</EditButton>
           </DeliveryMethodLabelWrapper>
           <DeliveryMethodInputWrapper>
-            <Input type="text" value={deliveryMethod} readOnly placeholder="공동현관 비밀번호 #1234" />
+            <Input
+              type="text"
+              value={deliveryMethod}
+              readOnly
+              placeholder="공동현관 비밀번호 #1234"
+            />
           </DeliveryMethodInputWrapper>
         </DeliveryMethodInputGroup>
 
@@ -188,7 +212,7 @@ const Payment = () => {
             <Input
               type="text"
               value={deliveryNote}
-              onChange={e => setDeliveryNote(e.target.value)}
+              onChange={(e) => setDeliveryNote(e.target.value)}
               placeholder="메모를 입력해주세요."
             />
           </DeliveryNoteInputWrapper>
@@ -208,7 +232,10 @@ const Payment = () => {
               <Instruction>
                 <ul>
                   <li>받으실 곳은 배송지 메모에 작성해주세요.</li>
-                  <li>배송지 출입 방법이 정확하지 않을 경우, 1층 또는 경비실 앞에 배송될 수 있습니다.</li>
+                  <li>
+                    배송지 출입 방법이 정확하지 않을 경우, 1층 또는 경비실 앞에
+                    배송될 수 있습니다.
+                  </li>
                 </ul>
               </Instruction>
               <div>
@@ -261,7 +288,8 @@ const Payment = () => {
               </div>
             </ModalBody>
             <ModalFooter>
-              <SaveButton onClick={saveAndCloseModal}>저장</SaveButton> {/* 저장 버튼 클릭 시 옵션 반영 */}
+              <SaveButton onClick={saveAndCloseModal}>저장</SaveButton>{" "}
+              {/* 저장 버튼 클릭 시 옵션 반영 */}
             </ModalFooter>
           </ModalContent>
         </ModalOverlay>
@@ -271,12 +299,14 @@ const Payment = () => {
       <Section>
         <SectionTitle>주문상품</SectionTitle>
         {orderItems.length > 0 ? (
-          orderItems.map(item => (
+          orderItems.map((item) => (
             <OrderItem key={item.cartId}>
               <ItemImage src={item.productImage} alt={item.productTitle} />
               <ItemDetails>
                 {/* HTML 태그가 포함된 제목을 안전하게 렌더링 */}
-                <ItemTitle dangerouslySetInnerHTML={{ __html: item.productTitle }} />
+                <ItemTitle
+                  dangerouslySetInnerHTML={{ __html: item.productTitle }}
+                />
                 <ItemInfo>수량: {item.quantity}개 | 옵션: 노란색 XL</ItemInfo>
                 <ItemPrice>{item.productLprice.toLocaleString()}원</ItemPrice>
               </ItemDetails>
@@ -296,7 +326,7 @@ const Payment = () => {
               type="radio"
               name="payment"
               value="카드&간편결제"
-              onChange={() => handlePaymentChange('카드&간편결제')}
+              onChange={() => handlePaymentChange("카드&간편결제")}
             />
             <div>
               <img src={images.paymentCard} alt="카드&간편결제" />
@@ -304,14 +334,24 @@ const Payment = () => {
             카드&간편결제
           </label>
           <label>
-            <input type="radio" name="payment" value="무통장입금" onChange={() => handlePaymentChange('무통장입금')} />
+            <input
+              type="radio"
+              name="payment"
+              value="무통장입금"
+              onChange={() => handlePaymentChange("무통장입금")}
+            />
             <div>
               <img src={images.paymentBankBook} alt="무통장입금" />
             </div>
             무통장입금
           </label>
           <label>
-            <input type="radio" name="payment" value="핸드폰" onChange={() => handlePaymentChange('핸드폰')} />
+            <input
+              type="radio"
+              name="payment"
+              value="핸드폰"
+              onChange={() => handlePaymentChange("핸드폰")}
+            />
             <div>
               <img src={images.paymentPhone} alt="핸드폰결제" width="18px" />
             </div>
@@ -327,9 +367,16 @@ const Payment = () => {
           <>
             <OrderSummary>
               <p>
-                총 상품 금액:{' '}
+                총 상품 금액:{" "}
                 <span>
-                  {orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString()}원
+                  {orderItems
+                    .reduce(
+                      (total, item) =>
+                        total + item.productLprice * item.quantity,
+                      0
+                    )
+                    .toLocaleString()}
+                  원
                 </span>
               </p>
               <p>
@@ -344,9 +391,16 @@ const Payment = () => {
             </OrderSummary>
             <FinalAmount>
               <p>
-                최종 결제 금액:{' '}
+                최종 결제 금액:{" "}
                 <span>
-                  {orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString()}원
+                  {orderItems
+                    .reduce(
+                      (total, item) =>
+                        total + item.productLprice * item.quantity,
+                      0
+                    )
+                    .toLocaleString()}
+                  원
                 </span>
               </p>
             </FinalAmount>
@@ -370,7 +424,13 @@ const Payment = () => {
 
       {/* 결제 버튼 */}
       <PaymentButton onClick={handlePaymentButtonClick}>
-        {orderItems.reduce((total, item) => total + item.productLprice * item.quantity, 0).toLocaleString()}원 결제하기
+        {orderItems
+          .reduce(
+            (total, item) => total + item.productLprice * item.quantity,
+            0
+          )
+          .toLocaleString()}
+        원 결제하기
       </PaymentButton>
     </PaymentPage>
   );
@@ -669,12 +729,12 @@ const Option = styled.div`
   align-items: center;
   margin-bottom: 15px;
 
-  [type='radio'],
+  [type="radio"],
   span {
     vertical-align: middle;
   }
 
-  [type='radio'] {
+  [type="radio"] {
     appearance: none;
     border: max(2px, 0.1em) solid gray;
     border-radius: 50%;
@@ -683,32 +743,32 @@ const Option = styled.div`
     transition: border 0.1s ease-in-out;
   }
 
-  [type='radio']:checked {
+  [type="radio"]:checked {
     border: 0.4em solid tomato;
   }
 
-  [type='radio']:focus-visible {
+  [type="radio"]:focus-visible {
     outline-offset: max(2px, 0.1em);
     outline: max(2px, 0.1em) dotted tomato;
   }
 
-  [type='radio']:hover {
+  [type="radio"]:hover {
     box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
     cursor: pointer;
   }
 
-  [type='radio']:hover + span {
+  [type="radio"]:hover + span {
     cursor: pointer;
   }
 
-  [type='radio']:disabled {
+  [type="radio"]:disabled {
     background-color: lightgray;
     box-shadow: none;
     opacity: 0.7;
     cursor: not-allowed;
   }
 
-  [type='radio']:disabled + span {
+  [type="radio"]:disabled + span {
     opacity: 0.7;
     cursor: not-allowed;
   }

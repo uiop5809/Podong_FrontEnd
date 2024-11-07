@@ -18,12 +18,9 @@ const PetItemDetailPage = () => {
   useEffect(() => {
     const fetchItemDetail = async () => {
       try {
-        // 나눔 상세 가져오기
         const itemResponse = await axios.get(`/petItems/${no}`);
         setItemDetail(itemResponse.data);
-        console.log("나눔 상세 :", itemResponse.data);
 
-        // 작성자의 닉네임 가져오기
         const userResponse = await axios.get(`/user/${itemResponse.data.user}`);
         setItemUserNickname(userResponse.data.nickname);
       } catch (error) {
@@ -41,7 +38,6 @@ const PetItemDetailPage = () => {
           (item) => item.petItem === parseInt(no)
         );
         setComments(relevantComments);
-        console.log("댓글 목록 :", relevantComments);
 
         // 댓글 작성자들의 유저 정보 가져오기
         const userIds = [...new Set(relevantComments.map((item) => item.user))];
@@ -75,7 +71,6 @@ const PetItemDetailPage = () => {
         good: updatedGood,
       })
       .then((response) => {
-        console.log("좋아요 업데이트:", response.data);
         setItemDetail((prevDetail) => ({ ...prevDetail, good: updatedGood }));
       })
       .catch((error) => {
@@ -94,7 +89,6 @@ const PetItemDetailPage = () => {
         comment: newComment,
       })
       .then((response) => {
-        console.log("댓글 등록 성공:", response.data);
         setNewComment("");
         return axios.get(`/petItemComments?petItem=${no}`);
       })

@@ -15,7 +15,6 @@ const HealthCare = () => {
   });
   const [memo, setMemo] = useState("");
   const userId = localStorage.getItem("userId");
-  console.log("User:", userId);
 
   const formatDate = (date) => {
     if (!date || isNaN(new Date(date).getTime())) {
@@ -34,8 +33,7 @@ const HealthCare = () => {
         );
         if (filteredPets.length > 0) {
           const petId = filteredPets.map((pet) => pet.petId)[0]; // petId 추출
-          console.log("Filtered pet:", petId);
-          setPetId(petId); // 상태 업데이트
+          setPetId(petId);
         }
       })
       .catch((error) => {
@@ -48,7 +46,6 @@ const HealthCare = () => {
     try {
       const response = await axios.get(`/healths`);
       const PetHealthData = response.data.filter((item) => item.pet === petId);
-      console.log("건강", PetHealthData);
 
       setAppointments(
         PetHealthData.map((item) => {
@@ -69,7 +66,6 @@ const HealthCare = () => {
           };
         })
       );
-      console.log("건강 기록:", response.data);
     } catch (error) {
       console.error("Error :", error);
     }
@@ -115,7 +111,6 @@ const HealthCare = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log("등록 data : ", postResponse.data);
       setMemo("");
     } catch (error) {
       console.error("오류 발생:", error);
