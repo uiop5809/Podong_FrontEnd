@@ -16,12 +16,11 @@ const HealthCare = () => {
   const [memo, setMemo] = useState("");
   const user = localStorage.getItem('userId');
   console.log(user)
-  
   const petData =  () => {
     axios.get(`https://ureca.store/api/pets`)
     .then((response) => {
         setPetId( user === response.data.userId)
-        console.log('petId :', response.data);
+        console.log('petId :', "ddd");
       })
     }
   
