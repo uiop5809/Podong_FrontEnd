@@ -110,25 +110,16 @@ const HealthCare = () => {
         formData.append("notes", memo);
       }
 
-      console.log("formData 내용:", formData);
-
-      // formData를 포함하여 POST 요청 전송
       const postResponse = await axios.post("/healths", formData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       console.log("등록 data : ", postResponse.data);
-      alert("등록 성공");
       setMemo("");
     } catch (error) {
       console.error("오류 발생:", error);
-      alert("오류 발생");
     }
-  };
-
-  const toggleInput = (type) => {
-    setShowInput({ ...showInput, [type]: !showInput[type] });
   };
 
   // 날짜에 따른 캘린더 타일 표시
@@ -211,72 +202,24 @@ const HealthCare = () => {
       <AppointmentSection>
         <AppointmentInput>
           <label>병원 방문일</label>
-          <Button onClick={() => toggleInput("hospital")}>
-            {showInput.hospital ? "-" : "+"}
-          </Button>
+          <RegisterButton onClick={(e) => addAppointment("병원 방문일", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.hospital && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <RegisterButton onClick={(e) => addAppointment("병원 방문일", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
         <AppointmentInput>
           <label>다음 방문일</label>
-          <Button onClick={() => toggleInput("nextVisit")}>
-            {showInput.nextVisit ? "-" : "+"}
-          </Button>
+          <RegisterButton onClick={(e) => addAppointment("다음 방문일", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.nextVisit && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <RegisterButton onClick={(e) => addAppointment("다음 방문일", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
         <AppointmentInput>
           <label>건강 관리</label>
-          <Button onClick={() => toggleInput("healthCare")}>
-            {showInput.healthCare ? "-" : "+"}
-          </Button>
+
+          <RegisterButton onClick={(e) => addAppointment("건강 관리", e)}>
+            등록
+          </RegisterButton>
         </AppointmentInput>
-        {showInput.healthCare && (
-          <InputWrapper>
-            <DateInput
-              type="date"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            />
-            <MemoInput
-              type="text"
-              placeholder="메모를 입력하세요"
-              value={memo}
-              onChange={(e) => setMemo(e.target.value)}
-            />
-            <RegisterButton onClick={(e) => addAppointment("건강 관리", e)}>
-              등록
-            </RegisterButton>
-          </InputWrapper>
-        )}
       </AppointmentSection>
-      <AppointmentList>
-        {appointments.map((appointment, index) => (
-          <AppointmentItem key={index}>
-            {appointment.type} - {appointment.date.toLocaleDateString()}
-            {appointment.memo && (
-              <MemoText> - 메모: {appointment.memo}</MemoText>
-            )}
-          </AppointmentItem>
-        ))}
-      </AppointmentList>
     </Container>
   );
 };
