@@ -23,9 +23,10 @@ const Container = styled.div`
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 150px; /* 이미지 너비 */
-  height: 150px; /* 이미지 높이 */
-  margin-bottom: 20px; /* 간격 조정 */
+  width: 150px; 
+  height: 150px; 
+  margin-bottom: 50px;
+  margin-left: 40px;
 `;
 
 const OverlayImage = styled.div`
@@ -36,6 +37,7 @@ const OverlayImage = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+  margin-left:10px;
   justify-content: center;
 `;
 
@@ -103,7 +105,7 @@ const RegisterButton = styled.button`
 const PetEditPage = () => {
 
   const navigate = useNavigate();
-  const { petId } = useParams();
+  const { userId,petId } = useParams();
   const [imgPath, setImgPath] = useState('');
   const [selectedPetType, setSelectedPetType] = useState('');
   const [petName, setPetName] = useState('');
@@ -113,7 +115,6 @@ const PetEditPage = () => {
   const [isNeutered, setIsNeutered] = useState(null);
   const [isAllergic, setIsAllergic] = useState(null);
   const [weight, setWeight] = useState(0);
-  const [userId, setUserId] = useState('');
   const [selectCatList, setSelectCatList] = useState(null);
   const [selectDogList, setSelectDogList] = useState(null);
 
@@ -159,9 +160,7 @@ const PetEditPage = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching pet data:', error);
       }
-      console.log("Image URL:", imgPath);
     };
 
     if (petId) {
@@ -224,7 +223,7 @@ const PetEditPage = () => {
   };
 
   const validateForm = () => {
-    if (!selectedPetType || !petName || !birthdate || !selectedGender || !weight || !userId) {
+    if (!selectedPetType || !petName || !selectedGender || !weight || !userId) {
       alert('모든 필수 항목을 입력해주세요.');
       return false;
     }
@@ -255,14 +254,6 @@ const PetEditPage = () => {
           placeholder="우리 응애 이름을 입력해주세요."
           value={petName || ''}
           onChange={handlePetNameChange}
-          required
-        />
-
-        <Label>유저 ID</Label>
-        <StyledInput
-          placeholder="유저 ID를 입력해주세요."
-          value={userId || ''}
-          onChange={handleUserIdChange}
           required
         />
 

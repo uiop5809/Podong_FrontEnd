@@ -279,19 +279,17 @@ const RegisterButton = styled.button`
   justify-content: center;
   align-items: center;
   border: 1px solid #e4e4e4;
-  width: 90%;
+  width: 100%;
   height: 43px;
   text-align: center;
   border-radius: 8px;
-  margin: 0px;
+  margin: 0 auto 80px;
+
   &:hover {
     background-color: #ff6e00;
     color: white;
   }
-  margin-bottom: 80px;
-  margin-left: 20px;
 `;
-
 const UserRegisterPage = () => {
   const navigate = useNavigate();
   const [imgPath, setImgPath] = useState("");

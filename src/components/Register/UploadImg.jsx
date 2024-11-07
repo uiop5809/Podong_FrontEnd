@@ -19,6 +19,7 @@ const InputFile = styled.label`
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
+  margin-left: 15px;
   transition: background-color 0.3s;
   margin-top: -20px;
 `;
@@ -36,7 +37,7 @@ const ImageBox = styled.div`
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  margin-left: 30px;
+  margin-left: 10px;
   background-color: #FFD3D3;
   overflow: hidden;
   border: 1px solid #FFD3D3;

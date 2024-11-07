@@ -1,22 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RxAvatar } from 'react-icons/rx';
-import { FaCircleUser } from 'react-icons/fa6';
 import { MdOutlineKeyboardArrowRight, MdOutlineArrowBack, MdOutlineArrowForward } from 'react-icons/md';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../apis/AxiosInstance';
 import { images } from '../../components/Images';
+import user from './user.png'
 import { ScrollableContainer, Container, MainContainer, UserInfo, EditButton } from './Sytles/MyPage';
-
-const StyledAvatar = styled(RxAvatar)`
-  font-size: 24px;
-  color: #ff6e00;
-  width: 64px;
-  height: 64px;
-  margin-top: 36px;
-  margin-left: 60px;
-  margin-bottom: 21px;
-`; //여기에 사용자 프로필 사진 불러와야함
 
 const SubContainer = styled.div`
   display: flex;
@@ -25,6 +15,14 @@ const SubContainer = styled.div`
   padding: 15px;
   box-sizing: border-box;
   background-color: #f5f5f5;
+`;
+
+const Image = styled.img`
+  width: 120px;
+  height: auto;
+  margin-top: 30px;
+  margin-left: 50px;
+  margin-bottom: 20px;
 `;
 
 const PetProfile = styled.div`
@@ -41,7 +39,6 @@ const PetProfile = styled.div`
 
 const PetInfoFirstRow = styled.div`
   display: flex;
-  justify-content: space-between;
 `;
 
 const PetInfoSecondRow = styled.div`
@@ -70,6 +67,7 @@ const OrderReviewImage = styled.img`
   margin-left: 5px;
   margin-bottom: 5px;
   margin-top: 10px;
+  cursor: pointer;
 `;
 
 const OrderPointImage = styled.img`
@@ -97,6 +95,7 @@ const Coupon = styled.span`
 `;
 
 const ActivePetName = styled.p`
+  margin-top:10px;
   font-size: 15px;
   font-weight: bold;
   color: #ff6e00;
@@ -104,7 +103,7 @@ const ActivePetName = styled.p`
 `;
 
 const ActivePetType = styled.p`
-  font-size: 10px;
+  font-size: 11px;
   color: #a9a9a9;
 `;
 
@@ -171,13 +170,6 @@ const OrderContainer = styled.div`
   margin-top: 20px;
 `;
 
-const MissingStatus = styled.span`
-  color: red;
-  font-weight: bold;
-  font-size: 12px;
-  margin-top: 8px;
-`;
-
 const UserActiveInfo = styled.div`
   background-color: white;
   border: 1px solid #ddd;
@@ -189,10 +181,11 @@ const UserActiveInfo = styled.div`
 const PetNameComment = styled.p`
   font-size: 15px;
   font-weight: bold;
+  margin-left: 7px;
 `;
 
 const ActivityText = styled.p`
-  font-size: 9px;
+  font-size: 10px;
   font-weight: normal;
   color: #000;
   margin-left: 6px;
@@ -215,7 +208,7 @@ const MissingHeader = styled.div`
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
 `;
 
@@ -228,7 +221,7 @@ const StyledArrowRight = styled(MdOutlineKeyboardArrowRight)`
 const MissingDetail = styled.div`
   display: flex;
   flex-direction: row;
-  font-size: 9px;
+  font-size: 10px;
   margin-top: 13px;
 `;
 
@@ -252,9 +245,8 @@ const MissingRegisterBtn = styled.button`
   color: black;
   border: none;
   border-radius: 5px;
-  font-size: 8px;
+  font-size: 10px;
   cursor: pointer;
-  margin-right: 20px;
   font-weight: normal;
 
   &:hover {
@@ -269,8 +261,8 @@ const PetEditBtn = styled.button`
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 8px;
-  margin-left: 10%;
+  font-size: 10px;
+  margin-left: 15%;
   font-weight: normal;
   transition: background-color 0.3s;
 
@@ -299,6 +291,7 @@ const LastComment = styled.span`
     font-weight: bold;
   }
 `;
+
 const NoPetsMessage = styled.div`
   font-size: 14px;
   font-weight: bold;
@@ -320,9 +313,14 @@ const NoPetsMessage = styled.div`
 
 const PetAddButton = styled.button`
     background-color: #D0D0D0;
-    transform: translateY(-2px); 
+    margin-left: 100px;
+    padding: 5px 10px;
+    margin-right:8px;
+    font-size: 11px;
+    border-radius: 10px;
+    color: #fff;
   
-  &:active {
+  &:hover {
     background-color: #D0D0D0;
     transform: translateY(0); 
 
@@ -331,13 +329,21 @@ const PetAddButton = styled.button`
 `;
 
 const PetDeleteBtn = styled.button`
-  background-color: #ff6e00;
+  background-color: #D0D0D0;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 5px 10px;
   font-size: 11px;
-`
+  
+  &:hover {
+    background-color: #D0D0D0;
+    transform: translateY(0); 
+
+    background-color: #b0b0b0;
+  }
+`;
+
 function MyPage() {
   const navigate = useNavigate();
 
@@ -388,8 +394,7 @@ function MyPage() {
       alert('펫 삭제에 실패했습니다.');
     }
   };
-
-
+  
   const userActivities = [
     { src: images.myActivity, alt: '내 활동', text: '내 활동' },
     { src: images.bogwan, alt: '보관 게시글', text: '보관 게시글' },
@@ -411,7 +416,7 @@ function MyPage() {
     <ScrollableContainer>
       <Container>
         <MainContainer>
-          <StyledAvatar />
+          <Image src={user} alt="사용자 아바타" />
           <UserInfo>
             {userData ? userData.nickname : '불러오는 중...'}
             <EditButton onClick={() => navigate(`/myPage/${userId}/editUserRegister/${userId}`)}>수정</EditButton>
@@ -431,13 +436,14 @@ function MyPage() {
                     <PetInfoFirstRow>
                       <PetNameComment>우리응애</PetNameComment>
                       <PetAddButton onClick={() => navigate(`/myPage/${userId}/petRegister`)}>추가</PetAddButton>
+                      <PetDeleteBtn onClick={() => handleDeletePet(pet.petId)}>삭제</PetDeleteBtn>
                     </PetInfoFirstRow>
 
                     <PetInfoSecondRow>
                     <img
                         src={pet.petPicture} 
                         alt={`${pet.petName}의 사진`} 
-                        style={{ width: '70px', height: '70px', borderRadius: '50%' }} 
+                        style={{ width: '80px', height: '80px', borderRadius: '50%', marginTop: '10px' }} 
                       />
                       <PetDetailInfo>
                         <ActivePetName>{pet.petName}응애</ActivePetName>
@@ -453,7 +459,6 @@ function MyPage() {
                           <PetEditBtn onClick={() => navigate(`/myPage/${userId}/editPetRegister/${pet.petId}`)}>
                             수정
                           </PetEditBtn>
-                            <PetDeleteBtn onClick={() => handleDeletePet(pet.petId)}>삭제</PetDeleteBtn>
                         </PetButton>
                       </PetDetailInfo>
                     </PetInfoSecondRow>
@@ -476,7 +481,7 @@ function MyPage() {
               <span>주문내역 </span>
             </OrderIconContainer>
             <OrderIconContainer>
-              <OrderReviewImage src={images.review} alt="결제내역" />
+              <OrderReviewImage src={images.review} alt="결제내역" onClick={()=> navigate('/paymentHistory')}/>
               <span>결제내역</span>
             </OrderIconContainer>
             <OrderIconContainer>
