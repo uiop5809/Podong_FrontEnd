@@ -169,7 +169,7 @@ const CommunityList = () => {
             <ListTitlesContainer>
               <ListTItle>{item.title}</ListTItle>
               <ListUser>
-                작성자: {userNicknames[item.user] || "로딩 중..."}
+                작성자: {userNicknames[item.user] || ""}
               </ListUser>
               <ListDate>
                 {new Date(item.createdAt).toLocaleDateString("ko-KR", {

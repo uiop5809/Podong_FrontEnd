@@ -123,9 +123,7 @@ const PetItemListPage = () => {
             <ListImg src={item.imageUrl} />
             <ListTitlesContainer>
               <ListTItle>{item.name}</ListTItle>
-              <ListUser>
-                작성자: {userNicknames[item.user] || "로딩 중..."}
-              </ListUser>
+              <ListUser>작성자: {userNicknames[item.user] || ""}</ListUser>
               <ListPrice>
                 {item.price ? (
                   `${item.price.toLocaleString()}원`
